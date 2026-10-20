@@ -6,6 +6,7 @@
 <title>Manual do Usuário Immuno Ops</title>
 <meta name="description" content="Passo a passo do Immuno Ops: do cadastro à primeira investigação no seu cluster Kubernetes.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='20' fill='%23080C08'/%3E%3Crect x='36' y='28' width='20' height='62' fill='%23FFFFFF'/%3E%3Ccircle cx='74' cy='80' r='10' fill='%2300FF41'/%3E%3C/svg%3E">
+<script>document.documentElement.classList.add('js');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Teko:wght@600;700&display=swap" rel="stylesheet">
@@ -52,7 +53,9 @@ img, svg { max-width: 100%; }
 .dh { position: sticky; top: 0; z-index: 50; height: var(--header-h); display: flex; align-items: center; gap: 28px; padding: 0 var(--wrap); background: rgba(8,12,8,.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 800; letter-spacing: 1.5px; font-size: 15px; white-space: nowrap; }
 .brand:hover { text-decoration: none; }
-.brand svg { width: 22px; height: 22px; color: var(--action); flex: none; }
+.brand svg { width: 30px; height: 18px; flex: none; }
+.brand .wordmark { font-family: var(--mono); font-size: 20px; font-weight: 700; letter-spacing: .5px; }
+.brand .wordmark span { color: var(--action); }
 .brand .badge { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text-2); border: 1px solid var(--line-strong); border-radius: 4px; padding: 2px 6px; }
 .dh nav { display: flex; gap: 24px; font-size: 14px; }
 .dh nav a { color: var(--text-2); font-weight: 600; }
@@ -469,7 +472,7 @@ details.faq div { padding: 0 24px 20px; color: var(--text-3); line-height: 1.65;
 .app .topline { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--a-line); }
 .app .topline .bc { font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; color: var(--action); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .app .topline .acts { display: flex; gap: 6px; align-items: center; flex: none; }
-.app .topline .lang { font-family: var(--font-mono); font-size: 9.5px; color: var(--a-text-2); border: 1px solid var(--a-line); border-radius: 999px; padding: 2px 8px; }
+.app .topline .lang { position: static; font-family: var(--font-mono); font-size: 9.5px; color: var(--a-text-2); border: 1px solid var(--a-line); border-radius: 999px; padding: 2px 8px; }
 .app .topline .orgchip { display: flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; border: 1px solid var(--a-line); border-radius: 999px; padding: 2px 8px 2px 2px; }
 .app .topline .orgchip i { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-family: var(--font-mono); font-size: 8px; color: #58C7F3; background: rgba(88,199,243,.14); }
 .app .topline .ai { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; color: var(--action); border: 1px solid var(--a-line); }
@@ -521,15 +524,119 @@ details.faq div { padding: 0 24px 20px; color: var(--text-3); line-height: 1.65;
 .dh nav a.on::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--action); }
 .dh nav .soon { color: var(--text-3); cursor: not-allowed; }
 .dh nav .soon:hover { background: rgba(255,255,255,.02); }
+
+/* =========================================================
+   Responsivo: notebook, tablet (retrato e paisagem) e celular.
+   Fica no fim para valer sobre as regras de layout acima.
+   ========================================================= */
+/* Menu do topo sem JavaScript: tira os selos "Em breve" antes de faltar espaço */
+@media (max-width: 1100px) { .dh nav .soon em { display: none; } .dh { gap: 18px; } }
+.nav-cta { display: none !important; }
+
+/* Menu do topo auto ajustável: o script mede o espaço livre e aplica, nesta ordem,
+   .nav-tight (sem selos), .nav-compact (itens num menu suspenso) e .nav-mini (botão do console dentro do menu) */
+/* Nada no cabeçalho encolhe nem quebra linha: se não couber, o cabeçalho transborda e o script recolhe o menu */
+.dh > *, .dh nav > * { flex-shrink: 0; }
+.dh nav a { white-space: nowrap; }
+html.js .dh nav { display: flex; }
+html.js .dh > .btn-primary { display: inline-flex; }
+html.js .dh nav .soon em { display: inline; }
+html.js .dh.nav-tight nav .soon em { display: none; }
+html.js .dh.nav-compact .menu-btn { display: grid; place-items: center; flex: none; }
+html.js .dh.nav-compact nav { display: none; position: absolute; top: calc(100% + 6px); right: var(--wrap); width: min(300px, calc(100vw - 2 * var(--wrap))); flex-direction: column; align-items: stretch; gap: 2px; padding: 6px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+html.js .dh.nav-compact.open nav { display: flex; }
+html.js .dh.nav-compact nav a, html.js .dh.nav-compact nav .soon { height: 44px; padding: 0 12px; border-radius: 6px; }
+html.js .dh.nav-compact nav a.on::after { display: none; }
+html.js .dh.nav-compact nav .soon em { display: inline; margin-left: auto; }
+html.js .dh.nav-compact.open .menu-btn { border-color: var(--action); color: var(--action); }
+html.js .dh.nav-mini > .btn-primary { display: none; }
+html.js .dh.nav-mini nav .nav-cta { display: flex !important; justify-content: center; margin-top: 4px; background: var(--action); color: var(--on-action); font-weight: 700; }
+html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-action); }
+
+/* Menu lateral acompanha a largura da tela, sem degraus */
+.layout { grid-template-columns: clamp(230px, 22vw, 280px) minmax(0, 1fr); gap: clamp(28px, 3.5vw, 48px); }
+
+/* Tablet em retrato e celular: uma coluna, com os passos numa faixa que rola para o lado e fica presa sob o cabeçalho */
+@media (max-width: 960px) {
+  html { scroll-padding-top: calc(var(--header-h) + 72px); }
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .side { position: sticky; top: var(--header-h); z-index: 40; display: flex; gap: 6px; width: auto; max-height: none; transform: none; overflow-x: auto; overflow-y: hidden; margin: 0 calc(-1 * var(--wrap)); padding: 10px var(--wrap); background: rgba(8,12,8,.94); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-right: 0; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+  .side::-webkit-scrollbar { display: none; }
+  .side .grp { display: none; }
+  .side ul { display: flex; flex-wrap: nowrap; gap: 6px; }
+  .side li { flex: none; }
+  .side li a { white-space: nowrap; margin: 0; padding: 6px 12px; font-size: 13px; border: 1px solid var(--line-strong); border-radius: 999px; }
+  .side li a.on { border-color: var(--action); background: rgba(0,255,65,.08); }
+  .doc { padding-top: 40px; }
+  .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .app { zoom: 1.1; }
+}
+
+/* Celular */
+@media (max-width: 640px) {
+  :root { --wrap: 16px; }
+  .hero { padding: 48px var(--wrap) 44px; }
+  .hero h1 { font-size: clamp(40px, 12.5vw, 60px); }
+  .hero .lead { font-size: 16px; margin-bottom: 28px; }
+  .start { padding: 44px var(--wrap) 56px; }
+  .band { padding-bottom: 56px; }
+  .sec-head h2, .home-band h2 { font-size: 30px; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr); }
+  .card { padding: 20px; }
+  .doc h1, .hero h1 { overflow-wrap: break-word; }
+  .doc h1 { font-size: clamp(32px, 11vw, 40px); }
+  .doc .lead { font-size: 16.5px; }
+  .note { padding: 14px 16px; }
+  .steps > li { padding-left: 40px; }
+  .app { zoom: 1; }
+  .app .shell { grid-template-columns: minmax(0, 1fr); }
+  .app .rail { display: none; }
+  .app .body { padding: 6px 12px 14px; }
+  .app .center { padding: 18px 12px; }
+  .app .lc { padding: 18px; }
+  .app .kpis { gap: 6px; }
+  .app .kpi { padding: 8px; }
+  .app .kpi .num { font-size: 24px; }
+  .app .tbl2 th:nth-child(3), .app .tbl2 td:nth-child(3) { display: none; }
+  .tbl { font-size: 14px; }
+  .tbl th, .tbl td { padding: 10px; }
+  .pill { white-space: normal; }
+  details.faq summary { padding: 16px 18px; font-size: 15px; }
+  details.faq div { padding: 0 18px 16px; }
+}
+@media (max-width: 380px) {
+  .dh .brand .badge { display: none; }
+  .ui { white-space: normal; }
+  /* Tabelas viram cartões: cada linha empilhada, com o nome da coluna acima do valor */
+  table.tbl, .tbl tbody, .tbl tr, .tbl td { display: block; }
+  .tbl thead { display: none; }
+  .tbl tr { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .tbl tr:last-child { border-bottom: 0; }
+  .tbl td { padding: 2px 0; border: 0; }
+  .tbl td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; margin-top: 6px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-4); }
+}
+
+/* Celular ou tablet deitado (tela baixa): cabeçalho mais fino e capa mais curta */
+@media (orientation: landscape) and (max-height: 540px) {
+  :root { --header-h: 52px; }
+  .hero { padding: 36px var(--wrap) 32px; }
+  .hero h1 { font-size: clamp(40px, 6vw, 64px); margin-bottom: 14px; }
+  .hero .lead { margin-bottom: 20px; }
+  .side { padding-top: 8px; padding-bottom: 8px; }
+  html { scroll-padding-top: calc(var(--header-h) + 60px); }
+  .app { zoom: 1; }
+  .app .shell, .app .center { min-height: 0 !important; }
+}
 </style>
 </head>
 <body id="topo">
 
 <header class="dh">
-  <a class="brand" href="#topo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l8 3.2v6c0 4.9-3.4 8.6-8 9.8-4.6-1.2-8-4.9-8-9.8v-6z"/><path d="M8.5 12.2l2.5 2.5 4.6-5" stroke-linecap="round"/></svg>IMMUNO OPS<span class="badge">DOCS</span></a>
-  <nav aria-label="Seções"><a class="on" href="#acesso" aria-current="page"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.3 5.2 7.9 4.5 4 4.5v13c3.9 0 6.3.7 8 2 1.7-1.3 4.1-2 8-2v-13c-3.9 0-6.3.7-8 2z"/><path d="M12 6.5v13"/></svg>Manual do usuário</a><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><circle cx="12" cy="12" r="2.6"/></svg>Agentes<em>Em breve</em></span><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5"/><path d="M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0z"/><path d="M12 17v4"/></svg>Integrações<em>Em breve</em></span><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>Novidades<em>Em breve</em></span></nav>
+  <a class="brand" href="#topo"><svg width="30" height="18" viewBox="0 0 40 24" fill="none" aria-hidden="true"><path d="M0 12 H9 L13 3 L19 21 L23 12 H40" stroke="#00FF41" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="wordmark">IMMUNO<span>.OPS</span></span><span class="badge">DOCS</span></a>
+  <nav id="topnav" aria-label="Seções"><a class="on" href="#acesso" aria-current="page"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.3 5.2 7.9 4.5 4 4.5v13c3.9 0 6.3.7 8 2 1.7-1.3 4.1-2 8-2v-13c-3.9 0-6.3.7-8 2z"/><path d="M12 6.5v13"/></svg>Manual do usuário</a><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><circle cx="12" cy="12" r="2.6"/></svg>Agentes<em>Em breve</em></span><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5"/><path d="M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0z"/><path d="M12 17v4"/></svg>Integrações<em>Em breve</em></span><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>Novidades<em>Em breve</em></span><a class="nav-cta" href="https://app.immunoops.io/ui/login">Abrir o console →</a></nav>
   <span class="sp"></span>
   <a class="btn btn-primary" href="https://app.immunoops.io/ui/login">Abrir o console</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="topnav" aria-label="Abrir menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 </header>
 
 <section class="hero grid-bg">
@@ -1151,11 +1258,51 @@ details.faq div { padding: 0 24px 20px; color: var(--text-3); line-height: 1.65;
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); focusSearch(); }
   });
 
+  /* Menu do topo: encolhe por etapas conforme o espaço que sobra no cabeçalho */
+  var dh = document.querySelector('.dh'), menuBtn = dh.querySelector('.menu-btn');
+  function fit() {
+    var steps = ['nav-tight', 'nav-compact', 'nav-mini'];
+    dh.classList.remove.apply(dh.classList, steps);
+    for (var i = 0; i < steps.length && dh.scrollWidth > dh.clientWidth; i++) dh.classList.add(steps[i]);
+    if (!dh.classList.contains('nav-compact')) setMenu(false);
+  }
+  function setMenu(open) {
+    dh.classList.toggle('open', open);
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  }
+  menuBtn.addEventListener('click', function (e) { e.stopPropagation(); setMenu(!dh.classList.contains('open')); });
+  document.addEventListener('click', function (e) { if (!e.target.closest('#topnav')) setMenu(false); });
+  document.getElementById('topnav').addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && dh.classList.contains('open')) { setMenu(false); menuBtn.focus(); } });
+  // * O recuo lateral do cabeçalho cresce com a tela, então a área interna pode ficar igual: observa a caixa inteira:::
+  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(dh, { box: 'border-box' });
+  window.addEventListener('resize', fit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  fit();
+
+  /* Nome da coluna em cada célula, para as tabelas empilhadas em telas estreitas */
+  document.querySelectorAll('table.tbl').forEach(function (t) {
+    var names = Array.prototype.map.call(t.querySelectorAll('thead th'), function (th) { return th.textContent; });
+    t.querySelectorAll('tbody tr').forEach(function (tr) {
+      Array.prototype.forEach.call(tr.children, function (td, i) { if (names[i]) td.setAttribute('data-label', names[i]); });
+    });
+  });
+
   /* Destaca no menu a seção que está na tela */
+  var side = document.querySelector('.side');
   var links = Array.prototype.slice.call(document.querySelectorAll('.side a'));
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); }); });
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) {
+          var on = a.getAttribute('href') === '#' + e.target.id;
+          a.classList.toggle('on', on);
+          // * Na faixa que rola para o lado (tablet e celular), mantém o passo atual à vista:::
+          if (on && side.scrollWidth > side.clientWidth) side.scrollTo({ left: a.offsetLeft - (side.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' });
+        });
+      });
     }, { rootMargin: '-15% 0px -75% 0px' });
     document.querySelectorAll('section.doc').forEach(function (s) { io.observe(s); });
   }
