@@ -535,6 +535,9 @@ details.faq div { padding: 0 24px 20px; color: var(--text-3); line-height: 1.65;
 
 /* Menu do topo auto ajustável: o script mede o espaço livre e aplica, nesta ordem,
    .nav-tight (sem selos), .nav-compact (itens num menu suspenso) e .nav-mini (botão do console dentro do menu) */
+/* Nada no cabeçalho encolhe nem quebra linha: se não couber, o cabeçalho transborda e o script recolhe o menu */
+.dh > *, .dh nav > * { flex-shrink: 0; }
+.dh nav a { white-space: nowrap; }
 html.js .dh nav { display: flex; }
 html.js .dh > .btn-primary { display: inline-flex; }
 html.js .dh nav .soon em { display: inline; }
@@ -550,7 +553,8 @@ html.js .dh.nav-mini > .btn-primary { display: none; }
 html.js .dh.nav-mini nav .nav-cta { display: flex !important; justify-content: center; margin-top: 4px; background: var(--action); color: var(--on-action); font-weight: 700; }
 html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-action); }
 
-@media (max-width: 1180px) { .layout { grid-template-columns: 220px minmax(0, 1fr); gap: 40px; } }
+/* Menu lateral acompanha a largura da tela, sem degraus */
+.layout { grid-template-columns: clamp(230px, 22vw, 280px) minmax(0, 1fr); gap: clamp(28px, 3.5vw, 48px); }
 
 /* Tablet em retrato e celular: uma coluna, com os passos numa faixa que rola para o lado e fica presa sob o cabeçalho */
 @media (max-width: 960px) {
@@ -1271,7 +1275,9 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
   document.addEventListener('click', function (e) { if (!e.target.closest('#topnav')) setMenu(false); });
   document.getElementById('topnav').addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && dh.classList.contains('open')) { setMenu(false); menuBtn.focus(); } });
-  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(dh); else window.addEventListener('resize', fit);
+  // * O recuo lateral do cabeçalho cresce com a tela, então a área interna pode ficar igual: observa a caixa inteira:::
+  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(dh, { box: 'border-box' });
+  window.addEventListener('resize', fit);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   fit();
 
