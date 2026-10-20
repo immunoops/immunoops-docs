@@ -1,0 +1,1165 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual do Usuário Immuno Ops</title>
+<meta name="description" content="Passo a passo do Immuno Ops: do cadastro à primeira investigação no seu cluster Kubernetes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='20' fill='%23080C08'/%3E%3Crect x='36' y='28' width='20' height='62' fill='%23FFFFFF'/%3E%3Ccircle cx='74' cy='80' r='10' fill='%2300FF41'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Teko:wght@600;700&display=swap" rel="stylesheet">
+<style>
+
+/* =========================================================
+   Immuno Ops Docs · immunoops.io/docs
+   Base visual: capa aprovada (unnamed (1).png) + design system do produto
+   ========================================================= */
+:root {
+  --ground: #080C08;
+  --surface: #0E140E;
+  --surface-2: #131B13;
+  --surface-3: #18221A;
+  --line: #1E2A1E;
+  --line-strong: #2C3D2C;
+  --line-hover: #3A4E3A;
+  --text: #FFFFFF;
+  --text-2: #A9BDAD;
+  --text-3: #6E8573;
+  --action: #00FF41;
+  --action-hover: #00CC33;
+  --on-action: #06110A;
+  --warning: #FFB020;
+  --critical: #FF5B4F;
+  --info: #35D6FF;
+  --display: 'Teko', 'Arial Narrow', sans-serif;
+  --sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+  --wrap: max(24px, calc(50% - 600px));
+  --header-h: 64px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 24px); }
+body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+a { color: var(--action); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+::selection { background: var(--action); color: var(--on-action); }
+:focus-visible { outline: 2px solid var(--action); outline-offset: 3px; border-radius: 4px; }
+img, svg { max-width: 100%; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Cabeçalho ---------- */
+.dh { position: sticky; top: 0; z-index: 50; height: var(--header-h); display: flex; align-items: center; gap: 28px; padding: 0 var(--wrap); background: rgba(8,12,8,.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 800; letter-spacing: 1.5px; font-size: 15px; white-space: nowrap; }
+.brand:hover { text-decoration: none; }
+.brand svg { width: 22px; height: 22px; color: var(--action); flex: none; }
+.brand .badge { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text-2); border: 1px solid var(--line-strong); border-radius: 4px; padding: 2px 6px; }
+.dh nav { display: flex; gap: 24px; font-size: 14px; }
+.dh nav a { color: var(--text-2); font-weight: 600; }
+.dh nav a:hover, .dh nav a.on { color: var(--text); text-decoration: none; }
+.dh .sp { flex: 1; }
+.dh .search-btn { display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px 0 12px; min-width: 220px; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text-3); font: 500 13px var(--sans); cursor: pointer; }
+.dh .search-btn:hover { border-color: var(--line-hover); color: var(--text-2); }
+.dh .search-btn kbd { margin-left: auto; font-family: var(--mono); font-size: 10.5px; border: 1px solid var(--line-strong); border-radius: 4px; padding: 1px 5px; color: var(--text-3); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 6px; font: 700 14px var(--sans); border: 1px solid transparent; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
+.btn:hover { text-decoration: none; }
+.btn-primary { background: var(--action); color: var(--on-action); }
+.btn-primary:hover { background: #3dff6e; }
+.btn-outline { border-color: var(--action); color: var(--action); background: transparent; }
+.btn-outline:hover { background: rgba(0,255,65,.08); }
+.btn svg { width: 16px; height: 16px; }
+.menu-btn { display: none; width: 40px; height: 40px; border-radius: 6px; border: 1px solid var(--line-strong); background: transparent; color: var(--text); cursor: pointer; }
+
+/* ---------- Capa ---------- */
+.grid-bg { position: relative; isolation: isolate; }
+.grid-bg::before { content: ""; position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(rgba(0,204,51,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(0,204,51,.07) 1px, transparent 1px); background-size: 48px 48px; -webkit-mask-image: radial-gradient(ellipse 80% 90% at 50% 20%, #000 35%, transparent 80%); mask-image: radial-gradient(ellipse 80% 90% at 50% 20%, #000 35%, transparent 80%); }
+.hero { text-align: center; padding: 96px var(--wrap) 72px; border-bottom: 1px solid var(--line); }
+.eyebrow { font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--action); margin: 0 0 18px; }
+.hero h1 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: clamp(48px, 7.4vw, 92px); line-height: .92; letter-spacing: .5px; margin: 0 auto 22px; max-width: 900px; }
+.hero .lead { font-size: 17px; color: var(--text-2); max-width: 520px; margin: 0 auto 36px; }
+.search-row { display: flex; align-items: center; gap: 14px; max-width: 760px; margin: 0 auto; }
+.search-box { flex: 1; display: flex; align-items: center; height: 52px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); overflow: hidden; transition: border-color .15s; }
+.search-box:focus-within { border-color: var(--action); }
+.search-box svg { width: 18px; height: 18px; color: var(--text-3); margin: 0 12px 0 16px; flex: none; }
+.search-box input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; color: var(--text); font: 500 15px var(--sans); }
+.search-box input::placeholder { color: var(--text-3); }
+.search-box button { height: 100%; padding: 0 22px; border: 0; background: var(--action); color: var(--on-action); font: 700 13px var(--mono); letter-spacing: 1.5px; cursor: pointer; }
+.search-box button:hover { background: #3dff6e; }
+.search-row .or { font-size: 13px; color: var(--text-3); }
+.search-row .btn-outline { height: 52px; }
+.popular { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin: 22px auto 0; max-width: 760px; font-size: 13px; }
+.popular span { color: var(--text-3); }
+.popular a { color: var(--text); font-weight: 700; }
+.start { padding: 64px var(--wrap) 80px; }
+.sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+.sec-head h2 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 36px; line-height: 1; margin: 0; letter-spacing: .5px; }
+.sec-head a { font-family: var(--mono); font-size: 12px; font-weight: 700; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.card { display: flex; flex-direction: column; gap: 6px; padding: 22px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text); transition: border-color .15s, background .15s; }
+a.card:hover { border-color: rgba(0,255,65,.45); background: var(--surface-2); text-decoration: none; }
+.card .tag { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--action); }
+.card h3 { margin: 4px 0 0; font-size: 17px; font-weight: 800; }
+.card p { margin: 0; font-size: 14px; color: var(--text-2); line-height: 1.55; }
+.band { padding: 0 var(--wrap) 80px; }
+.band-inner { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.mini { display: block; padding: 18px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--text); transition: border-color .15s; }
+a.mini:hover { border-color: rgba(0,255,65,.45); text-decoration: none; }
+.mini b { display: block; font-size: 15px; margin-bottom: 2px; color: var(--text); }
+.mini span { font-size: 13.5px; color: var(--text-2); }
+
+/* ---------- Páginas internas ---------- */
+.layout { display: grid; grid-template-columns: 260px minmax(0, 1fr) 220px; gap: 48px; padding: 0 var(--wrap); }
+.side { position: sticky; top: var(--header-h); align-self: start; max-height: calc(100vh - var(--header-h)); overflow-y: auto; padding: 32px 0 40px; }
+.side .grp { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin: 24px 0 8px; }
+.side .grp:first-child { margin-top: 0; }
+.side ul { list-style: none; margin: 0; padding: 0; }
+.side li a { display: block; padding: 5px 10px; margin-left: -10px; border-left: 2px solid transparent; font-size: 14px; color: var(--text-2); }
+.side li a:hover { color: var(--text); text-decoration: none; background: var(--surface); }
+.side li a.on { color: var(--action); border-left-color: var(--action); background: var(--surface); font-weight: 700; }
+article { min-width: 0; padding: 40px 0 72px; max-width: 760px; }
+.crumbs { font-family: var(--mono); font-size: 11.5px; letter-spacing: .5px; color: var(--text-3); margin-bottom: 18px; }
+.crumbs a { color: var(--text-3); } .crumbs a:hover { color: var(--action); }
+article h1 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 56px; line-height: .95; margin: 0 0 14px; letter-spacing: .5px; }
+article .lead { font-size: 18px; color: var(--text-2); margin: 0 0 32px; }
+article h2 { font-size: 24px; font-weight: 800; margin: 48px 0 12px; padding-top: 8px; letter-spacing: -.2px; }
+article h3 { font-size: 18px; font-weight: 800; margin: 32px 0 10px; }
+article p, article li { color: #DCE6DE; }
+article ul, article ol { padding-left: 22px; }
+article li { margin-bottom: 6px; }
+article strong { color: var(--text); }
+.anchor { margin-left: 8px; color: var(--text-3); opacity: 0; font-weight: 400; }
+h2:hover .anchor, h3:hover .anchor { opacity: 1; }
+code { font-family: var(--mono); font-size: .86em; background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--text); }
+pre { position: relative; margin: 18px 0; padding: 16px 18px; border-radius: 8px; border: 1px solid var(--line); background: #050805; overflow-x: auto; }
+pre code { background: none; border: 0; padding: 0; font-size: 13px; line-height: 1.6; color: #CFE3D3; }
+pre .copy { position: absolute; top: 8px; right: 8px; font: 700 11px var(--mono); letter-spacing: 1px; color: var(--text-2); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 4px; padding: 4px 8px; cursor: pointer; opacity: 0; transition: opacity .15s; }
+pre:hover .copy, pre .copy:focus { opacity: 1; }
+.lang { position: absolute; top: 8px; left: 18px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+pre.has-lang { padding-top: 32px; }
+table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; }
+th { text-align: left; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); padding: 10px 12px; border-bottom: 1px solid var(--line-strong); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; color: #DCE6DE; }
+td code { white-space: nowrap; }
+.table-wrap { overflow-x: auto; }
+.callout { display: flex; gap: 12px; margin: 22px 0; padding: 14px 16px; border-radius: 8px; border: 1px solid var(--line); border-left: 3px solid var(--info); background: var(--surface); font-size: 15px; }
+.callout > b:first-child { flex: none; font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--info); padding-top: 3px; min-width: 64px; }
+.callout p { margin: 0; }
+.callout.tip { border-left-color: var(--action); } .callout.tip > b:first-child { color: var(--action); }
+.callout.warn { border-left-color: var(--warning); } .callout.warn > b:first-child { color: var(--warning); }
+.callout.danger { border-left-color: var(--critical); } .callout.danger > b:first-child { color: var(--critical); }
+.steps { counter-reset: st; list-style: none; padding: 0 !important; }
+.steps > li { counter-increment: st; position: relative; padding: 0 0 18px 44px; }
+.steps > li::before { content: counter(st); position: absolute; left: 0; top: 0; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 6px; font: 700 12px var(--mono); color: var(--action); background: rgba(0,255,65,.08); border: 1px solid rgba(0,255,65,.3); }
+.ui { font-weight: 700; color: var(--text); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 6px; white-space: nowrap; font-size: .93em; }
+.method { display: inline-block; font: 700 11px var(--mono); letter-spacing: .5px; padding: 2px 6px; border-radius: 4px; margin-right: 6px; }
+.m-get { color: var(--info); background: rgba(53,214,255,.1); }
+.m-post { color: var(--action); background: rgba(0,255,65,.1); }
+.m-put, .m-patch { color: var(--warning); background: rgba(255,176,32,.1); }
+.m-del { color: var(--critical); background: rgba(255,91,79,.1); }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.ok { color: var(--action); background: rgba(0,255,65,.08); }
+.pill.wait { color: var(--warning); background: rgba(255,176,32,.1); }
+.pill.off { color: var(--critical); background: rgba(255,91,79,.1); }
+.pill.neutral { color: var(--text-2); background: var(--surface-2); }
+.cards-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 20px 0; }
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); }
+.pager a { display: block; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; color: var(--text); }
+.pager a:hover { border-color: rgba(0,255,65,.45); text-decoration: none; }
+.pager span { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.pager b { font-size: 15px; }
+.pager .next { text-align: right; grid-column: 2; }
+.feedback { margin-top: 28px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 14px; color: var(--text-2); }
+.feedback a { color: var(--text-2); border: 1px solid var(--line-strong); border-radius: 6px; padding: 4px 10px; font-weight: 600; }
+.feedback a:hover { color: var(--action); border-color: var(--action); text-decoration: none; }
+.toc { position: sticky; top: var(--header-h); align-self: start; padding: 40px 0; max-height: calc(100vh - var(--header-h)); overflow-y: auto; }
+.toc p { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin: 0 0 10px; }
+.toc a { display: block; font-size: 13px; color: var(--text-2); padding: 4px 0 4px 12px; border-left: 1px solid var(--line); }
+.toc a.l3 { padding-left: 24px; font-size: 12.5px; }
+.toc a:hover { color: var(--text); text-decoration: none; }
+.toc a.on { color: var(--action); border-left-color: var(--action); }
+.updated { font-family: var(--mono); font-size: 11.5px; color: var(--text-3); margin-top: 40px; }
+
+/* ---------- Busca e IA (janela) ---------- */
+.dlg { position: fixed; inset: 0; z-index: 80; display: none; align-items: flex-start; justify-content: center; padding: 10vh 16px 16px; background: rgba(4,6,4,.72); backdrop-filter: blur(4px); }
+.dlg.on { display: flex; }
+.dlg-box { width: min(680px, 100%); max-height: 78vh; display: flex; flex-direction: column; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface); box-shadow: 0 30px 80px rgba(0,0,0,.6); overflow: hidden; }
+.dlg-in { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.dlg-in svg { width: 18px; height: 18px; color: var(--text-3); flex: none; }
+.dlg-in input, .dlg-in textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text); font: 500 16px var(--sans); resize: none; }
+.dlg-in kbd { font-family: var(--mono); font-size: 10.5px; border: 1px solid var(--line-strong); border-radius: 4px; padding: 1px 6px; color: var(--text-3); }
+.dlg-res { overflow-y: auto; padding: 8px; }
+.dlg-res .hit { display: block; padding: 10px 12px; border-radius: 6px; color: var(--text); }
+.dlg-res .hit:hover, .dlg-res .hit.sel { background: var(--surface-2); text-decoration: none; }
+.dlg-res .hit small { display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--action); }
+.dlg-res .hit b { display: block; font-size: 15px; }
+.dlg-res .hit span { display: block; font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.dlg-res .hit mark { background: rgba(0,255,65,.18); color: var(--text); border-radius: 2px; padding: 0 1px; }
+.dlg-res .empty { padding: 24px 12px; text-align: center; color: var(--text-3); font-size: 14px; }
+.dlg-foot { display: flex; justify-content: space-between; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 10.5px; color: var(--text-3); }
+.ai-answer { padding: 16px 18px; font-size: 15px; color: #DCE6DE; }
+.ai-answer .src { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.ai-answer .src b { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); display: block; margin-bottom: 6px; }
+.ai-note { margin: 8px 8px 0; padding: 12px 14px; border-radius: 8px; background: rgba(53,214,255,.06); border: 1px solid rgba(53,214,255,.2); font-size: 13.5px; color: var(--text-2); }
+
+/* ---------- Rodapé ---------- */
+.df { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 22px var(--wrap); border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; color: var(--text-3); }
+.df a { color: var(--text-3); } .df a:hover { color: var(--action); }
+.df nav { display: flex; gap: 6px; }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 1180px) { .layout { grid-template-columns: 240px minmax(0, 1fr); } .toc { display: none; } .band-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 960px) {
+  .dh nav, .dh .search-btn span.t, .dh .search-btn kbd { display: none; }
+  .dh .search-btn { min-width: 0; width: 40px; height: 40px; padding: 0; justify-content: center; }
+  .menu-btn { display: grid; place-items: center; }
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .side { position: fixed; top: var(--header-h); left: 0; bottom: 0; width: min(300px, 86vw); max-height: none; z-index: 45; padding: 24px; background: var(--ground); border-right: 1px solid var(--line); transform: translateX(-100%); transition: transform .2s ease; }
+  body.nav-open .side { transform: none; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .dh { gap: 12px; }
+  .dh .btn-primary { display: none; }
+  .hero { padding: 64px var(--wrap) 56px; }
+  .search-row { flex-direction: column; align-items: stretch; }
+  .search-row .or { text-align: center; }
+  .cards, .cards-2, .band-inner { grid-template-columns: minmax(0, 1fr); }
+  article h1 { font-size: 42px; }
+  .pager { grid-template-columns: minmax(0, 1fr); }
+  .pager .next { grid-column: 1; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .side { transition: none; } }
+@media print { .dh, .side, .toc, .pager, .feedback, .df { display: none !important; } .layout { display: block; } body { background: #fff; color: #000; } }
+.search-wrap { max-width: 760px; margin: 0 auto; text-align: left; }
+.busca { max-width: 760px; margin: 0 auto; padding: 64px 24px 96px; min-height: 60vh; }
+.busca h1 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 56px; line-height: .95; margin: 0 0 28px; }
+.dh .search-btn { text-decoration: none; }
+
+/* Sem JavaScript: no celular o menu fica acima do texto, em vez de abrir por botão */
+@media (max-width: 960px) {
+  .dh nav { display: none; }
+  .side { position: static; transform: none; width: auto; max-height: none; padding: 24px 0 0; border-right: 0; border-bottom: 1px solid var(--line); background: transparent; }
+  .side ul { display: flex; flex-wrap: wrap; gap: 2px 14px; }
+  .side li a { margin-left: 0; padding: 4px 0; border-left: 0; }
+  .side li a.on { background: transparent; }
+}
+
+
+/* Arquivo único: capa em cima, guias embaixo */
+.layout { grid-template-columns: 260px minmax(0, 1fr); }
+.doc { padding: 56px 0 24px; border-top: 1px solid var(--line); max-width: 760px; }
+.doc:first-child { border-top: 0; }
+.doc h1 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 52px; line-height: .95; margin: 0 0 14px; }
+.doc .lead { font-size: 18px; color: var(--text-2); margin: 0 0 28px; }
+.doc h2 { font-size: 22px; font-weight: 800; margin: 40px 0 12px; }
+.doc h3 { font-size: 18px; font-weight: 800; margin: 28px 0 10px; }
+.doc p, .doc li { color: #DCE6DE; }
+.doc .back { margin-top: 32px; font-family: var(--mono); font-size: 12px; }
+.docs-main { min-width: 0; padding-bottom: 80px; }
+.side li a.on { color: var(--action); border-left-color: var(--action); background: var(--surface); font-weight: 700; }
+.qres { margin-top: 10px; text-align: left; }
+.qres a { display: block; padding: 10px 14px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 6px; background: var(--surface); color: var(--text); }
+.qres a:hover { border-color: rgba(0,255,65,.45); text-decoration: none; }
+.qres small { display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--action); }
+.qres span { display: block; font-size: 13px; color: var(--text-2); margin-top: 2px; }
+.qres mark { background: rgba(0,255,65,.2); color: var(--text); border-radius: 2px; padding: 0 1px; }
+.qres .none { color: var(--text-3); font-size: 14px; padding: 8px 2px; border: 0; background: none; }
+
+
+/* Variáveis usadas pelas telas e componentes do manual, na paleta da documentação */
+:root {
+  --bg: #080C08; --bg-2: #0E140E; --bg-3: #0E140E; --bg-4: #18221A; --bg-5: #212629;
+  --line-2: #2C3D2C; --line-3: #3A4E3A; --text-strong: #FFFFFF; --text-4: #6E8573;
+  --accent: #00FF41; --accent-line: rgba(0,255,65,.4); --on-accent: #06110A; --warn: #FFB020;
+}
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.card { background: var(--bg-3); border: 1px solid var(--line); border-radius: 16px; padding: 28px; }
+a.card { display: flex; flex-direction: column; gap: 10px; transition: border-color .15s ease; }
+a.card:hover { border-color: var(--accent-line); color: inherit; }
+.card .tag { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .5px; }
+.card h4 { margin: 0; font-size: 20px; color: var(--text-strong); line-height: 1.3; }
+.card p { margin: 0; font-size: 15px; color: var(--text-3); line-height: 1.55; }
+.card .go { margin-top: auto; padding-top: 6px; font-family: var(--mono); font-size: 12px; color: var(--text-4); }
+a.card:hover .go { color: var(--accent); }
+.card.compact { padding: 20px; }
+.ico-box { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: rgba(0,255,65,.08); border: 1px solid rgba(0,255,65,.25); }
+.ico-box svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.meta span { font-family: var(--mono); font-size: 12px; color: var(--text-2); border: 1px solid var(--line-2); border-radius: 20px; padding: 4px 12px; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 40px; align-items: start; margin-top: 8px; }
+.path { font-family: var(--mono); font-size: .88em; color: var(--accent); white-space: nowrap; }
+.note { display: flex; gap: 14px; align-items: flex-start; margin: 28px 0 0; padding: 18px 20px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-2); }
+.note i { flex: none; width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-style: normal; font-family: var(--mono); font-size: 13px; font-weight: 700; background: rgba(53,214,255,.12); color: var(--info); }
+.note b { display: block; color: var(--text-strong); margin-bottom: 2px; }
+.note span { color: var(--text-3); font-size: 15px; }
+.note.warn { border-color: rgba(255,176,32,.3); } .note.warn i { background: rgba(255,176,32,.12); color: var(--warn); }
+.note.tip { border-color: rgba(0,255,65,.25); } .note.tip i { background: rgba(0,255,65,.1); color: var(--accent); }
+table.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 15px; margin: 8px 0 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--bg-3); }
+.tbl th { text-align: left; font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-4); padding: 14px 18px; background: var(--bg-2); border-bottom: 1px solid var(--line); }
+.tbl td { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,.06); color: var(--text-3); vertical-align: top; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl td:first-child { color: var(--text-strong); font-weight: 600; }
+.faq-group { font-family: var(--mono); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-4); margin: 32px 0 12px; }
+details.faq { border: 1px solid var(--line); border-radius: 16px; background: var(--bg-3); margin-bottom: 10px; transition: border-color .15s ease; }
+details.faq[open] { border-color: var(--accent-line); }
+details.faq summary { cursor: pointer; list-style: none; padding: 20px 24px; font-weight: 700; font-size: 16px; color: var(--text-strong); display: flex; justify-content: space-between; gap: 16px; }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq summary::after { content: '+'; font-family: var(--mono); color: var(--accent); font-size: 18px; line-height: 1.2; transition: transform .2s ease; }
+details.faq[open] summary::after { transform: rotate(45deg); }
+details.faq div { padding: 0 24px 20px; color: var(--text-3); line-height: 1.65; }
+/* =========================================================
+   Telas do produto · design system do console
+   ========================================================= */
+.shot { margin: 0; }
+.browser { border-radius: 16px; overflow: hidden; border: 1px solid var(--line-2); background: #080C08; box-shadow: 0 30px 60px -30px rgba(0,0,0,.8); }
+.browser-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-4); border-bottom: 1px solid var(--line); }
+.browser-bar i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.14); }
+.browser-bar .url { flex: 1; margin-left: 8px; font-family: var(--mono); font-size: 11.5px; color: var(--text-4); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 4px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shot figcaption { font-family: var(--mono); font-size: 12px; color: var(--text-4); margin-top: 12px; }
+
+.app {
+  --ground:#080C08; --surface:#0E140E; --surface-2:#131B13; --surface-3:#18221A;
+  --a-line:#1E2A1E; --a-line-strong:#2C3D2C; --a-text:#FFFFFF; --a-text-2:#8FA893; --a-text-3:#5C7060;
+  --action:#00FF41; --on-action:#080C08; --warning:#FFB020; --critical:#FF5B4F; --a-info:#35D6FF;
+  --font-display:'Teko','Arial Narrow',sans-serif; --font-mono:'Space Mono',ui-monospace,monospace;
+  position: relative; background: var(--ground); color: var(--a-text); font-family: 'Manrope', system-ui, sans-serif; font-size: 13px; line-height: 1.45; min-height: 300px; overflow: hidden;
+}
+.app * { box-sizing: border-box; }
+.app .topbar { display: flex; align-items: center; gap: 10px; padding: 10px 12px 0; }
+.app .tb { flex: 1; display: flex; align-items: center; gap: 10px; padding: 5px 5px 5px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--a-line); }
+.app .wm { font-weight: 800; letter-spacing: 1.5px; font-size: 11.5px; white-space: nowrap; }
+.app .wm b { color: var(--action); }
+.app .org { display: flex; align-items: center; gap: 6px; padding: 3px 8px 3px 3px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.app .org i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-style: normal; font-size: 9px; color: #58C7F3; background: rgba(88,199,243,.14); border: 1px solid rgba(88,199,243,.4); }
+.app .nav { display: flex; gap: 2px; padding: 3px; margin: 0 auto; border-radius: 999px; background: var(--ground); border: 1px solid var(--a-line); }
+.app .nav span { padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--a-text-2); white-space: nowrap; }
+.app .nav span.on { background: var(--action); color: var(--on-action); }
+.app .nav span.ring { outline: 2px solid var(--action); outline-offset: 2px; color: var(--a-text); }
+.app .av { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 800; background: var(--surface-2); border: 1px solid var(--a-line-strong); flex: none; }
+.app .crumb { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--a-text-3); padding: 10px 18px 0; }
+.app .body { padding: 6px 18px 18px; }
+.app .ph { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin: 8px 0 12px; flex-wrap: wrap; }
+.app h5 { margin: 0; font-size: 20px; line-height: 1.05; font-weight: 800; letter-spacing: -.035em; }
+.app .ph p { margin: 4px 0 0; font-size: 11.5px; color: var(--a-text-2); max-width: 46ch; }
+.app .tabs { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--surface); border: 1px solid var(--a-line); }
+.app .tabs span { padding: 4px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 700; color: var(--a-text-2); white-space: nowrap; }
+.app .tabs span.on { background: var(--surface-3); color: var(--a-text); box-shadow: inset 0 0 0 1px var(--a-line-strong); }
+.app .tabs .c { font-family: var(--font-mono); font-size: 9.5px; color: var(--a-text-3); margin-left: 3px; }
+.app .abtn { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; border: 1px solid transparent; }
+.app .abtn.p { background: var(--action); color: var(--on-action); }
+.app .abtn.s { background: var(--surface-2); border-color: var(--a-line); }
+.app .abtn.g { color: var(--a-text-2); }
+.app .abtn.block { display: flex; justify-content: center; height: 36px; font-size: 12.5px; }
+.app .acard { background: var(--surface); border: 1px solid var(--a-line); border-radius: 20px; padding: 14px; }
+.app .acard + .acard { margin-top: 10px; }
+.app .ct { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11.5px; font-weight: 700; color: var(--a-text-2); margin-bottom: 10px; }
+.app .num { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; line-height: .9; }
+.app .lbl { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--a-text-3); }
+.app .st { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; padding: 3px 8px 3px 7px; border-radius: 999px; white-space: nowrap; }
+.app .st::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.app .st.ok { color: var(--a-text-2); background: var(--surface-2); }
+.app .st.good { color: var(--action); background: rgba(0,255,65,.08); }
+.app .st.warn { color: var(--warning); background: rgba(255,176,32,.1); }
+.app .st.crit { color: var(--critical); background: rgba(255,91,79,.1); }
+.app .st.info { color: var(--a-info); background: rgba(53,214,255,.1); }
+.app .row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--a-line); font-size: 11.5px; }
+.app .row:first-of-type { border-top: 0; }
+.app .row b { font-weight: 700; } .app .row .s { color: var(--a-text-3); font-size: 10.5px; display: block; }
+.app .row .main { flex: 1; min-width: 0; }
+.app .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.app .kpi { background: var(--surface); border: 1px solid var(--a-line); border-radius: 16px; padding: 10px 12px; }
+.app .kpi .num { font-size: 30px; margin: 4px 0 2px; }
+.app .kpi .num small { font-family: 'Manrope', sans-serif; font-size: 10px; color: var(--a-text-3); text-transform: none; margin-left: 2px; }
+.app .hero { display: flex; gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--a-line-strong); border-radius: 24px; padding: 14px; }
+.app .ring { width: 74px; height: 74px; border-radius: 50%; flex: none; display: grid; place-items: center; background: conic-gradient(var(--action) 0 86%, var(--a-line) 86% 100%); }
+.app .ring div { width: 60px; height: 60px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; text-align: center; }
+.app .ring .num { font-size: 26px; }
+.app .chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+.app .chips span.chip { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 10.5px; font-weight: 600; color: var(--a-text-2); }
+.app .chips span.chip.on { border-color: var(--action); color: var(--action); }
+.app .scrim { position: absolute; inset: 0; background: rgba(4,6,4,.66); display: grid; place-items: center; padding: 16px; }
+.app .modal { width: 100%; max-width: 360px; background: var(--surface); border: 1px solid var(--a-line-strong); border-radius: 28px; overflow: hidden; }
+.app .mh { padding: 16px 16px 4px; display: flex; gap: 10px; align-items: flex-start; }
+.app .mh .ic { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; flex: none; background: rgba(0,255,65,.08); color: var(--action); font-weight: 800; font-size: 15px; }
+.app .mh h6 { margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -.02em; }
+.app .mh p { margin: 2px 0 0; font-size: 11px; color: var(--a-text-2); }
+.app .bars { display: flex; gap: 4px; margin-top: 8px; }
+.app .bars i { height: 3px; flex: 1; border-radius: 999px; background: var(--a-line); }
+.app .bars i.on { background: var(--action); }
+.app .mb { padding: 10px 16px; }
+.app .mf { padding: 10px 16px 14px; display: flex; gap: 6px; justify-content: flex-end; }
+.app .kinds { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; margin-bottom: 10px; }
+.app .kinds span { border: 1px solid var(--a-line); background: var(--ground); border-radius: 12px; padding: 8px 4px; text-align: center; font-size: 9.5px; font-weight: 700; color: var(--a-text-2); }
+.app .kinds span.on { border-color: var(--action); color: var(--a-text); background: rgba(0,255,65,.05); }
+.app .field { position: relative; margin-bottom: 8px; }
+.app .field div { height: 42px; border-radius: 14px; background: var(--surface-2); border: 1px solid transparent; padding: 19px 12px 0; font-size: 12px; color: var(--a-text); }
+.app .field div.focus { border-color: var(--action); background: var(--surface-3); }
+.app .field label { position: absolute; left: 12px; top: 6px; font-size: 9.5px; font-weight: 600; color: var(--a-text-2); }
+.app .two-f { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.app .seg { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--ground); border: 1px solid var(--a-line); margin-bottom: 8px; }
+.app .seg span { padding: 4px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 700; color: var(--a-text-2); }
+.app .seg span.on { background: var(--surface-3); color: var(--a-text); box-shadow: inset 0 0 0 1px var(--a-line-strong); }
+.app .code { background: var(--ground); border: 1px solid var(--a-line); border-radius: 16px; padding: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--a-text-2); white-space: pre-wrap; word-break: break-all; line-height: 1.55; }
+.app .callout { display: flex; gap: 8px; padding: 9px 11px; border-radius: 14px; background: rgba(53,214,255,.06); color: var(--a-text-2); font-size: 10.5px; margin-top: 8px; }
+.app .callout.ok { background: rgba(0,255,65,.06); }
+.app .callout b { color: var(--a-text); }
+.app .lc { width: 100%; max-width: 330px; background: var(--surface); border: 1px solid var(--a-line-strong); border-radius: 28px; padding: 22px; }
+.app .lc h6 { margin: 16px 0 4px; font-size: 19px; font-weight: 800; letter-spacing: -.03em; }
+.app .lc p { margin: 0 0 14px; font-size: 11.5px; color: var(--a-text-2); }
+.app .center { display: grid; place-items: center; padding: 26px 16px; min-height: 330px; background-color: var(--ground); background-image: linear-gradient(rgba(0,204,51,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,204,51,.08) 1px, transparent 1px); background-size: 28px 28px; }
+.app .otp { display: flex; gap: 5px; }
+.app .otp span { flex: 1; height: 38px; border-radius: 12px; border: 1px solid var(--a-line-strong); background: var(--surface-2); display: grid; place-items: center; font-family: var(--font-mono); font-size: 15px; }
+.app .otp span.f { border-color: var(--action); }
+.app .opt { border: 1px solid var(--a-line); background: var(--ground); border-radius: 14px; padding: 9px 11px; }
+.app .opt b { display: block; font-size: 11.5px; }
+.app .opt span { font-size: 10px; color: var(--a-text-3); }
+.app .opt.on { border-color: var(--action); background: rgba(0,255,65,.05); }
+.app .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.app .tour { position: absolute; z-index: 2; width: 250px; background: var(--surface); border: 1px solid var(--a-line-strong); border-radius: 22px; padding: 14px; box-shadow: 0 0 0 9999px rgba(4,7,4,.62); }
+.app .tour .lbl { display: block; }
+.app .tour h6 { margin: 6px 0 4px; font-size: 14px; font-weight: 800; }
+.app .tour p { margin: 0 0 10px; font-size: 11px; color: var(--a-text-2); }
+.app .tour .rb { display: flex; gap: 6px; align-items: center; }
+.app .tour .rb .sp { flex: 1; }
+.app .qr { width: 86px; height: 86px; border-radius: 12px; background: #fff; padding: 7px; display: grid; grid-template-columns: repeat(9, 1fr); flex: none; }
+.app .qr i { background: #0A1A0D; } .app .qr i.w { background: #fff; }
+.app .bar { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.app .bar i { display: block; height: 100%; border-radius: 999px; background: var(--action); }
+.app .sig { display: grid; grid-template-columns: 90px 1fr 34px; gap: 8px; align-items: center; font-size: 10.5px; color: var(--a-text-2); padding: 3px 0; }
+.app .sig u { text-decoration: none; font-family: var(--font-mono); color: var(--a-text); text-align: right; }
+.app .tbl2 { width: 100%; border-collapse: collapse; font-size: 11px; }
+.app .tbl2 th { text-align: left; font-size: 9.5px; color: var(--a-text-3); font-weight: 700; padding: 0 6px 6px; }
+.app .tbl2 td { padding: 7px 6px; border-top: 1px solid var(--a-line); }
+.app .mini-seg { display: inline-flex; gap: 2px; padding: 2px; border-radius: 999px; border: 1px solid var(--a-line); }
+.app .mini-seg span { padding: 2px 7px; border-radius: 999px; font-size: 9.5px; font-weight: 700; color: var(--a-text-3); }
+.app .mini-seg span.on { background: var(--surface-3); color: var(--a-text); }
+
+/* =========================================================
+   Responsivo
+   ========================================================= */
+/* =========================================================
+   Telas do console atual (menu lateral)
+   ========================================================= */
+.app .shell { display: grid; grid-template-columns: 150px minmax(0, 1fr); min-height: 320px; }
+.app .rail { border-right: 1px solid var(--a-line); background: var(--surface); padding: 12px 0; font-size: 11px; }
+.app .rail .wm { display: block; padding: 0 12px 10px; }
+.app .rail .orgsel { margin: 0 10px 8px; padding: 6px 8px; border: 1px solid var(--a-line); border-radius: 10px; font-weight: 700; display: flex; justify-content: space-between; }
+.app .rail .orgsel::after { content: '▾'; color: var(--a-text-3); }
+.app .rail .g { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--a-text-3); padding: 9px 12px 3px; }
+.app .rail .n { padding: 4px 12px; color: var(--a-text-2); border-left: 2px solid transparent; }
+.app .rail .n.on { color: var(--action); border-left-color: var(--action); background: var(--surface-2); }
+.app .rail .n.hl { outline: 2px solid var(--action); outline-offset: -2px; border-radius: 6px; margin: 0 6px; padding-left: 8px; color: var(--a-text); }
+.app .content { min-width: 0; position: relative; }
+.app .content .crumb { padding-top: 12px; }
+.app .tour { right: auto; }
+@media (max-width: 640px) { .app .shell { grid-template-columns: minmax(0, 1fr); } .app .rail { display: none; } }
+/* Console atual: grupos do menu (fechados, abre o do item atual) e barra do topo */
+.app .rail { display: flex; flex-direction: column; }
+.app .rail .g { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; border-top: 1px solid var(--a-line); }
+.app .rail .g:first-of-type { border-top: 0; }
+.app .rail .g span { font-size: 9px; }
+.app .rail .g.open { color: var(--a-text-2); }
+.app .rail .n.sub { padding-left: 24px; font-size: 10.5px; }
+.app .rail .foot { margin-top: auto; display: flex; align-items: center; gap: 6px; padding: 10px 12px 0; border-top: 1px solid var(--a-line); font-size: 10.5px; color: var(--a-text-2); }
+.app .rail .foot .av { width: 20px; height: 20px; font-size: 8px; }
+.app .rail .foot .lock { margin-left: auto; color: var(--a-text-3); }
+.app .topline { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--a-line); }
+.app .topline .bc { font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; color: var(--action); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app .topline .acts { display: flex; gap: 6px; align-items: center; flex: none; }
+.app .topline .lang { font-family: var(--font-mono); font-size: 9.5px; color: var(--a-text-2); border: 1px solid var(--a-line); border-radius: 999px; padding: 2px 8px; }
+.app .topline .orgchip { display: flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; border: 1px solid var(--a-line); border-radius: 999px; padding: 2px 8px 2px 2px; }
+.app .topline .orgchip i { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-family: var(--font-mono); font-size: 8px; color: #58C7F3; background: rgba(88,199,243,.14); }
+.app .topline .ai { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; color: var(--action); border: 1px solid var(--a-line); }
+.app .content .body { padding-top: 10px; }
+/* Telas na largura toda: passos em cima, tela embaixo, em tamanho maior */
+.two:has(> .shot) { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.two > .shot { order: 2; }
+.app { zoom: 1.3; }
+.app .shell { min-height: 400px; }
+.app .center { min-height: 400px; }
+.app .modal { max-width: 420px; }
+.app .lc { max-width: 380px; }
+.shot figcaption { text-align: center; }
+@media (max-width: 1100px) { .app { zoom: 1.15; } }
+@media (max-width: 780px) { .app { zoom: 1; } .app .shell, .app .center { min-height: 0; } }
+/* Manual: cabeçalho de cada passo e telas */
+.doc .meta { margin: 0 0 18px; }
+.doc .card h4 { margin: 0; font-size: 17px; color: var(--text); }
+.doc .card.compact { padding: 20px; }
+.doc .grid-4, .doc .grid-3, .doc .grid-2 { margin: 18px 0; }
+.doc .two { margin-top: 12px; }
+.doc .tbl { margin-top: 16px; }
+.doc .shot { margin: 8px 0 0; }
+.doc h3 { margin-top: 36px; }
+.home-band h2 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 36px; line-height: 1; margin: 0 0 18px; }
+@media (max-width: 960px) { .two { grid-template-columns: minmax(0, 1fr); gap: 28px; } .grid-3 { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 780px) { .grid-2, .grid-4 { grid-template-columns: minmax(0, 1fr); } .app .nav span:not(.on):not(.ring) { display: none; } }
+@media (max-width: 640px) { .tbl th, .tbl td { padding: 12px; } }
+@media (max-width: 1100px) { .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+
+/* Cabeçalho: só o manual por enquanto; o resto aparece como "Em breve" */
+.dh nav { align-items: center; }
+.dh nav .soon { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--text-3); cursor: default; white-space: nowrap; }
+.dh nav .soon em { font-style: normal; font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--warning); border: 1px solid rgba(255,176,32,.35); border-radius: 4px; padding: 1px 5px; }
+
+/* Ícones do menu do topo */
+.dh nav a { display: inline-flex; align-items: center; gap: 7px; }
+.dh nav a.on { color: var(--action); }
+.dh nav .ni { width: 16px; height: 16px; flex: none; }
+.dh nav .soon .ni { opacity: .8; }
+
+/* Menu do topo com cara de menu: abas com área de clique, item atual marcado e "Em breve" bloqueado */
+.dh nav { gap: 4px; align-self: stretch; }
+.dh nav a, .dh nav .soon { position: relative; display: inline-flex; align-items: center; gap: 7px; height: 100%; padding: 0 12px; border-radius: 6px 6px 0 0; font-size: 14px; font-weight: 600; transition: background .15s, color .15s; }
+.dh nav a { color: var(--text-2); cursor: pointer; }
+.dh nav a:hover { color: var(--text); background: var(--surface-2); text-decoration: none; }
+.dh nav a.on { color: var(--action); background: rgba(0,255,65,.06); }
+.dh nav a.on::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--action); }
+.dh nav .soon { color: var(--text-3); cursor: not-allowed; }
+.dh nav .soon:hover { background: rgba(255,255,255,.02); }
+</style>
+</head>
+<body id="topo">
+
+<header class="dh">
+  <a class="brand" href="#topo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l8 3.2v6c0 4.9-3.4 8.6-8 9.8-4.6-1.2-8-4.9-8-9.8v-6z"/><path d="M8.5 12.2l2.5 2.5 4.6-5" stroke-linecap="round"/></svg>IMMUNO OPS<span class="badge">DOCS</span></a>
+  <nav aria-label="Seções"><a class="on" href="#acesso" aria-current="page"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.3 5.2 7.9 4.5 4 4.5v13c3.9 0 6.3.7 8 2 1.7-1.3 4.1-2 8-2v-13c-3.9 0-6.3.7-8 2z"/><path d="M12 6.5v13"/></svg>Manual do usuário</a><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><circle cx="12" cy="12" r="2.6"/></svg>Agentes<em>Em breve</em></span><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5"/><path d="M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0z"/><path d="M12 17v4"/></svg>Integrações<em>Em breve</em></span><span class="soon" aria-disabled="true" title="Disponível em breve"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>Novidades<em>Em breve</em></span></nav>
+  <span class="sp"></span>
+  <a class="btn btn-primary" href="https://app.immunoops.io/ui/login">Abrir o console</a>
+</header>
+
+<section class="hero grid-bg">
+  <p class="eyebrow">Manual do usuário</p>
+  <h1>Seu primeiro dia no Immuno Ops</h1>
+  <p class="lead">Confiabilidade, FinOps e governança multi-cluster num único painel. Este guia mostra, tela a tela, o caminho do cadastro até a primeira investigação.</p>
+  <div class="search-wrap">
+    <label class="search-box" id="localSearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span class="sr-only">Buscar no manual</span><input id="q" type="search" placeholder="Buscar no manual…" autocomplete="off"><button type="button" id="qBtn">BUSCAR</button></label>
+    <div id="qRes" class="qres" aria-live="polite"></div></div>
+  <div class="popular">
+    <span>Mais procurados:</span>
+    <a href="#acesso">Criar conta</a>
+    <a href="#cluster">Conectar um cluster</a>
+    <a href="#equipe">Convidar a equipe</a>
+    <a href="#seguranca">Verificação em duas etapas</a>
+    <a href="#vendas">Falar com vendas</a>
+  </div>
+</section>
+
+<section class="start" aria-labelledby="comece">
+  <div class="sec-head"><h2 id="comece">Comece por aqui</h2><a href="#acesso">Ver todos os passos →</a></div>
+  <div class="cards">
+    <a class="card" href="#acesso"><span class="tag">Passo 01</span><h3>Criar conta ou aceitar convite</h3><p>Cadastro com código no e-mail, ou entrada pelo link do convite.</p></a>
+    <a class="card" href="#cluster"><span class="tag">Passo 05</span><h3>Conectar um cluster</h3><p>Um comando Helm e os dados começam a chegar sozinhos.</p></a>
+    <a class="card" href="#instrumentar"><span class="tag">Passo 07</span><h3>Instrumentar a aplicação</h3><p>Métricas, logs e eventos de dentro do seu código, pelo SDK.</p></a>
+    <a class="card" href="#visao-geral"><span class="tag">Passo 08</span><h3>Ler a Visão Geral</h3><p>Está tudo bem agora? Status, alertas e clusters numa tela.</p></a>
+    <a class="card" href="#equipe"><span class="tag">Passo 11</span><h3>Convidar a equipe</h3><p>Convites e o que cada papel pode fazer.</p></a>
+    <a class="card" href="#vendas"><span class="tag">Passo 13</span><h3>Falar com vendas</h3><p>Ampliar os limites ou contratar com SSO e SLA.</p></a>
+  </div>
+</section>
+
+<section class="band home-band" aria-labelledby="camadas">
+  <h2 id="camadas">Onde cada coisa fica</h2>
+  <div class="grid-4">
+      <a class="card" href="#investigar"><span class="tag">Operar · Investigar</span><h4>Confiabilidade & Incidentes</h4><p>Alertas consistentes entre todas as telas e correlação real de causa raiz.</p><span class="go">Passos 08 e 09 →</span></a>
+      <a class="card" href="#custo"><span class="tag">Analisar</span><h4>FinOps & Custo</h4><p>Preço real de vCPU, RAM e SKUs de nuvem, e o FinOps Score do cluster.</p><span class="go">Passo 10 →</span></a>
+      <a class="card" href="#cluster"><span class="tag">Administrar</span><h4>Governança Multi-Cluster</h4><p>Clusters, VMs, Cloud Run e equipe administrados de um único lugar.</p><span class="go">Passos 05, 06 e 11 →</span></a>
+      <a class="card" href="#instrumentar"><span class="tag">Investigar · Administrar</span><h4>Observabilidade Nativa</h4><p>Métricas, logs e traces sem depender do editor do Grafana.</p><span class="go">Passos 07 e 09 →</span></a>
+    </div>
+</section>
+
+<section class="band home-band" aria-labelledby="precisa">
+  <h2 id="precisa">O que você precisa</h2>
+  <div class="grid-3">
+      <div class="card compact"><div class="ico-box" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div><h4 style="font-size:17px; margin-top:14px">Um e-mail seu</h4><p>Pessoal ou da empresa: é por ele que você entra e recebe os convites.</p></div>
+      <div class="card compact"><div class="ico-box" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div><h4 style="font-size:17px; margin-top:14px">App autenticador</h4><p>Google Authenticator, 1Password, Authy ou outro.</p></div>
+      <div class="card compact"><div class="ico-box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2l8.5 4.9v10.2L12 22l-8.5-4.9V6.9z"/><circle cx="12" cy="12" r="3"/></svg></div><h4 style="font-size:17px; margin-top:14px">Acesso ao cluster</h4><p><code>kubectl</code> e <code>helm</code> apontados para o cluster que você vai conectar.</p></div>
+    </div>
+</section>
+
+<div class="layout">
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Cloud Run e VMs</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<main class="docs-main">
+<section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
+  <div class="crumbs">Passo 01 · Começar</div>
+  <h1>Criar conta ou aceitar convite</h1>
+  <div class="meta"><span>~3 min</span><span>Quem cria a organização ou quem foi convidado</span></div>
+  <p class="lead">Se sua empresa ainda não usa o Immuno Ops, crie a conta: você vira administrador da organização. Se alguém da sua empresa já usa, peça um convite. Não crie uma segunda conta para a mesma empresa.</p>
+
+    <h3 id="acesso--1">Criar uma conta nova</h3>
+    <div class="two">
+      <ol class="steps">
+        <li>Na tela de login, clique em <span class="ui">Criar conta →</span>.</li>
+        <li>Informe seu e-mail e clique em <span class="ui">Enviar código →</span>.</li>
+        <li>Digite o <strong>código de 6 dígitos</strong> que chegou no e-mail. Não chegou? Espere o contador e use <span class="ui">Reenviar</span>.</li>
+        <li>Preencha nome completo e senha (8 ou mais caracteres, com maiúscula, minúscula, número e símbolo) e clique em <span class="ui">Criar minha conta →</span>.</li>
+        <li>Responda as perguntas rápidas: WhatsApp, empresa e cargo, tamanho do cluster e o que dói mais hoje.</li>
+        <li>Confira os dados e clique em <span class="ui">Concluir cadastro</span>. Você entra direto no console.</li>
+      </ol>
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/signup</div></div>
+          <div class="app"><div class="center"><div class="lc">
+            <span class="wm">IMMUNO<b>.OPS</b></span>
+            <div class="bars" style="margin-top:14px"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+            <h6>O que dói mais hoje?</h6>
+            <div style="display:grid; gap:6px; margin-top:10px">
+              <div class="opt on"><b>Custo de nuvem fora de controle</b></div>
+              <div class="opt"><b>Alertas contraditórios / ruído</b></div>
+              <div class="opt"><b>Falta de visão multi-cluster</b></div>
+              <div class="opt"><b>Incidentes sem causa raiz clara</b></div>
+            </div>
+            <span class="abtn p block" style="margin-top:14px">Continuar →</span>
+            <span class="abtn g block" style="margin-top:4px">← Voltar</span>
+          </div></div></div>
+        </div>
+        <figcaption>Cadastro · pergunta de qualificação</figcaption>
+      </figure>
+    </div>
+    <h3 id="acesso--2">Aceitar um convite</h3>
+    <div class="two">
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/accept-invite</div></div>
+          <div class="app"><div class="center"><div class="lc">
+            <span class="wm">IMMUNO<b>.OPS</b></span>
+            <h6>Aceitar convite</h6>
+            <p>Ana Souza convidou você para a organização <b style="color:#fff">Acme</b> com o papel <b style="color:#fff">Operador</b>.</p>
+            <div class="field"><label>E-mail</label><div>voce@acme.com</div></div>
+            <div class="field"><label>Nome completo</label><div class="focus">Seu nome</div></div>
+            <div class="field"><label>Senha</label><div>••••••••••</div></div>
+            <span class="abtn p block" style="margin-top:6px">Aceitar e entrar</span>
+          </div></div></div>
+        </div>
+        <figcaption>Aceite de convite · quem ainda não tem conta</figcaption>
+      </figure>
+      <ol class="steps">
+        <li>Abra o link do e-mail de convite.</li>
+        <li>A tela mostra quem convidou, a organização e o seu papel.</li>
+        <li>Defina nome e senha e clique em <span class="ui">Aceitar e entrar</span>.</li>
+      </ol>
+    </div>
+    <div class="note tip"><i>✓</i><div><b>Já tem conta?</b><span>Se o seu e-mail já usa o Immuno Ops em outra organização, clique em <span class="ui">Entrar para aceitar</span>. A nova organização entra na conta que você já usa, sem outra senha.</span></div></div>
+    <div class="note warn"><i>!</i><div><b>Convite expirado ou revogado</b><span>Convites têm prazo. Se a tela disser que expirou, foi revogado ou já foi usado, peça ao administrador para reenviar.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="login" data-keywords="login, entrar, acessar, acesso, logar, senha, esqueci a senha, recuperar senha, redefinir senha, código do app, organização padrão, trocar de organização, tenant, app.immunoops.io">
+  <div class="crumbs">Passo 02 · Começar</div>
+  <h1>Entrar no console</h1>
+  <div class="meta"><span>~1 min</span><span>Todo acesso</span></div>
+  
+
+    <div class="two">
+      <ol class="steps">
+        <li>Acesse <a class="path" href="https://app.immunoops.io/ui/login">app.immunoops.io/ui/login</a>.</li>
+        <li>Informe <strong>e-mail</strong> e <strong>senha</strong> e clique em <span class="ui">Entrar →</span>.</li>
+        <li>Se você ativou a verificação em duas etapas, digite o código de 6 dígitos do app autenticador e clique em <span class="ui">Verificar código</span>.</li>
+        <li>Se o seu e-mail tem acesso a mais de uma organização, escolha a <strong>organização padrão</strong>. Ela abre sempre que você entra, e dá para trocar pelo seletor de organização, no canto superior direito.</li>
+      </ol>
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/login</div></div>
+          <div class="app"><div class="center"><div class="lc">
+            <span class="wm">IMMUNO<b>.OPS</b></span>
+            <h6>Bem-vindo de volta</h6>
+            <p>Entre com sua conta pra acessar o painel.</p>
+            <div class="field"><label>E-mail de trabalho</label><div>voce@suaempresa.com</div></div>
+            <div class="field"><label>Senha</label><div class="focus">••••••••••••</div></div>
+            <span class="abtn p block" style="margin-top:6px">Entrar →</span>
+            <span class="abtn g block" style="margin-top:4px">Esqueceu sua senha?</span>
+            <p style="margin:10px 0 0; text-align:center; font-size:10.5px">Ainda não tem uma conta? <b style="color:var(--action)">Criar conta →</b></p>
+          </div></div></div>
+        </div>
+        <figcaption>Login</figcaption>
+      </figure>
+    </div>
+    <div class="note"><i>i</i><div><b>Esqueceu a senha?</b><span>Clique em <span class="ui">Esqueceu sua senha?</span>, informe o e-mail e siga o link que chegar.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="tour" data-keywords="tour, boas-vindas, onboarding, guia inicial, primeiro acesso, pular tour, tutorial, passo a passo">
+  <div class="crumbs">Passo 03 · Começar</div>
+  <h1>Tour de boas-vindas</h1>
+  <div class="meta"><span>~2 min</span><span>Abre sozinho no primeiro acesso</span></div>
+  <p class="lead">Logo depois do cadastro, e enquanto nenhum serviço estiver conectado, um tour guiado abre por cima da Visão Geral. Ele ilumina cada item do menu e mostra onde conectar seus serviços.</p>
+
+    <div class="two">
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/</div></div>
+          <div class="app"><div class="shell" style="min-height:330px"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g open">Administrar<span>▾</span></div><div class="n hl">Clusters</div><div class="n">VMs</div><div class="n">Cloud Run</div><div class="n">Instrumentação</div><div class="n">Equipe</div><div class="n">Empresa</div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g open">Operar<span>▾</span></div><div class="n on">Visão Geral</div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">OPERAR / VISÃO GERAL</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="tour" style="left:16px; top:56px">
+              <span class="lbl">Passo 2 de 7</span>
+              <h6>Seus serviços ficam em Clusters</h6>
+              <p>É aqui que você conecta e acompanha tudo o que o Immuno Ops monitora.</p>
+              <div class="rb"><span class="abtn g" style="padding:0 8px">Pular</span><span class="sp"></span><span class="abtn s">Voltar</span><span class="abtn p">Ir para Clusters</span></div>
+            </div></div></div></div>
+        </div>
+        <figcaption>Tour · passo que ilumina Clusters no menu</figcaption>
+      </figure>
+      <table class="tbl">
+        <thead><tr><th>Passo</th><th>O que mostra</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Boas-vindas</td></tr>
+          <tr><td>2 · 3</td><td>Clusters: onde ficam e como conectar</td></tr>
+          <tr><td>4 · 5</td><td>Cloud Run: onde fica e como registrar</td></tr>
+          <tr><td>6</td><td>Instrumentar a aplicação com OpenTelemetry</td></tr>
+          <tr><td>7</td><td>VMs e a aba Suspensão</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note tip"><i>✓</i><div><b>Pode pular</b><span><span class="ui">Pular</span> ou <code>Esc</code> fecham o tour. Ele volta no próximo login enquanto nada estiver conectado. Os passos 05 a 07 cobrem o mesmo caminho com mais detalhe.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="console" data-keywords="menu, navegação, menu lateral, Administrar, Investigar, Analisar, Operar, barra do topo, idioma, seletor de organização, agente de IA, papel, permissão, onde fica">
+  <div class="crumbs">Passo 04 · Começar</div>
+  <h1>Conhecer o console</h1>
+  <div class="meta"><span>~2 min</span><span>Leitura</span></div>
+  <p class="lead">O menu da esquerda tem quatro grupos, nesta ordem: <strong>Administrar</strong>, <strong>Investigar</strong>, <strong>Analisar</strong> e <strong>Operar</strong>. Clique no nome do grupo para abrir os itens; o grupo da tela em que você está já fica aberto. No rodapé do menu ficam seu usuário e o atalho para <strong>Segurança da conta</strong>.</p>
+
+    <div class="two">
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/</div></div>
+          <div class="app"><div class="shell" style="min-height:330px"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g">Administrar<span>▸</span></div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g open">Operar<span>▾</span></div><div class="n on">Visão Geral</div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">OPERAR / VISÃO GERAL</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body"><div class="ph"><div><h5>Visão Geral do Immuno Ops</h5><p>Status operacional unificado entre workloads, confiabilidade, sinais de custo e saúde da plataforma.</p></div></div></div></div></div></div>
+        </div>
+        <figcaption>Menu lateral com os quatro grupos e a barra do topo</figcaption>
+      </figure>
+      <table class="tbl">
+        <thead><tr><th>Grupo</th><th>Itens</th></tr></thead>
+        <tbody>
+          <tr><td>Administrar</td><td>Clusters, VMs, Cloud Run, Instrumentação, Equipe e Empresa.</td></tr>
+          <tr><td>Investigar</td><td>Workloads, Alertas e Incidentes e Observabilidade, com Dashboards dentro de Observabilidade.</td></tr>
+          <tr><td>Analisar</td><td>Kubernetes FinOps e FOCUS Normalizer.</td></tr>
+          <tr><td>Operar</td><td>Visão Geral: status, alertas e clusters. É a tela que abre depois do login.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><i>i</i><div><b>A barra do topo</b><span>Mostra onde você está, por exemplo <strong>ADMINISTRAR / CLUSTERS</strong>. À direita ficam o idioma, o seletor de organização e o agente de IA.</span></div></div>
+    <div class="note"><i>i</i><div><b>Seu papel define o que aparece</b><span>Quem tem papel <strong>Leitura</strong> vê painéis, alertas e custos, mas não os botões de conectar ou convidar. <strong>Equipe</strong> e <strong>Empresa</strong> só aparecem para quem tem permissão.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="cluster" data-keywords="cluster, kubernetes, k8s, conectar cluster, agente, agent, instalar agente, helm, kubectl, chart, token, GKE, EKS, AKS, pendente, conectado, desconectado, heartbeat, status do cluster, namespace">
+  <div class="crumbs">Passo 05 · Conectar</div>
+  <h1>Conectar um cluster Kubernetes</h1>
+  <div class="meta"><span>~5 min</span><span>Administrador ou Operador</span><span>Precisa de helm no cluster</span></div>
+  <p class="lead">É o passo mais importante. Com o agent instalado, métricas, logs, traces e o inventário de workloads começam a chegar sozinhos.</p>
+
+    <div class="two">
+      <ol class="steps">
+        <li>No menu, vá em <span class="ui">Administrar › Clusters</span> e clique em <span class="ui">Conectar cluster</span>.</li>
+        <li>Em <strong>Escolha a nuvem</strong>, selecione o provedor.</li>
+        <li>Dê um <strong>nome</strong> ao cluster, escolha o <strong>ambiente</strong> (produção, staging…) e clique em <span class="ui">Registrar cluster</span>.</li>
+        <li>A janela <strong>Instale o agent</strong> mostra um comando <code>helm</code> já com o token de conexão. Clique em <span class="ui">Copiar comando</span> e rode num terminal com acesso ao cluster.</li>
+        <li>Clique em <span class="ui">Concluir</span>. Em alguns minutos o status muda de <span class="pill wait">Pendente</span> para <span class="pill ok">Conectado</span>.</li>
+      </ol>
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/clusters</div></div>
+          <div class="app"><div class="shell" style="min-height:340px"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g open">Administrar<span>▾</span></div><div class="n on">Clusters</div><div class="n">VMs</div><div class="n">Cloud Run</div><div class="n">Instrumentação</div><div class="n">Equipe</div><div class="n">Empresa</div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">ADMINISTRAR / CLUSTERS</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body"><div class="ph"><div><h5>Clusters</h5></div></div></div>
+              <div class="scrim"><div class="modal">
+                <div class="mh"><span class="ic">⎈</span><div style="flex:1"><h6>Instale o agent em prod-gke</h6><p>Rode no terminal com acesso ao cluster.</p></div></div>
+                <div class="mb"><span class="lbl">Comando de instalação</span>
+                  <div class="code" style="margin-top:6px">helm upgrade --install immuno-agent \
+  oci://…/immuno-agent \
+  --set connectionToken=••••••••</div></div>
+                <div class="mf"><span class="abtn s">Copiar comando</span><span class="abtn p">Concluir</span></div>
+              </div></div></div></div></div>
+        </div>
+        <figcaption>Administrar › Clusters · comando de instalação do agent (ilustrativo)</figcaption>
+      </figure>
+    </div>
+    <div class="note warn"><i>!</i><div><b>Guarde o comando com cuidado</b><span>Ele carrega um token de conexão da sua organização. Não cole em chats públicos nem em repositórios.</span></div></div>
+    <h3 id="cluster--1">Como ler o status do cluster</h3>
+    <table class="tbl">
+      <thead><tr><th>Status</th><th>O que significa</th><th>O que fazer</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill wait">Pendente</span></td><td>Cluster registrado, mas o agent nunca mandou dado.</td><td>Confira se o comando rodou sem erro e se os pods do agent estão <code>Running</code>.</td></tr>
+        <tr><td><span class="pill ok">Conectado</span></td><td>O agent está mandando dados.</td><td>Nada. Os dados já aparecem em Investigar.</td></tr>
+        <tr><td><span class="pill off">Desconectado</span></td><td>O último sinal tem mais de 5 minutos.</td><td>Verifique o agent no cluster: pods, rede de saída e token.</td></tr>
+      </tbody>
+    </table>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="cloudrun-vm" data-keywords="Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário">
+  <div class="crumbs">Passo 06 · Conectar</div>
+  <h1>Cloud Run e VMs</h1>
+  <div class="meta"><span>~3 min cada</span><span>Se você usa esses serviços</span></div>
+  
+
+    <div class="grid-3" style="margin:8px 0 8px">
+      <div class="card compact"><span class="tag">Cluster</span><h4 style="font-size:17px">Instala um agent</h4><p>Helm no cluster. Traz workloads, métricas, logs e traces.</p></div>
+      <div class="card compact"><span class="tag">Cloud Run</span><h4 style="font-size:17px">Nada para instalar</h4><p>As métricas vêm do Cloud Monitoring do seu projeto GCP.</p></div>
+      <div class="card compact"><span class="tag">VM</span><h4 style="font-size:17px">Agente no host</h4><p>Comando de instalação na VM do Compute Engine.</p></div>
+    </div>
+    <div class="two" style="margin-top:32px">
+      <div>
+        <h3 id="cloudrun-vm--1" style="margin-top:0">Cloud Run</h3>
+        <ol class="steps">
+          <li>Vá em <span class="ui">Administrar › Cloud Run</span> e clique em <span class="ui">Conectar Cloud Run</span>.</li>
+          <li>Informe <strong>nome</strong>, <strong>ID do projeto GCP</strong> e <strong>região</strong>. Clique em <span class="ui">Registrar</span>.</li>
+        </ol>
+        <h3 id="cloudrun-vm--2">VMs</h3>
+        <ol class="steps">
+          <li>Vá em <span class="ui">Administrar › VMs</span> e clique em <span class="ui">Conectar VM</span>.</li>
+          <li>Informe <strong>nome</strong>, <strong>ID do projeto GCP</strong> e <strong>zona</strong>. Clique em <span class="ui">Registrar</span>.</li>
+          <li>Copie o comando em <strong>Instalar o agente</strong>, rode na VM e clique em <span class="ui">Concluir</span>.</li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/cloud-run</div></div>
+          <div class="app"><div class="shell" style="min-height:340px"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g open">Administrar<span>▾</span></div><div class="n">Clusters</div><div class="n">VMs</div><div class="n on">Cloud Run</div><div class="n">Instrumentação</div><div class="n">Equipe</div><div class="n">Empresa</div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">ADMINISTRAR / CLOUD RUN</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body"><div class="ph"><div><h5>Cloud Run</h5></div></div></div>
+              <div class="scrim"><div class="modal">
+                <div class="mh"><span class="ic">☁</span><div style="flex:1"><h6>Registrar um serviço Cloud Run</h6></div></div>
+                <div class="mb">
+                  <div class="field"><label>Nome</label><div>checkout-api</div></div>
+                  <div class="field"><label>ID do projeto GCP</label><div>acme-prod-123</div></div>
+                  <div class="field"><label>Região</label><div class="focus">southamerica-east1</div></div>
+                </div>
+                <div class="mf"><span class="abtn g">Cancelar</span><span class="abtn p">Registrar</span></div>
+              </div></div></div></div></div>
+        </div>
+        <figcaption>Administrar › Cloud Run · registro de serviço</figcaption>
+      </figure>
+    </div>
+    <div class="note tip"><i>✓</i><div><b>Economize com a aba Suspensão</b><span>Em <span class="ui">VMs › Suspensão</span>, use <span class="ui">Nova política</span> para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="instrumentar" data-keywords="instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes">
+  <div class="crumbs">Passo 07 · Conectar</div>
+  <h1>Instrumentar a aplicação</h1>
+  <div class="meta"><span>~10 min</span><span>Time de desenvolvimento</span><span>Opcional</span></div>
+  <p class="lead">O agent já mostra a saúde da infraestrutura. Para ver métricas de negócio, logs e eventos de dentro do seu código, conecte a aplicação pelo SDK.</p>
+
+    <div class="two">
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/instrumentation</div></div>
+          <div class="app"><div class="shell"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g open">Administrar<span>▾</span></div><div class="n">Clusters</div><div class="n">VMs</div><div class="n">Cloud Run</div><div class="n on">Instrumentação</div><div class="n">Equipe</div><div class="n">Empresa</div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">ADMINISTRAR / INSTRUMENTAÇÃO</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body">
+            <div class="ph"><div><h5>Instrumentação</h5><p>Aplicações e serviços instrumentados via SDK.</p></div><span class="abtn p">Conectar via SDK</span></div>
+            <div class="acard">
+              <div class="row"><span class="main"><b>checkout-api</b><span class="s">último dado há 12 s</span></span><span class="st good">Conectada</span></div>
+              <div class="row"><span class="main"><b>billing-worker</b><span class="s">—</span></span><span class="st ok">Aguardando primeiro dado</span></div>
+              <div class="row"><span class="main"><b>legacy-cron</b><span class="s">último dado há 3 h</span></span><span class="st warn">Sem dados recentes</span></div>
+            </div></div></div></div></div>
+        </div>
+        <figcaption>Administrar › Instrumentação · dados ilustrativos</figcaption>
+      </figure>
+      <ol class="steps">
+        <li>Vá em <span class="ui">Administrar › Instrumentação</span> e clique em <span class="ui">Conectar via SDK</span>.</li>
+        <li>Dê um nome à aplicação e clique em <span class="ui">Gerar chave</span>.</li>
+        <li><strong>Instale o pacote</strong> do SDK com o comando mostrado.</li>
+        <li><strong>Inicialize o client</strong> colando a chave de conexão em <code>apiKey</code>.</li>
+        <li><strong>Envie o primeiro dado</strong>. O status muda sozinho para <span class="pill ok">Conectada</span>.</li>
+      </ol>
+    </div>
+    <div class="note"><i>i</i><div><b>Atalho para Cloud Run e VMs</b><span>Na linha de um serviço já registrado, <span class="ui">Instrumentar minha aplicação</span> gera token e snippet OpenTelemetry prontos para colar.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="visao-geral" data-keywords="visão geral, overview, dashboard inicial, status, saudável, atenção, crítico, alertas disparando, heartbeat, tela vazia, primeiro recurso, home, início">
+  <div class="crumbs">Passo 08 · Operar</div>
+  <h1>Ler a Visão Geral</h1>
+  <div class="meta"><span>Todo dia</span><span>Primeira tela depois do login</span></div>
+  <p class="lead">A Visão Geral responde uma pergunta: está tudo bem agora? Os números são os mesmos em todas as telas: um alerta crítico aqui é o mesmo alerta em Alertas e Incidentes.</p>
+
+    <div class="two">
+      <ol class="steps">
+        <li><strong>Faixa de status:</strong> <span class="pill ok">Saudável</span>, <span class="pill wait">Atenção</span> ou <span class="pill off">Crítico</span>, com a frase que explica o porquê.</li>
+        <li><strong>Números do topo:</strong> alertas disparando, clusters conectados, workloads monitorados e o último sinal recebido.</li>
+        <li><strong>Alertas disparando:</strong> cada linha traz o problema e leva à regra em Alertas e Incidentes.</li>
+        <li><strong>Clusters:</strong> a conexão do agent de cada cluster.</li>
+      </ol>
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/</div></div>
+          <div class="app"><div class="shell"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g">Administrar<span>▸</span></div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g open">Operar<span>▾</span></div><div class="n on">Visão Geral</div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">OPERAR / VISÃO GERAL</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body">
+            <div class="ph"><div><h5>Visão Geral do Immuno Ops</h5><p>Status operacional unificado entre workloads, confiabilidade, custo e plataforma.</p></div><span class="abtn s">Atualizar status</span></div>
+            <div class="acard" style="border-left:3px solid var(--warning)"><span class="st warn">Atenção</span><p style="margin:6px 0 0; font-size:11px; color:var(--a-text-2)">2 regras de alerta disparando agora.</p></div>
+            <div class="kpis">
+              <div class="kpi"><span class="lbl">Alertas disparando</span><div class="num" style="color:var(--warning)">2</div></div>
+              <div class="kpi"><span class="lbl">Clusters conectados</span><div class="num">3/3</div></div>
+              <div class="kpi"><span class="lbl">Último heartbeat</span><div class="num">12<small>s</small></div></div>
+            </div>
+            <div class="acard" style="margin-top:10px"><div class="ct"><span>Alertas disparando</span></div>
+              <div class="row"><span class="main"><b>checkout · latência p95</b><span class="s">prod-gke · desde 14:02</span></span><span class="st warn">Disparando</span></div>
+              <div class="row"><span class="main"><b>billing · erro 5xx</b><span class="s">prod-gke · desde 14:10</span></span><span class="st crit">Disparando</span></div>
+            </div></div></div></div></div>
+        </div>
+        <figcaption>Operar › Visão Geral · dados ilustrativos</figcaption>
+      </figure>
+    </div>
+    <div class="note"><i>i</i><div><b>Tela vazia?</b><span><strong>Conecte seu primeiro recurso</strong> quer dizer que nenhum cluster, VM ou Cloud Run mandou dado ainda. Volte ao passo 05. Não mostramos número inventado enquanto isso.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="investigar" data-keywords="investigar, incidente, alerta, alertas e incidentes, workloads, pods, CrashLoop, restart, observabilidade, logs, traces, métricas, OpenTelemetry, dashboards, Grafana, causa raiz, troubleshooting, latência, erro 5xx">
+  <div class="crumbs">Passo 09 · Operar</div>
+  <h1>Investigar um incidente</h1>
+  <div class="meta"><span>Quando algo sai do normal</span></div>
+  <p class="lead">Resposta a incidente com contexto, não alerta solto. Um roteiro para ir do alerta à causa:</p>
+
+    <div class="grid-2" style="margin-top:24px">
+      <div class="card compact"><span class="tag">1 · Alertas e Incidentes</span><h4 style="font-size:17px">Triagem</h4><p>Veja a linha do tempo ao vivo e reconheça o alerta, para o time saber que alguém está olhando.</p></div>
+      <div class="card compact"><span class="tag">2 · Workloads</span><h4 style="font-size:17px">Qual serviço</h4><p>Filtre por namespace, ambiente e severidade. Cada workload traz a evidência e a ação recomendada.</p></div>
+      <div class="card compact"><span class="tag">3 · Observabilidade</span><h4 style="font-size:17px">Por quê</h4><p>Métricas, logs e traces da última hora cruzados. Sinais correlacionados junta pico de erro, logs de erro e spans lentos.</p></div>
+      <div class="card compact"><span class="tag">4 · Dashboards</span><h4 style="font-size:17px">Acompanhar</h4><p>Dashboards do seu time com painéis reais, sem depender do editor do Grafana.</p></div>
+    </div>
+    <div style="margin-top:32px"><figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/workloads</div></div>
+          <div class="app"><div class="shell"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g">Administrar<span>▸</span></div><div class="g open">Investigar<span>▾</span></div><div class="n on">Workloads</div><div class="n">Alertas e Incidentes</div><div class="n">Observabilidade</div><div class="n sub">Dashboards</div><div class="g">Analisar<span>▸</span></div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">INVESTIGAR / WORKLOADS</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body">
+            <div class="ph"><div><h5>Workloads operacionais</h5><p>Saúde de runtime, risco de confiabilidade, capacidade e custo.</p></div></div>
+            <div class="chips" style="margin:0 0 10px"><span class="chip on">Namespace: payments</span><span class="chip">Todos os Ambientes</span><span class="chip on">Severidade: Crítico</span></div>
+            <div class="acard"><table class="tbl2"><thead><tr><th>Workload</th><th>Restarts</th><th>Ação recomendada</th><th></th></tr></thead><tbody>
+              <tr><td><b>billing-api</b></td><td>37</td><td>Investigar CrashLoop e validar probes</td><td><span class="st crit">Crítico</span></td></tr>
+              <tr><td><b>ledger-sync</b></td><td>0</td><td>Ajustar requests de CPU e memória</td><td><span class="st warn">Superprov.</span></td></tr>
+            </tbody></table></div></div></div></div></div>
+        </div>
+        <figcaption>Investigar › Workloads · dados ilustrativos</figcaption>
+      </figure></div>
+    <div class="note"><i>i</i><div><b>Logs e traces vazios?</b><span>Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam visíveis em <strong>Entidades do Cluster</strong>.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="custo" data-keywords="custo, custos, FinOps, FinOps Score, nota, desperdício, economia, billing, fatura, FOCUS, FOCUS Normalizer, rightsizing, requests, CPU, memória, storage, rede, nuvem, SKU, preço">
+  <div class="crumbs">Passo 10 · Operar</div>
+  <h1>Custo e FinOps Score</h1>
+  <div class="meta"><span>Quando a pergunta é “onde estou gastando à toa?”</span></div>
+  <p class="lead">Seu cluster tem uma nota, e o Immuno Ops mostra qual é. O FinOps Score vai de 0 a 100 e é calculado com os dados reais do seu cluster, nunca com amostra.</p>
+
+    <div class="two">
+      <ol class="steps">
+        <li>Vá em <span class="ui">Analisar › Kubernetes FinOps</span> e escolha o cluster.</li>
+        <li>Leia o <strong>FinOps Score</strong>: 100 menos o desperdício ponderado por custo. As barras (Capacidade, Requests, Autoscaling, Storage, Rede e Dono) mostram onde está o desperdício. A mais baixa é onde começar.</li>
+        <li>Veja o custo de CPU e memória, o desperdício e as opções de rightsizing.</li>
+        <li>Use <span class="ui">Como ler estes dados</span> para saber de onde vem cada número e o que ainda não é coletado.</li>
+      </ol>
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/kubernetes-finops</div></div>
+          <div class="app"><div class="shell"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g">Administrar<span>▸</span></div><div class="g">Investigar<span>▸</span></div><div class="g open">Analisar<span>▾</span></div><div class="n on">Kubernetes FinOps</div><div class="n">FOCUS Normalizer</div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">ANALISAR / KUBERNETES FINOPS</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body">
+            <div class="ph"><div><h5>Kubernetes FinOps</h5><p>Capacidade, desperdício e recomendações por cluster.</p></div></div>
+            <div class="acard" style="display:flex; gap:14px; align-items:center; flex-wrap:wrap">
+              <div class="ring"><div><div><div class="num">82</div><span class="lbl" style="font-size:7.5px">FinOps Score</span></div></div></div>
+              <div style="flex:1; min-width:150px">
+                <div class="sig">Capacidade<span class="bar"><i style="width:74%"></i></span><u>74</u></div>
+                <div class="sig">Requests<span class="bar"><i style="width:68%"></i></span><u>68</u></div>
+                <div class="sig">Storage<span class="bar"><i style="width:90%"></i></span><u>90</u></div>
+                <div class="sig">Rede<span class="bar"><i style="width:86%"></i></span><u>86</u></div>
+                <div class="sig">Dono<span class="bar"><i style="width:92%"></i></span><u>92</u></div>
+              </div>
+            </div></div></div></div></div>
+        </div>
+        <figcaption>Analisar › Kubernetes FinOps · números ilustrativos</figcaption>
+      </figure>
+    </div>
+    <div class="note tip"><i>✓</i><div><b>Mais de uma nuvem?</b><span><span class="ui">Analisar › FOCUS Normalizer</span> mostra o billing das suas nuvens no mesmo formato (padrão FOCUS), para comparar SKUs lado a lado.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="equipe" data-keywords="equipe, time, usuários, pessoas, convidar, convite, papel, papéis, permissões, administrador, admin, operador, leitura, viewer, suspender, remover, reenviar convite, RBAC">
+  <div class="crumbs">Passo 11 · Organizar</div>
+  <h1>Convidar a equipe</h1>
+  <div class="meta"><span>~1 min por pessoa</span><span>Administrador</span></div>
+  
+
+    <div class="two">
+      <ol class="steps">
+        <li>Vá em <span class="ui">Administrar › Equipe</span> e clique em <span class="ui">Convidar funcionário</span>.</li>
+        <li>Informe o e-mail (o nome é opcional) e escolha o <strong>papel</strong>.</li>
+        <li>Clique em <span class="ui">Convidar</span>. A pessoa aparece como <span class="pill wait">Convite pendente</span> até aceitar.</li>
+        <li>No menu <strong>Ações</strong> de cada linha você reenvia ou revoga convites, altera o papel, suspende ou remove alguém da organização.</li>
+      </ol>
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/team</div></div>
+          <div class="app"><div class="shell" style="min-height:330px"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g open">Administrar<span>▾</span></div><div class="n">Clusters</div><div class="n">VMs</div><div class="n">Cloud Run</div><div class="n">Instrumentação</div><div class="n on">Equipe</div><div class="n">Empresa</div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">ADMINISTRAR / EQUIPE</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body"><div class="ph"><div><h5>Equipe</h5></div></div></div>
+              <div class="scrim"><div class="modal">
+                <div class="mh"><span class="ic">+</span><div style="flex:1"><h6>Convidar funcionário</h6></div></div>
+                <div class="mb">
+                  <div class="field"><label>E-mail</label><div class="focus">joao@acme.com</div></div>
+                  <span class="lbl" style="display:block; margin:4px 0 6px">Papel</span>
+                  <div class="seg"><span>Administrador</span><span class="on">Operador</span><span>Leitura</span></div>
+                  <p style="margin:0; font-size:10.5px; color:var(--a-text-2)">Operador aplica correções e cuida de alertas; não gerencia pessoas.</p>
+                </div>
+                <div class="mf"><span class="abtn g">Cancelar</span><span class="abtn p">Convidar</span></div>
+              </div></div></div></div></div>
+        </div>
+        <figcaption>Administrar › Equipe · convite</figcaption>
+      </figure>
+    </div>
+    <div class="note warn"><i>!</i><div><b>O e-mail não saiu?</b><span>A tela mostra o link do convite. Copie e envie direto para a pessoa.</span></div></div>
+    <table class="tbl" style="margin-top:28px">
+      <thead><tr><th>Papel</th><th>O que pode fazer</th><th>Indicado para</th></tr></thead>
+      <tbody>
+        <tr><td>Administrador</td><td>Gerencia pessoas, clusters e políticas.</td><td>Head de plataforma, SRE lead</td></tr>
+        <tr><td>Operador</td><td>Aplica correções e cuida de alertas. Não gerencia pessoas.</td><td>SREs, quem está de plantão</td></tr>
+        <tr><td>Leitura</td><td>Só vê painéis, alertas e custos.</td><td>Gestores, financeiro, devs consultando</td></tr>
+      </tbody>
+    </table>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="seguranca" data-keywords="segurança, 2FA, MFA, TOTP, verificação em duas etapas, autenticação em dois fatores, autenticador, Google Authenticator, Authy, 1Password, QR Code, senha, trocar senha, proteger conta">
+  <div class="crumbs">Passo 12 · Organizar</div>
+  <h1>Proteger sua conta</h1>
+  <div class="meta"><span>~2 min</span><span>Todo usuário</span><span>Recomendado no primeiro dia</span></div>
+  
+
+    <div class="two">
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/account/security</div></div>
+          <div class="app"><div class="shell"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g">Administrar<span>▸</span></div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">ADMINISTRAR / SEGURANÇA DA CONTA</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body">
+            <div class="ph"><div><h5>Segurança da conta</h5><p>Proteja o seu acesso ao console com uma senha forte e uma segunda etapa no login.</p></div></div>
+            <div class="acard"><div class="ct"><span>Verificação em duas etapas</span></div>
+              <div style="display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap">
+                <div class="qr" aria-hidden="true"><i></i><i></i><i></i><i class="w"></i><i></i><i class="w"></i><i></i><i></i><i></i><i></i><i class="w"></i><i></i><i></i><i class="w"></i><i class="w"></i><i></i><i class="w"></i><i></i><i></i><i></i><i></i><i class="w"></i><i></i><i></i><i></i><i></i><i></i><i class="w"></i><i class="w"></i><i></i><i class="w"></i><i></i><i class="w"></i><i></i><i class="w"></i><i class="w"></i><i></i><i></i><i class="w"></i><i></i><i></i><i class="w"></i><i></i><i></i><i></i><i class="w"></i><i class="w"></i><i class="w"></i><i></i><i class="w"></i><i class="w"></i><i></i><i class="w"></i><i class="w"></i><i></i><i></i><i></i><i class="w"></i><i></i><i></i><i class="w"></i><i></i><i></i><i></i><i class="w"></i><i></i><i class="w"></i><i class="w"></i><i></i><i class="w"></i><i></i><i></i><i></i><i></i><i class="w"></i><i></i><i></i><i class="w"></i><i></i><i></i></div>
+                <div style="flex:1; min-width:140px">
+                  <span class="lbl">1. Leia o QR Code com o app autenticador</span>
+                  <span class="lbl" style="display:block; margin:10px 0 6px">2. Digite o código que o app mostrar</span>
+                  <div class="otp"><span class="f">3</span><span class="f">9</span><span class="f">2</span><span></span><span></span><span></span></div>
+                  <span class="abtn p" style="margin-top:10px">Confirmar e ativar</span>
+                </div>
+              </div></div></div></div></div></div>
+        </div>
+        <figcaption>Segurança da conta · ativação da verificação em duas etapas</figcaption>
+      </figure>
+      <ol class="steps">
+        <li>Clique no ícone de <strong>Segurança da conta</strong> no rodapé do menu, ao lado do seu nome.</li>
+        <li>Em <strong>Verificação em duas etapas</strong>, clique em <span class="ui">Ativar verificação em duas etapas</span>.</li>
+        <li>Leia o QR Code com o app autenticador. Sem câmera? Use <span class="ui">Copiar chave</span> e cole no app.</li>
+        <li>Digite o código de 6 dígitos e clique em <span class="ui">Confirmar e ativar</span>.</li>
+      </ol>
+    </div>
+    <div class="note tip"><i>✓</i><div><b>A partir daqui</b><span>Todo login pede e-mail, senha e o código do app. Na mesma tela você também troca sua senha.</span></div></div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="vendas" data-keywords="vendas, comercial, contratar, plano, preço, limites, créditos, mais créditos, Enterprise, contrato, SSO, SLA, faturamento, proposta, protocolo, WhatsApp, e-mail, falar com vendas, upgrade">
+  <div class="crumbs">Passo 13 · Organizar</div>
+  <h1>Falar com vendas</h1>
+  <div class="meta"><span>~2 min</span><span>Administrador</span></div>
+  <p class="lead">Quer ampliar os limites ou precisa de um contrato com SSO e SLA? Fale com o time direto pelo console. Seu uso já vai junto no pedido, então você só conta o que precisa.</p>
+
+    <div class="two">
+      <ol class="steps">
+        <li>Vá em <span class="ui">Administrar › Empresa</span> e, no painel <strong>Plano</strong>, clique em <span class="ui">Falar com vendas</span>.</li>
+        <li>Escolha o assunto: <strong>Trocar de plano</strong>, <strong>Aumentar volume de créditos</strong>, <strong>Enterprise ou contrato personalizado</strong> ou <strong>Outra dúvida</strong>.</li>
+        <li>Se quiser, conte mais: por exemplo, quantos clusters você pretende conectar.</li>
+        <li>Escolha como prefere ser contatado: <strong>e-mail</strong> (resposta em até 1 dia útil) ou <strong>WhatsApp</strong> (mais rápido no horário comercial).</li>
+        <li>Envie. Você recebe um <strong>protocolo</strong>, e alguém do time técnico responde direto, sem fila de qualificação automática.</li>
+      </ol>
+      <figure class="shot">
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/company</div></div>
+          <div class="app"><div class="shell" style="min-height:380px"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g open">Administrar<span>▾</span></div><div class="n">Clusters</div><div class="n">VMs</div><div class="n">Cloud Run</div><div class="n">Instrumentação</div><div class="n">Equipe</div><div class="n on">Empresa</div><div class="g">Investigar<span>▸</span></div><div class="g">Analisar<span>▸</span></div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">ADMINISTRAR / EMPRESA</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body"><div class="ph"><div><h5>Empresa</h5></div></div></div>
+              <div class="scrim"><div class="modal">
+                <div class="mh"><span class="ic">✉</span><div style="flex:1"><h6>Falar com vendas</h6><p>Seu plano e seu uso já vão junto. Você só conta o que precisa.</p></div></div>
+                <div class="mb" style="display:grid; gap:6px">
+                  <div class="opt on"><b>Trocar de plano</b><span>Ver outro plano que caiba melhor no seu uso.</span></div>
+                  <div class="opt"><b>Aumentar volume de créditos</b><span>Mais créditos por mês para o uso da plataforma.</span></div>
+                  <div class="opt"><b>Enterprise ou contrato personalizado</b><span>SSO, SLA, volume alto, faturamento anual.</span></div>
+                  <div class="opt"><b>Outra dúvida</b><span>Qualquer outra coisa sobre plano ou cobrança.</span></div>
+                </div>
+                <div class="mf"><span class="abtn g">Cancelar</span><span class="abtn p">Continuar →</span></div>
+              </div></div></div></div></div>
+        </div>
+        <figcaption>Administrar › Empresa · Falar com vendas</figcaption>
+      </figure>
+    </div>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais">
+  <div class="crumbs">Ajuda</div>
+  <h1>Perguntas frequentes</h1>
+  <div class="meta"><span>Antes de chamar o time</span></div>
+  
+
+    <p class="faq-group">Dados e acesso</p>
+    <details class="faq"><summary>Preciso dar acesso de escrita na minha conta de nuvem?</summary><div>Não para visualização e FinOps Score: isso é leitura. O escopo nas contas de nuvem conectadas é de leitura por padrão.</div></details>
+    <details class="faq"><summary>Os números são reais?</summary><div>Sim. Todo dado vem do seu cluster e da sua conta de nuvem. Quando ainda não há dado, a tela diz isso em vez de mostrar um número inventado.</div></details>
+    <p class="faq-group">Problemas comuns</p>
+    <details class="faq"><summary>Meu cluster está como “Pendente” há muito tempo</summary><div>O agent nunca mandou dado. Confira se o comando <code>helm</code> terminou sem erro, se os pods do agent estão <code>Running</code> e se o cluster tem saída de rede para o Immuno Ops.</div></details>
+    <details class="faq"><summary>O cluster está conectado, mas Workloads está vazio</summary><div>O inventário pode levar alguns minutos para chegar depois da conexão. Se a tela disser “Ainda não recebemos workloads de…”, teste a conexão e confira os logs do agent.</div></details>
+    <details class="faq"><summary>Não recebi o código de verificação no cadastro</summary><div>Olhe a caixa de spam e espere o contador para usar <strong>Reenviar</strong>. Confira o e-mail em <strong>← Trocar e-mail</strong>.</div></details>
+    <details class="faq"><summary>“Não foi possível criar a conta”</summary><div>Normalmente sua empresa já tem cadastro. Peça um convite ao administrador da organização.</div></details>
+    <details class="faq"><summary>“Sua conta não tem organização ativa”</summary><div>Seu acesso foi suspenso ou removido em todas as organizações. Peça a um administrador para reativar ou convidar você de novo.</div></details>
+    <details class="faq"><summary>Não vejo os botões de conectar ou convidar</summary><div>Seu papel é <strong>Leitura</strong>. Peça a um administrador para alterar seu papel em <strong>Equipe</strong>.</div></details>
+  <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
+</section>
+</main>
+</div>
+
+<footer class="df">
+  <span>Immuno Ops · <a href="https://immunoops.io/">immunoops.io</a></span>
+  <nav><a href="https://immunoops.io/contato">Status</a>·<a href="#faq">Perguntas frequentes</a>·<a href="https://immunoops.io/contato">Suporte</a></nav>
+</footer>
+
+<script>
+/* Busca embutida, sem dependências: título, palavras-chave, subtítulos e texto de cada seção,
+   com acento ignorado, variações da palavra (conectar, conectado, conexão) e resultados por relevância. */
+(function () {
+  var norm = function (s) { return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var STOP = ' a o as os de da do das dos e em no na nos nas um uma uns umas por para com como que se ao aos ou meu minha seu sua eu voce '.split(' ');
+  // * Radical simples em português, para "conectar", "conectado" e "conexão" se encontrarem:::
+  function stem(w) {
+    var suf = ['amentos', 'imentos', 'amento', 'imento', 'acoes', 'icoes', 'mente', 'acao', 'icao', 'ados', 'adas', 'idos', 'idas', 'ando', 'endo', 'indo', 'ador', 'ado', 'ada', 'ido', 'ida', 'oes', 'ao', 'ar', 'er', 'ir', 'es', 's', 'a', 'o', 'e'];
+    for (var i = 0; i < suf.length; i++) { var x = suf[i]; if (w.length - x.length >= 4 && w.slice(-x.length) === x) return w.slice(0, -x.length); }
+    return w;
+  }
+  function words(s) { return norm(s).split(/[^a-z0-9.]+/).filter(function (w) { return w.length > 1 && STOP.indexOf(w) < 0; }); }
+  function stems(s) { return words(s).map(stem); }
+  function has(list, st) { for (var i = 0; i < list.length; i++) if (list[i].indexOf(st) === 0) return true; return false; }
+
+  var docs = Array.prototype.map.call(document.querySelectorAll('section.doc'), function (s) {
+    var heads = Array.prototype.map.call(s.querySelectorAll('h2[id], h3[id]'), function (h) { return { id: h.id, t: h.textContent, st: stems(h.textContent) }; });
+    // * Só o texto do guia: parágrafos, listas, tabelas e perguntas, sem as telas de exemplo:::
+    var text = Array.prototype.filter.call(s.querySelectorAll('.lead, p, li, td, summary, details.faq > div'), function (el) { return !el.closest('.shot'); })
+      .map(function (el) { return el.textContent; }).join(' · ').replace(/\s+/g, ' ');
+    return { id: s.id, title: s.querySelector('h1').textContent, group: s.querySelector('.crumbs').textContent,
+      tSt: stems(s.querySelector('h1').textContent), kSt: stems(s.getAttribute('data-keywords') || ''), heads: heads, text: text, bSt: stems(text) };
+  });
+
+  function snippet(text, qs) {
+    var n = norm(text), at = -1;
+    qs.some(function (q) { var m = n.search(new RegExp('\\b' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))); if (m > -1) { at = m; return true; } return false; });
+    if (at < 0) return '';
+    var st = Math.max(0, at - 50), out = esc((st > 0 ? '…' : '') + text.slice(st, st + 150) + '…');
+    qs.forEach(function (q) { out = out.replace(new RegExp('(' + q + '[\\wÀ-ÿ]*)', 'ig'), '<mark>$1</mark>'); });
+    return out;
+  }
+
+  var q = document.getElementById('q'), out = document.getElementById('qRes');
+  function run() {
+    var qs = stems(q.value);
+    if (!qs.length) { out.innerHTML = ''; return; }
+    var hits = [];
+    docs.forEach(function (d) {
+      var score = 0, found = 0;
+      qs.forEach(function (w) {
+        var f = 0;
+        if (has(d.tSt, w)) { score += 10; f = 1; }
+        if (has(d.kSt, w)) { score += 6; f = 1; }
+        if (d.heads.some(function (h) { return has(h.st, w); })) { score += 3; f = 1; }
+        if (has(d.bSt, w)) { score += 1; f = 1; }
+        found += f;
+      });
+      if (!found) return;
+      score += found === qs.length ? 8 : 0;
+      var h = d.heads.filter(function (x) { return qs.some(function (w) { return has(x.st, w); }); })[0];
+      hits.push({ s: score, href: '#' + (h ? h.id : d.id), title: d.title + (h ? ' › ' + h.t : ''), group: d.group, ex: snippet(d.text, qs) });
+    });
+    hits.sort(function (a, b) { return b.s - a.s; });
+    out.innerHTML = hits.length ? hits.slice(0, 8).map(function (r) {
+      return '<a href="' + r.href + '"><small>' + esc(r.group) + '</small>' + esc(r.title) + (r.ex ? '<span>' + r.ex + '</span>' : '') + '</a>';
+    }).join('') : '<div class="none">Nada encontrado para “' + esc(q.value) + '”. Tente outra palavra.</div>';
+  }
+  function focusSearch() { q.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(function () { q.focus({ preventScroll: true }); }, 350); }
+  var t;
+  q.addEventListener('input', function () { clearTimeout(t); t = setTimeout(run, 120); });
+  q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
+  document.getElementById('qBtn').addEventListener('click', function () {
+    if (!q.value.trim()) { out.innerHTML = '<div class="none">Digite o que você procura, por exemplo “instalar o agente”.</div>'; q.focus(); return; }
+    run();
+  });
+  document.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); focusSearch(); }
+  });
+
+  /* Destaca no menu a seção que está na tela */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.side a'));
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); }); });
+    }, { rootMargin: '-15% 0px -75% 0px' });
+    document.querySelectorAll('section.doc').forEach(function (s) { io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
