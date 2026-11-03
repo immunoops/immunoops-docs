@@ -260,9 +260,9 @@ A conta é somente leitura do billing. Nada é criado nem alterado nos recursos 
 #### Ativar o export no Google Cloud
 
 1. No Google Cloud, abra a conta de faturamento que paga os projetos e vá em **Exportação de faturamento › Exportação para o BigQuery**.
-2. Ative o export de **custo de uso** (padrão ou detalhado). A tabela do Immuno Ops é essa, com as colunas de custo do Cloud Billing. Não use uma tabela no formato FOCUS.
-3. Escolha o projeto e o dataset. O Google cria uma tabela com nome no formato `gcp_billing_export_v1_…` ou `gcp_billing_export_resource_v1_…`.
-4. Anote o identificador completo, no formato `projeto.dataset.tabela`. Exemplo ilustrativo: `acme-billing.billing_export.gcp_billing_export_v1_012345_ABCDE1_234567`.
+2. Ative o export de **custo de uso** no modo **detalhado** (ou padrão com recursos: `gcp_billing_export_resource_v1_…`). A tabela do Immuno Ops é essa, com as colunas de custo do Cloud Billing. Não use uma tabela no formato FOCUS.
+3. Escolha o projeto e o dataset. O Google cria uma tabela com nome no formato `gcp_billing_export_resource_v1_…`.
+4. Anote o identificador completo, no formato `projeto.dataset.tabela`. Exemplo ilustrativo: `acme-billing.billing_export.gcp_billing_export_resource_v1_012345_ABCDE1_234567`.
 
 A primeira linha do export pode levar algumas horas para aparecer. O teste de conexão aceita a tabela vazia; o status só fica em dia quando chega custo recente.
 
@@ -293,6 +293,17 @@ bq add-iam-policy-binding --member="serviceAccount:aegis-api@immunoops-prod.iam.
 
 Rode os dois num terminal autenticado no Google Cloud, com permissão para alterar o IAM desse dataset. No exemplo ilustrativo, `PROJETO:DATASET` é `acme-billing:billing_export`.
 
+#### Permissão para executar queries
+
+As contas de serviço também precisam submeter queries ao BigQuery no projeto de plataforma (`immunoops-prod`). Elas precisam do papel **BigQuery Job User** (`roles/bigquery.jobUser`) nesse projeto. Sem isso, o teste de conexão falha com `export_query_failed`.
+
+```
+gcloud projects add-iam-policy-binding immunoops-prod --member="serviceAccount:aegis-worker@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.jobUser" --condition=None
+gcloud projects add-iam-policy-binding immunoops-prod --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.jobUser" --condition=None
+```
+
+Rode os dois com uma conta que tenha permissão para alterar o IAM do projeto `immunoops-prod`.
+
 #### Se a organização bloqueia contas de fora
 
 Algumas organizações restringem quem pode receber papel no IAM (`iam.allowedPolicyMemberDomains`, “Domain restricted sharing”). O comando acima falha com a mensagem de que o membro não pertence a um cliente permitido.
@@ -313,7 +324,8 @@ Inclua o customer ID **C011tigzz** como exceção dessa política. A organizaç�
 | --- | --- |
 | Sem tabela | Informe `projeto.dataset.tabela` e salve. |
 | A organização bloqueia contas de fora | Inclua o customer ID C011tigzz e teste de novo. |
-| Não foi possível ler o export | Confira se os dois comandos `bq` rodaram no dataset certo e teste de novo. |
+| Não foi possível ler o export | Confira se os dois comandos `bq` rodaram no dataset certo, e se `roles/bigquery.jobUser` foi concedido no projeto immunoops-prod. Teste de novo. |
+| Custo chegou, mas logs mostram erro de permissão | Conceda `roles/logging.viewer` ao dataset ou ao projeto, e teste de novo. |
 
 **A última conta fica.** Enquanto houver VM ou Cloud Run, a última conta de nuvem não pode ser removida. Enquanto houver Cloud Run, a última conta GCP não pode ser removida. Cadastre a conta que continua valendo e só então remova a outra.
 
