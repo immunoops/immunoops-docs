@@ -50,6 +50,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 - Visão Geral: `app.immunoops.io/ui/`
 - Clusters: `app.immunoops.io/ui/clusters`
 - Cloud Run: `app.immunoops.io/ui/cloud-run`
+- Contas de nuvem: `app.immunoops.io/ui/infrastructure?tab=contas`
 - Instrumentação: `app.immunoops.io/ui/instrumentation`
 - Workloads: `app.immunoops.io/ui/workloads`
 - Kubernetes FinOps: `app.immunoops.io/ui/kubernetes-finops`
@@ -64,7 +65,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 3. [Tour de boas-vindas](#passo-03-tour-de-boas-vindas) — Começar
 4. [Conhecer o console](#passo-04-conhecer-o-console) — Começar
 5. [Conectar um cluster Kubernetes](#passo-05-conectar-um-cluster-kubernetes) — Conectar
-6. [Cloud Run e VMs](#passo-06-cloud-run-e-vms) — Conectar
+6. [Cloud Run e VMs](#passo-06-cloud-run-e-vms) — Conectar. Inclui [cadastrar a conta de nuvem e liberar o billing](#conta-de-nuvem).
 7. [Instrumentar a aplicação](#passo-07-instrumentar-a-aplicacao) — Conectar
 8. [Ler a Visão Geral](#passo-08-ler-a-visao-geral) — Operar
 9. [Investigar um incidente](#passo-09-investigar-um-incidente) — Operar
@@ -189,7 +190,9 @@ Comparado com os outros tipos de recurso: no cluster se instala um agent com Hel
 - Grupo: Conectar
 - Tempo: cerca de 3 minutos cada
 - Quem: quem usa esses serviços
-- Palavras-chave: Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário
+- Palavras-chave: Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, domínio, allowedPolicyMemberDomains
+
+VM e Cloud Run exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exige uma conta GCP. Sem essa conta, **Conectar VM** e **Conectar Cloud Run** abrem **Adicionar conta** em vez do formulário do recurso. O cadastro e as permissões estão em [Conta de nuvem](#conta-de-nuvem).
 
 | Tipo | O que instalar | O que chega |
 | --- | --- | --- |
@@ -209,6 +212,75 @@ Comparado com os outros tipos de recurso: no cluster se instala um agent com Hel
 3. Copie o comando em **Instalar o agente**, rode na VM e clique em **Concluir**.
 
 **Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente.
+
+### Conta de nuvem
+
+- Quem cadastra no Immuno Ops: Administrador
+- Quem libera no Google Cloud: alguém que altera o IAM do dataset de billing e, se a organização restringe domínios, a política do projeto
+- Onde: **Infraestrutura**, aba **Contas** (`app.immunoops.io/ui/infrastructure?tab=contas`)
+- Palavras-chave: conta de nuvem, adicionar conta, billing export, BigQuery, tabela, projeto.dataset.tabela, dataViewer, aegis-api, aegis-worker, customer ID, C011tigzz, domínio, Sem tabela, testar conexão
+
+A conta é somente leitura do billing. Nada é criado nem alterado nos recursos da nuvem. Uma conta GCP traz o custo do projeto. Uma conta AWS ou Azure conta como “ao menos uma conta” para uma VM, mas não substitui a conta GCP do Cloud Run.
+
+#### Ativar o export no Google Cloud
+
+1. No Google Cloud, abra a conta de faturamento que paga os projetos e vá em **Exportação de faturamento › Exportação para o BigQuery**.
+2. Ative o export de **custo de uso** (padrão ou detalhado). A tabela do Immuno Ops é essa, com as colunas de custo do Cloud Billing. Não use uma tabela no formato FOCUS.
+3. Escolha o projeto e o dataset. O Google cria uma tabela com nome no formato `gcp_billing_export_v1_…` ou `gcp_billing_export_resource_v1_…`.
+4. Anote o identificador completo, no formato `projeto.dataset.tabela`. Exemplo ilustrativo: `acme-billing.billing_export.gcp_billing_export_v1_012345_ABCDE1_234567`.
+
+A primeira linha do export pode levar algumas horas para aparecer. O teste de conexão aceita a tabela vazia; o status só fica em dia quando chega custo recente.
+
+#### Cadastrar no Immuno Ops
+
+1. Vá em **Infraestrutura**, aba **Contas**, e clique em **Adicionar conta**.
+2. Escolha **GCP**.
+3. Informe o **ID do projeto** e a **Tabela do billing export** (`projeto.dataset.tabela`). O nome é opcional.
+4. Clique em **Adicionar conta**.
+
+**Conta GCP antiga, sem tabela.** O cartão mostra **Sem tabela**. Abra a conta, informe a tabela e clique em **Salvar tabela**. A partir daí valem os mesmos comandos e o mesmo teste.
+
+#### Permissões no dataset
+
+No dataset do export, as duas contas de serviço do Immuno Ops precisam do papel **BigQuery Data Viewer** (`roles/bigquery.dataViewer`). É leitura. Não conceda papéis de edição, de administração do projeto nem de faturamento.
+
+| Conta de serviço | Papel | Onde |
+| --- | --- | --- |
+| `aegis-worker@immunoops-prod.iam.gserviceaccount.com` | `roles/bigquery.dataViewer` | dataset do export |
+| `aegis-api@immunoops-prod.iam.gserviceaccount.com` | `roles/bigquery.dataViewer` | dataset do export |
+
+Depois de salvar a tabela, a conta no console mostra os dois comandos já com o dataset preenchido. Copie de lá. A forma, com `PROJETO:DATASET` no lugar do dataset (os dois primeiros trechos de `projeto.dataset.tabela`, separados por `:`), é:
+
+```
+bq add-iam-policy-binding --member="serviceAccount:aegis-worker@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.dataViewer" PROJETO:DATASET
+bq add-iam-policy-binding --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.dataViewer" PROJETO:DATASET
+```
+
+Rode os dois num terminal autenticado no Google Cloud, com permissão para alterar o IAM desse dataset. No exemplo ilustrativo, `PROJETO:DATASET` é `acme-billing:billing_export`.
+
+#### Se a organização bloqueia contas de fora
+
+Algumas organizações restringem quem pode receber papel no IAM (`iam.allowedPolicyMemberDomains`, “Domain restricted sharing”). O comando acima falha com a mensagem de que o membro não pertence a um cliente permitido.
+
+Inclua o customer ID **C011tigzz** como exceção dessa política. A organização é **immunoops.io**, id **424787708642**. Faça a exceção só no projeto do billing, não na organização inteira.
+
+1. No Google Cloud, abra **IAM e administrador › Políticas da organização** no projeto do billing.
+2. Abra a restrição **Domain restricted sharing** (`constraints/iam.allowedPolicyMemberDomains`).
+3. Adicione **C011tigzz** aos valores permitidos, sem remover os que já existem.
+4. Salve e rode de novo os dois comandos `bq`.
+
+#### Testar
+
+1. Volte na conta, em **Infraestrutura › Contas**, e clique em **Testar conexão**.
+2. O teste lê uma linha da tabela. Sem erro de permissão, a conta fica pendente até chegar custo, ou em dia quando o custo recente aparece.
+
+| O que a tela diz | O que fazer |
+| --- | --- |
+| Sem tabela | Informe `projeto.dataset.tabela` e salve. |
+| A organização bloqueia contas de fora | Inclua o customer ID C011tigzz e teste de novo. |
+| Não foi possível ler o export | Confira se os dois comandos `bq` rodaram no dataset certo e teste de novo. |
+
+**A última conta fica.** Enquanto houver VM ou Cloud Run, a última conta de nuvem não pode ser removida. Enquanto houver Cloud Run, a última conta GCP não pode ser removida. Cadastre a conta que continua valendo e só então remova a outra.
 
 ## Passo 07 — Instrumentar a aplicação
 
@@ -277,7 +349,7 @@ O cluster tem uma nota. O FinOps Score vai de 0 a 100 e é calculado com os dado
 3. Veja o custo de CPU e memória, o desperdício e as opções de rightsizing.
 4. Use **Como ler estes dados** para saber de onde vem cada número e o que ainda não é coletado.
 
-**Mais de uma nuvem?** **Analisar › FOCUS Normalizer** mostra o billing das nuvens no mesmo formato (padrão FOCUS), para comparar SKUs lado a lado.
+**Mais de uma nuvem?** **Analisar › FOCUS Normalizer** mostra o billing das nuvens no mesmo formato (padrão FOCUS), para comparar SKUs lado a lado. O custo da conta GCP entra por aqui depois do export descrito em [Conta de nuvem](#conta-de-nuvem).
 
 ## Passo 11 — Convidar a equipe
 
@@ -350,7 +422,13 @@ O manual não lista preços, nomes de planos nem cotas. Para isso, use este flux
 ### Dados e acesso
 
 **Preciso dar acesso de escrita na minha conta de nuvem?**
-Não para visualização e FinOps Score: isso é leitura. O escopo nas contas de nuvem conectadas é de leitura por padrão.
+Não. A conta é somente leitura do billing. No GCP, o papel é **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) no dataset do export, para `aegis-worker@immunoops-prod.iam.gserviceaccount.com` e `aegis-api@immunoops-prod.iam.gserviceaccount.com`. O passo a passo está em [Conta de nuvem](#conta-de-nuvem).
+
+**A organização bloqueia a conta do Immuno Ops no IAM.**
+A política `iam.allowedPolicyMemberDomains` está recusando um membro de fora. Inclua o customer ID **C011tigzz** (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.
+
+**A conta GCP está “Sem tabela”.**
+Abra a conta, informe a tabela no formato `projeto.dataset.tabela` e clique em **Salvar tabela**. Sem essa tabela a conta não entra no billing.
 
 **Os números são reais?**
 Sim. Todo dado vem do cluster e da conta de nuvem. Quando ainda não há dado, a tela diz isso em vez de mostrar um número inventado.
