@@ -65,7 +65,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 3. [Tour de boas-vindas](#passo-03-tour-de-boas-vindas) — Começar
 4. [Conhecer o console](#passo-04-conhecer-o-console) — Começar
 5. [Conectar um cluster Kubernetes](#passo-05-conectar-um-cluster-kubernetes) — Conectar
-6. [Cloud Run e VMs](#passo-06-cloud-run-e-vms) — Conectar. Inclui [cadastrar a conta de nuvem e liberar o billing](#conta-de-nuvem).
+6. [Cloud Run e VMs](#passo-06-cloud-run-e-vms) — Conectar. Inclui [permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run) e [cadastrar a conta de nuvem e liberar o billing](#conta-de-nuvem).
 7. [Instrumentar a aplicação](#passo-07-instrumentar-a-aplicacao) — Conectar
 8. [Ler a Visão Geral](#passo-08-ler-a-visao-geral) — Operar
 9. [Investigar um incidente](#passo-09-investigar-um-incidente) — Operar
@@ -190,9 +190,9 @@ Comparado com os outros tipos de recurso: no cluster se instala um agent com Hel
 - Grupo: Conectar
 - Tempo: cerca de 3 minutos cada
 - Quem: quem usa esses serviços
-- Palavras-chave: Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, domínio, allowedPolicyMemberDomains
+- Palavras-chave: Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains
 
-VM e Cloud Run exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exige uma conta GCP. Sem essa conta, **Conectar VM** e **Conectar Cloud Run** abrem **Adicionar conta** em vez do formulário do recurso. O cadastro e as permissões estão em [Conta de nuvem](#conta-de-nuvem).
+VM e Cloud Run exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exige uma conta GCP. Sem essa conta, **Conectar VM** e **Conectar Cloud Run** abrem **Adicionar conta** em vez do formulário do recurso. O cadastro da conta está em [Conta de nuvem](#conta-de-nuvem). Os papéis no projeto do recurso estão em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
 
 | Tipo | O que instalar | O que chega |
 | --- | --- | --- |
@@ -211,7 +211,42 @@ VM e Cloud Run exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exig
 2. Informe nome, ID do projeto GCP e zona. Clique em **Registrar**.
 3. Copie o comando em **Instalar o agente**, rode na VM e clique em **Concluir**.
 
-**Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente.
+**Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente. O acesso para isso está em [Permissões da VM](#permissoes-da-vm).
+
+### Permissões de VM e Cloud Run
+
+Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é `aegis-api@immunoops-prod.iam.gserviceaccount.com`, a conta da API, que também lê o billing em [Conta de nuvem](#conta-de-nuvem). Se a organização bloqueia contas de fora, inclua o customer ID **C011tigzz** neste projeto também, do mesmo jeito descrito em [Se a organização bloqueia contas de fora](#se-a-organizacao-bloqueia-contas-de-fora).
+
+#### Permissões do Cloud Run
+
+O Immuno Ops lê o Cloud Monitoring e o Cloud Logging do projeto. Nada é instalado no container. No projeto GCP do serviço, essa conta precisa de dois papéis de leitura:
+
+| Papel | ID | Onde | Para quê |
+| --- | --- | --- | --- |
+| Monitoring Viewer | `roles/monitoring.viewer` | projeto do serviço | Requisições, latência, CPU, memória e instâncias |
+| Logs Viewer | `roles/logging.viewer` | projeto do serviço | Logs de stdout, stderr e requisições |
+
+```
+gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/monitoring.viewer"
+gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/logging.viewer"
+```
+
+Troque `PROJETO` pelo ID do projeto do serviço. No exemplo da tela, é `acme-prod-123`. Rode os dois num terminal autenticado no Google Cloud.
+
+Sem o papel de Monitoring, os números do serviço ficam sem leitura. Sem o papel de Logging, a tela de logs cita `roles/logging.viewer` e o projeto. Se a tela disser que a coleta de logs ainda não está habilitada para a conta, peça ao suporte para habilitá-la: o papel prepara o acesso, e a coleta só começa depois dessa liberação.
+
+#### Permissões da VM
+
+Métricas e logs da VM saem do agente instalado no host. Quem instala precisa rodar o comando na máquina, e a VM precisa de saída HTTPS para `app.immunoops.io`.
+
+A aba **Suspensão** liga e desliga a instância no Compute Engine. Para isso, a mesma conta precisa listar, iniciar e parar instâncias nesse projeto. Crie um papel só com essas três permissões e conceda à conta:
+
+```
+gcloud iam roles create immunoOpsVmPower --project=PROJETO --title="Immuno Ops VM power" --permissions=compute.instances.list,compute.instances.start,compute.instances.stop --stage=GA
+gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="projects/PROJETO/roles/immunoOpsVmPower"
+```
+
+Troque `PROJETO` pelo ID do projeto da VM. O papel cobre listar, iniciar e parar. A coleta do agente segue com a instalação no host.
 
 ### Conta de nuvem
 
@@ -417,12 +452,18 @@ O manual não lista preços, nomes de planos nem cotas. Para isso, use este flux
 
 - Grupo: Ajuda
 - Quando: antes de chamar o time
-- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais
+- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga
 
 ### Dados e acesso
 
 **Preciso dar acesso de escrita na minha conta de nuvem?**
-Não. A conta é somente leitura do billing. No GCP, o papel é **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) no dataset do export, para `aegis-worker@immunoops-prod.iam.gserviceaccount.com` e `aegis-api@immunoops-prod.iam.gserviceaccount.com`. O passo a passo está em [Conta de nuvem](#conta-de-nuvem).
+Não. A conta é somente leitura do billing. No GCP, o papel é **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) no dataset do export, para `aegis-worker@immunoops-prod.iam.gserviceaccount.com` e `aegis-api@immunoops-prod.iam.gserviceaccount.com`. O passo a passo está em [Conta de nuvem](#conta-de-nuvem). Métricas e logs do Cloud Run, e ligar ou desligar VM, usam outros papéis de leitura ou de energia da instância, em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
+
+**O Cloud Run não mostra métricas ou logs.**
+No projeto do serviço, conceda `roles/monitoring.viewer` e `roles/logging.viewer` para `aegis-api@immunoops-prod.iam.gserviceaccount.com`. Os comandos estão em [Permissões do Cloud Run](#permissoes-do-cloud-run). Se a tela disser que a coleta de logs ainda não está habilitada para a conta, fale com o suporte: o papel prepara o acesso, e a coleta começa depois dessa liberação.
+
+**A política de suspensão não desliga a VM.**
+A conta `aegis-api@immunoops-prod.iam.gserviceaccount.com` precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel `immunoOpsVmPower` estão em [Permissões da VM](#permissoes-da-vm). A VM também precisa do agente instalado e de saída HTTPS para `app.immunoops.io` para enviar métricas e logs.
 
 **A organização bloqueia a conta do Immuno Ops no IAM.**
 A política `iam.allowedPolicyMemberDomains` está recusando um membro de fora. Inclua o customer ID **C011tigzz** (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.
