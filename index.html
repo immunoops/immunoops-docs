@@ -688,7 +688,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Cloud Run e VMs</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Cloud Run e VMs</a></li><li><a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -883,13 +883,13 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     </table>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="cloudrun-vm" data-keywords="Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
+<section class="doc" id="cloudrun-vm" data-keywords="Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
   <div class="crumbs">Passo 06 · Conectar</div>
   <h1>Cloud Run e VMs</h1>
   <div class="meta"><span>~3 min cada</span><span>Se você usa esses serviços</span></div>
   
 
-    <div class="note"><i>i</i><div><b>Antes, a conta de nuvem</b><span>VM e Cloud Run exigem ao menos uma conta cadastrada. Cloud Run exige uma conta GCP. Sem ela, <span class="ui">Conectar VM</span> e <span class="ui">Conectar Cloud Run</span> abrem <span class="ui">Adicionar conta</span>. O cadastro e as permissões estão em <a href="#conta-nuvem">Conta de nuvem</a>.</span></div></div>
+    <div class="note"><i>i</i><div><b>Antes, a conta de nuvem</b><span>VM e Cloud Run exigem ao menos uma conta cadastrada. Cloud Run exige uma conta GCP. Sem ela, <span class="ui">Conectar VM</span> e <span class="ui">Conectar Cloud Run</span> abrem <span class="ui">Adicionar conta</span>. O cadastro da conta está em <a href="#conta-nuvem">Conta de nuvem</a>. Os papéis no projeto do recurso estão em <a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a>.</span></div></div>
     <div class="grid-3" style="margin:8px 0 8px">
       <div class="card compact"><span class="tag">Cluster</span><h4 style="font-size:17px">Instala um agent</h4><p>Helm no cluster. Traz workloads, métricas, logs e traces.</p></div>
       <div class="card compact"><span class="tag">Cloud Run</span><h4 style="font-size:17px">Nada para instalar</h4><p>As métricas vêm do Cloud Monitoring do seu projeto GCP.</p></div>
@@ -925,7 +925,31 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
         <figcaption>Administrar › Cloud Run · registro de serviço</figcaption>
       </figure>
     </div>
-    <div class="note tip"><i>✓</i><div><b>Economize com a aba Suspensão</b><span>Em <span class="ui">VMs › Suspensão</span>, use <span class="ui">Nova política</span> para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente.</span></div></div>
+    <div class="note tip"><i>✓</i><div><b>Economize com a aba Suspensão</b><span>Em <span class="ui">VMs › Suspensão</span>, use <span class="ui">Nova política</span> para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente. O acesso para isso está em <a href="#vm-permissoes">Permissões da VM</a>.</span></div></div>
+
+    <h3 id="permissoes-vm-cloudrun">Permissões de VM e Cloud Run</h3>
+    <p>Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>, a conta da API, que também lê o billing em <a href="#conta-nuvem">Conta de nuvem</a>. Se a organização bloqueia contas de fora, inclua o customer ID <strong>C011tigzz</strong> neste projeto também, do mesmo jeito descrito em <a href="#conta-nuvem-dominio">Se a organização bloqueia contas de fora</a>.</p>
+
+    <h3 id="cloudrun-permissoes">Cloud Run</h3>
+    <p>O Immuno Ops lê o Cloud Monitoring e o Cloud Logging do projeto. Nada é instalado no container. No projeto GCP do serviço, essa conta precisa de dois papéis de leitura:</p>
+    <table class="tbl">
+      <thead><tr><th>Papel</th><th>ID</th><th>Onde</th><th>Para quê</th></tr></thead>
+      <tbody>
+        <tr><td>Monitoring Viewer</td><td><code>roles/monitoring.viewer</code></td><td>projeto do serviço</td><td>Requisições, latência, CPU, memória e instâncias</td></tr>
+        <tr><td>Logs Viewer</td><td><code>roles/logging.viewer</code></td><td>projeto do serviço</td><td>Logs de stdout, stderr e requisições</td></tr>
+      </tbody>
+    </table>
+    <pre><code>gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/monitoring.viewer"
+gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/logging.viewer"</code></pre>
+    <p>Troque <code>PROJETO</code> pelo ID do projeto do serviço. No exemplo da tela, é <code>acme-prod-123</code>. Rode os dois num terminal autenticado no Google Cloud.</p>
+    <p>Sem o papel de Monitoring, os números do serviço ficam sem leitura. Sem o papel de Logging, a tela de logs cita <code>roles/logging.viewer</code> e o projeto. Se a tela disser que a coleta de logs ainda não está habilitada para a conta, peça ao suporte para habilitá-la: o papel prepara o acesso, e a coleta só começa depois dessa liberação.</p>
+
+    <h3 id="vm-permissoes">VM</h3>
+    <p>Métricas e logs da VM saem do agente instalado no host. Quem instala precisa rodar o comando na máquina, e a VM precisa de saída HTTPS para <code>app.immunoops.io</code>.</p>
+    <p>A aba <span class="ui">Suspensão</span> liga e desliga a instância no Compute Engine. Para isso, a mesma conta precisa listar, iniciar e parar instâncias nesse projeto. Crie um papel só com essas três permissões e conceda à conta:</p>
+    <pre><code>gcloud iam roles create immunoOpsVmPower --project=PROJETO --title="Immuno Ops VM power" --permissions=compute.instances.list,compute.instances.start,compute.instances.stop --stage=GA
+gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="projects/PROJETO/roles/immunoOpsVmPower"</code></pre>
+    <p>Troque <code>PROJETO</code> pelo ID do projeto da VM. O papel cobre listar, iniciar e parar. A coleta do agente segue com a instalação no host.</p>
 
     <h3 id="conta-nuvem">Conta de nuvem</h3>
     <p>A conta é somente leitura do billing. Nada é criado nem alterado nos recursos da nuvem. Quem cadastra no Immuno Ops é o <strong>Administrador</strong>. Quem libera no Google Cloud é alguém que altera o IAM do dataset de billing e, se a organização restringe domínios, a política do projeto.</p>
@@ -1222,14 +1246,16 @@ bq add-iam-policy-binding --member="serviceAccount:aegis-api@immunoops-prod.iam.
     </div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, billing export, BigQuery, dataViewer, domínio, Sem tabela, C011tigzz">
+<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, billing export, BigQuery, dataViewer, domínio, Sem tabela, C011tigzz, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga">
   <div class="crumbs">Ajuda</div>
   <h1>Perguntas frequentes</h1>
   <div class="meta"><span>Antes de chamar o time</span></div>
   
 
     <p class="faq-group">Dados e acesso</p>
-    <details class="faq"><summary>Preciso dar acesso de escrita na minha conta de nuvem?</summary><div>Não. A conta é somente leitura do billing. No GCP, o papel é <strong>BigQuery Data Viewer</strong> (<code>roles/bigquery.dataViewer</code>) no dataset do export, para <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code> e <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>. O passo a passo está em <a href="#conta-nuvem">Conta de nuvem</a>.</div></details>
+    <details class="faq"><summary>Preciso dar acesso de escrita na minha conta de nuvem?</summary><div>Não. A conta é somente leitura do billing. No GCP, o papel é <strong>BigQuery Data Viewer</strong> (<code>roles/bigquery.dataViewer</code>) no dataset do export, para <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code> e <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>. O passo a passo está em <a href="#conta-nuvem">Conta de nuvem</a>. Métricas e logs do Cloud Run, e ligar ou desligar VM, usam outros papéis de leitura ou de energia da instância, em <a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a>.</div></details>
+    <details class="faq"><summary>O Cloud Run não mostra métricas ou logs</summary><div>No projeto do serviço, conceda <code>roles/monitoring.viewer</code> e <code>roles/logging.viewer</code> para <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>. Os comandos estão em <a href="#cloudrun-permissoes">Cloud Run</a>. Se a tela disser que a coleta de logs ainda não está habilitada para a conta, fale com o suporte: o papel prepara o acesso, e a coleta começa depois dessa liberação.</div></details>
+    <details class="faq"><summary>A política de suspensão não desliga a VM</summary><div>A conta <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code> precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel <code>immunoOpsVmPower</code> estão em <a href="#vm-permissoes">VM</a>. A VM também precisa do agente instalado e de saída HTTPS para <code>app.immunoops.io</code> para enviar métricas e logs.</div></details>
     <details class="faq"><summary>A organização bloqueia a conta do Immuno Ops no IAM</summary><div>A política <code>iam.allowedPolicyMemberDomains</code> está recusando um membro de fora. Inclua o customer ID <strong>C011tigzz</strong> (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.</div></details>
     <details class="faq"><summary>A conta GCP está “Sem tabela”</summary><div>Abra a conta, informe a tabela no formato <code>projeto.dataset.tabela</code> e clique em <span class="ui">Salvar tabela</span>. Sem essa tabela a conta não entra no billing.</div></details>
     <details class="faq"><summary>Os números são reais?</summary><div>Sim. Todo dado vem do seu cluster e da sua conta de nuvem. Quando ainda não há dado, a tela diz isso em vez de mostrar um número inventado.</div></details>
