@@ -688,7 +688,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Cloud Run e VMs</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Cloud Run e VMs</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -883,12 +883,13 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     </table>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="cloudrun-vm" data-keywords="Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário">
+<section class="doc" id="cloudrun-vm" data-keywords="Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
   <div class="crumbs">Passo 06 · Conectar</div>
   <h1>Cloud Run e VMs</h1>
   <div class="meta"><span>~3 min cada</span><span>Se você usa esses serviços</span></div>
   
 
+    <div class="note"><i>i</i><div><b>Antes, a conta de nuvem</b><span>VM e Cloud Run exigem ao menos uma conta cadastrada. Cloud Run exige uma conta GCP. Sem ela, <span class="ui">Conectar VM</span> e <span class="ui">Conectar Cloud Run</span> abrem <span class="ui">Adicionar conta</span>. O cadastro e as permissões estão em <a href="#conta-nuvem">Conta de nuvem</a>.</span></div></div>
     <div class="grid-3" style="margin:8px 0 8px">
       <div class="card compact"><span class="tag">Cluster</span><h4 style="font-size:17px">Instala um agent</h4><p>Helm no cluster. Traz workloads, métricas, logs e traces.</p></div>
       <div class="card compact"><span class="tag">Cloud Run</span><h4 style="font-size:17px">Nada para instalar</h4><p>As métricas vêm do Cloud Monitoring do seu projeto GCP.</p></div>
@@ -925,6 +926,67 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
       </figure>
     </div>
     <div class="note tip"><i>✓</i><div><b>Economize com a aba Suspensão</b><span>Em <span class="ui">VMs › Suspensão</span>, use <span class="ui">Nova política</span> para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente.</span></div></div>
+
+    <h3 id="conta-nuvem">Conta de nuvem</h3>
+    <p>A conta é somente leitura do billing. Nada é criado nem alterado nos recursos da nuvem. Quem cadastra no Immuno Ops é o <strong>Administrador</strong>. Quem libera no Google Cloud é alguém que altera o IAM do dataset de billing e, se a organização restringe domínios, a política do projeto.</p>
+    <p>O caminho é <span class="ui">Infraestrutura</span>, aba <span class="ui">Contas</span> (<a href="https://app.immunoops.io/ui/infrastructure?tab=contas">app.immunoops.io/ui/infrastructure?tab=contas</a>). Uma conta GCP traz o custo do projeto. Uma conta AWS ou Azure conta como “ao menos uma conta” para uma VM, mas não substitui a conta GCP do Cloud Run.</p>
+
+    <h3 id="conta-nuvem-export">Ativar o export no Google Cloud</h3>
+    <ol class="steps">
+      <li>No Google Cloud, abra a conta de faturamento que paga os projetos e vá em <span class="ui">Exportação de faturamento › Exportação para o BigQuery</span>.</li>
+      <li>Ative o export de <strong>custo de uso</strong> (padrão ou detalhado). A tabela do Immuno Ops é essa, com as colunas de custo do Cloud Billing. Não use uma tabela no formato FOCUS.</li>
+      <li>Escolha o projeto e o dataset. O Google cria uma tabela com nome no formato <code>gcp_billing_export_v1_…</code> ou <code>gcp_billing_export_resource_v1_…</code>.</li>
+      <li>Anote o identificador completo, no formato <code>projeto.dataset.tabela</code>. Exemplo ilustrativo: <code>acme-billing.billing_export.gcp_billing_export_v1_012345_ABCDE1_234567</code>.</li>
+    </ol>
+    <div class="note"><i>i</i><div><b>A primeira linha demora</b><span>O export pode levar algumas horas para aparecer. O teste de conexão aceita a tabela vazia; o status só fica em dia quando chega custo recente.</span></div></div>
+
+    <h3 id="conta-nuvem-cadastro">Cadastrar no Immuno Ops</h3>
+    <ol class="steps">
+      <li>Vá em <span class="ui">Infraestrutura</span>, aba <span class="ui">Contas</span>, e clique em <span class="ui">Adicionar conta</span>.</li>
+      <li>Escolha <strong>GCP</strong>.</li>
+      <li>Informe o <strong>ID do projeto</strong> e a <strong>Tabela do billing export</strong> (<code>projeto.dataset.tabela</code>). O nome é opcional.</li>
+      <li>Clique em <span class="ui">Adicionar conta</span>.</li>
+    </ol>
+    <div class="note"><i>i</i><div><b>Conta GCP antiga, sem tabela</b><span>O cartão mostra <span class="ui">Sem tabela</span>. Abra a conta, informe a tabela e clique em <span class="ui">Salvar tabela</span>. A partir daí valem os mesmos comandos e o mesmo teste.</span></div></div>
+
+    <h3 id="conta-nuvem-permissoes">Permissões no dataset</h3>
+    <p>No dataset do export, as duas contas de serviço do Immuno Ops precisam do papel <strong>BigQuery Data Viewer</strong> (<code>roles/bigquery.dataViewer</code>). É leitura. Não conceda papéis de edição, de administração do projeto nem de faturamento.</p>
+    <table class="tbl">
+      <thead><tr><th>Conta de serviço</th><th>Papel</th><th>Onde</th></tr></thead>
+      <tbody>
+        <tr><td><code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code></td><td><code>roles/bigquery.dataViewer</code></td><td>dataset do export</td></tr>
+        <tr><td><code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code></td><td><code>roles/bigquery.dataViewer</code></td><td>dataset do export</td></tr>
+      </tbody>
+    </table>
+    <p>Depois de salvar a tabela, a conta no console mostra os dois comandos já com o dataset preenchido. Copie de lá. A forma, com <code>PROJETO:DATASET</code> no lugar do dataset (os dois primeiros trechos de <code>projeto.dataset.tabela</code>, separados por <code>:</code>), é:</p>
+    <pre><code>bq add-iam-policy-binding --member="serviceAccount:aegis-worker@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.dataViewer" PROJETO:DATASET
+bq add-iam-policy-binding --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.dataViewer" PROJETO:DATASET</code></pre>
+    <p>Rode os dois num terminal autenticado no Google Cloud, com permissão para alterar o IAM desse dataset. No exemplo ilustrativo, <code>PROJETO:DATASET</code> é <code>acme-billing:billing_export</code>.</p>
+
+    <h3 id="conta-nuvem-dominio">Se a organização bloqueia contas de fora</h3>
+    <p>Algumas organizações restringem quem pode receber papel no IAM (<code>iam.allowedPolicyMemberDomains</code>, “Domain restricted sharing”). O comando acima falha com a mensagem de que o membro não pertence a um cliente permitido.</p>
+    <p>Inclua o customer ID <strong>C011tigzz</strong> como exceção dessa política. A organização é <strong>immunoops.io</strong>, id <strong>424787708642</strong>. Faça a exceção só no projeto do billing, não na organização inteira.</p>
+    <ol class="steps">
+      <li>No Google Cloud, abra <span class="ui">IAM e administrador › Políticas da organização</span> no projeto do billing.</li>
+      <li>Abra a restrição <strong>Domain restricted sharing</strong> (<code>constraints/iam.allowedPolicyMemberDomains</code>).</li>
+      <li>Adicione <strong>C011tigzz</strong> aos valores permitidos, sem remover os que já existem.</li>
+      <li>Salve e rode de novo os dois comandos <code>bq</code>.</li>
+    </ol>
+
+    <h3 id="conta-nuvem-teste">Testar</h3>
+    <ol class="steps">
+      <li>Volte na conta, em <span class="ui">Infraestrutura › Contas</span>, e clique em <span class="ui">Testar conexão</span>.</li>
+      <li>O teste lê uma linha da tabela. Sem erro de permissão, a conta fica pendente até chegar custo, ou em dia quando o custo recente aparece.</li>
+    </ol>
+    <table class="tbl">
+      <thead><tr><th>O que a tela diz</th><th>O que fazer</th></tr></thead>
+      <tbody>
+        <tr><td>Sem tabela</td><td>Informe <code>projeto.dataset.tabela</code> e salve.</td></tr>
+        <tr><td>A organização bloqueia contas de fora</td><td>Inclua o customer ID C011tigzz e teste de novo.</td></tr>
+        <tr><td>Não foi possível ler o export</td><td>Confira se os dois comandos <code>bq</code> rodaram no dataset certo e teste de novo.</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn"><i>!</i><div><b>A última conta fica</b><span>Enquanto houver VM ou Cloud Run, a última conta de nuvem não pode ser removida. Enquanto houver Cloud Run, a última conta GCP não pode ser removida. Cadastre a conta que continua valendo e só então remova a outra.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="instrumentar" data-keywords="instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes">
@@ -1049,7 +1111,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
         <figcaption>Analisar › Kubernetes FinOps · números ilustrativos</figcaption>
       </figure>
     </div>
-    <div class="note tip"><i>✓</i><div><b>Mais de uma nuvem?</b><span><span class="ui">Analisar › FOCUS Normalizer</span> mostra o billing das suas nuvens no mesmo formato (padrão FOCUS), para comparar SKUs lado a lado.</span></div></div>
+    <div class="note tip"><i>✓</i><div><b>Mais de uma nuvem?</b><span><span class="ui">Analisar › FOCUS Normalizer</span> mostra o billing das suas nuvens no mesmo formato (padrão FOCUS), para comparar SKUs lado a lado. O custo da conta GCP entra por aqui depois do export descrito em <a href="#conta-nuvem">Conta de nuvem</a>.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="equipe" data-keywords="equipe, time, usuários, pessoas, convidar, convite, papel, papéis, permissões, administrador, admin, operador, leitura, viewer, suspender, remover, reenviar convite, RBAC">
@@ -1160,14 +1222,16 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     </div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais">
+<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, billing export, BigQuery, dataViewer, domínio, Sem tabela, C011tigzz">
   <div class="crumbs">Ajuda</div>
   <h1>Perguntas frequentes</h1>
   <div class="meta"><span>Antes de chamar o time</span></div>
   
 
     <p class="faq-group">Dados e acesso</p>
-    <details class="faq"><summary>Preciso dar acesso de escrita na minha conta de nuvem?</summary><div>Não para visualização e FinOps Score: isso é leitura. O escopo nas contas de nuvem conectadas é de leitura por padrão.</div></details>
+    <details class="faq"><summary>Preciso dar acesso de escrita na minha conta de nuvem?</summary><div>Não. A conta é somente leitura do billing. No GCP, o papel é <strong>BigQuery Data Viewer</strong> (<code>roles/bigquery.dataViewer</code>) no dataset do export, para <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code> e <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>. O passo a passo está em <a href="#conta-nuvem">Conta de nuvem</a>.</div></details>
+    <details class="faq"><summary>A organização bloqueia a conta do Immuno Ops no IAM</summary><div>A política <code>iam.allowedPolicyMemberDomains</code> está recusando um membro de fora. Inclua o customer ID <strong>C011tigzz</strong> (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.</div></details>
+    <details class="faq"><summary>A conta GCP está “Sem tabela”</summary><div>Abra a conta, informe a tabela no formato <code>projeto.dataset.tabela</code> e clique em <span class="ui">Salvar tabela</span>. Sem essa tabela a conta não entra no billing.</div></details>
     <details class="faq"><summary>Os números são reais?</summary><div>Sim. Todo dado vem do seu cluster e da sua conta de nuvem. Quando ainda não há dado, a tela diz isso em vez de mostrar um número inventado.</div></details>
     <p class="faq-group">Problemas comuns</p>
     <details class="faq"><summary>Meu cluster está como “Pendente” há muito tempo</summary><div>O agent nunca mandou dado. Confira se o comando <code>helm</code> terminou sem erro, se os pods do agent estão <code>Running</code> e se o cluster tem saída de rede para o Immuno Ops.</div></details>
