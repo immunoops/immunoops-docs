@@ -914,6 +914,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
           <li>Informe o <strong>nome</strong> da função, a <strong>região</strong> (por exemplo <code>us-east-1</code>) e o <strong>ID da conta AWS</strong>, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em <span class="ui">Registrar</span>.</li>
           <li>Instrumente a função com o SDK e chame <code>flush()</code> antes de retornar. Veja <a href="#lambda-sdk">Lambda com o SDK</a>.</li>
         </ol>
+        <div class="note"><i>i</i><div><b>Permissões na AWS: nenhuma</b><span>O SDK roda dentro da função e envia os dados para <code>app.immunoops.io</code> com a chave de conexão. O Immuno Ops não entra na sua conta AWS, então não há papel IAM nem AssumeRole a liberar. O registro em Serverless só identifica a função no console. A função precisa apenas de saída HTTPS para <code>app.immunoops.io</code>; numa VPC sem internet, isso exige um NAT Gateway. Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (<code>cloudwatch:GetMetricData</code> e leitura de logs). O custo da AWS usa outro papel, descrito em <a href="#conta-aws">Conta AWS</a>.</span></div></div>
         <p>A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como <strong>em breve</strong>.</p>
       </div>
       <figure class="shot">

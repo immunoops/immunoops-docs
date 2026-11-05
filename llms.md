@@ -216,6 +216,10 @@ VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exi
 3. Informe o nome da função, a região (por exemplo `us-east-1`) e o ID da conta AWS, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em **Registrar**.
 4. Instrumente a função com o SDK, como no [passo 07](#passo-07-instrumentar-a-aplicacao), e chame `flush()` antes de a função retornar. Veja [Lambda com o SDK](#lambda-com-o-sdk).
 
+**Permissões na AWS: nenhuma.** O SDK roda dentro da função e envia os dados para `app.immunoops.io` com a chave de conexão. O Immuno Ops não entra na sua conta AWS, então não há papel IAM nem AssumeRole a liberar. O registro em Serverless só identifica a função no console. A função precisa apenas de saída HTTPS para `app.immunoops.io`; numa VPC sem internet, isso exige um NAT Gateway.
+
+Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (`cloudwatch:GetMetricData` e leitura de logs). O custo da AWS usa outro papel, descrito em [Conta AWS](#conta-aws).
+
 A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como **em breve**.
 
 ### VMs
