@@ -65,7 +65,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 3. [Tour de boas-vindas](#passo-03-tour-de-boas-vindas) — Começar
 4. [Conhecer o console](#passo-04-conhecer-o-console) — Começar
 5. [Conectar um cluster Kubernetes](#passo-05-conectar-um-cluster-kubernetes) — Conectar
-6. [Serverless e VMs](#passo-06-serverless-e-vms) — Conectar. Inclui [permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run) e [cadastrar a conta de nuvem e liberar o billing](#conta-de-nuvem).
+6. [Serverless e VMs](#passo-06-serverless-e-vms) — Conectar. Inclui [conta AWS](#conta-aws), [permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run) e [cadastrar a conta de nuvem e liberar o billing](#conta-de-nuvem).
 7. [Instrumentar a aplicação](#passo-07-instrumentar-a-aplicacao) — Conectar
 8. [Ler a Visão Geral](#passo-08-ler-a-visao-geral) — Operar
 9. [Investigar um incidente](#passo-09-investigar-um-incidente) — Operar
@@ -216,6 +216,10 @@ VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exi
 3. Informe o nome da função, a região (por exemplo `us-east-1`) e o ID da conta AWS, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em **Registrar**.
 4. Instrumente a função com o SDK, como no [passo 07](#passo-07-instrumentar-a-aplicacao), e chame `flush()` antes de a função retornar. Veja [Lambda com o SDK](#lambda-com-o-sdk).
 
+**Permissões na AWS: nenhuma.** O SDK roda dentro da função e envia os dados para `app.immunoops.io` com a chave de conexão. O Immuno Ops não entra na sua conta AWS, então não há papel IAM nem AssumeRole a liberar. O registro em Serverless só identifica a função no console. A função precisa apenas de saída HTTPS para `app.immunoops.io`; numa VPC sem internet, isso exige um NAT Gateway.
+
+Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (`cloudwatch:GetMetricData` e leitura de logs). O custo da AWS usa outro papel, descrito em [Conta AWS](#conta-aws).
+
 A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como **em breve**.
 
 ### VMs
@@ -358,6 +362,79 @@ Inclua o customer ID **C011tigzz** como exceção dessa política. A organizaç�
 | Custo chegou, mas logs mostram erro de permissão | Conceda `roles/logging.viewer` ao dataset ou ao projeto, e teste de novo. |
 
 **A última conta fica.** Enquanto houver VM ou Cloud Run, a última conta de nuvem não pode ser removida. Enquanto houver Cloud Run, a última conta GCP não pode ser removida. Cadastre a conta que continua valendo e só então remova a outra.
+
+### Conta AWS
+
+- Quem cadastra no Immuno Ops: Administrador
+- Quem faz na AWS: alguém com permissão de IAM e de Billing na conta (no console, **Billing and Cost Management**)
+- Onde: **Infraestrutura**, aba **Contas** (`app.immunoops.io/ui/infrastructure?tab=contas`)
+- Palavras-chave: AWS, conta AWS, Amazon, EKS, EC2, Lambda, ID da conta, 12 dígitos, billing AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, conta pagadora, conta-membro
+
+A conta AWS é o que libera, para a sua organização, os recursos da AWS no Immuno Ops. O que já funciona e o que ainda vem:
+
+| O que | Situação |
+| --- | --- |
+| Cluster EKS | Disponível. Agent via Helm, como no [passo 05](#passo-05-conectar-um-cluster-kubernetes). |
+| VM EC2 | Disponível. O agente detecta conta, região e tipo de instância ([VMs](#vms)). |
+| Lambda | Disponível pelo SDK ([Serverless: Lambda](#serverless-lambda-aws)). Exige a conta AWS cadastrada. |
+| Custo da AWS (billing) | **Em breve.** Dá para preparar o export agora, e o histórico começa a contar a partir daí. |
+
+#### Passo 1 — Descobrir o ID da conta
+
+No console da AWS, clique no nome da conta no canto superior direito e copie o **Account ID**, com 12 dígitos. Pelo terminal:
+
+```
+aws sts get-caller-identity --query Account --output text
+```
+
+#### Passo 2 — Cadastrar no Immuno Ops
+
+1. Vá em **Infraestrutura**, aba **Contas**, e clique em **Adicionar conta**.
+2. Escolha **AWS**.
+3. Informe o **ID da conta (12 dígitos)**. O nome é opcional.
+4. Clique em **Adicionar conta**.
+
+A conta aparece como pendente: o custo da AWS ainda não é lido. Isso não impede EKS, EC2 e Lambda.
+
+#### Passo 3 — Conectar o que roda nessa conta
+
+- **EKS:** **Infraestrutura › Clusters › Conectar cluster**, escolha **AWS** e rode o comando `helm` no cluster ([passo 05](#passo-05-conectar-um-cluster-kubernetes)).
+- **EC2:** **Infraestrutura › VMs › Conectar VM**, dê um nome e rode o comando na instância. Com o agente em Docker, ajuste o hop limit do IMDSv2 para 2 ([VMs](#vms)).
+- **Lambda:** **Infraestrutura › Serverless › Conectar serviço Serverless**, provedor **AWS**, e instrumente a função com o SDK ([Lambda com o SDK](#lambda-com-o-sdk)).
+
+Nenhum desses passos dá ao Immuno Ops acesso à sua conta AWS: os dados saem do agente ou do SDK que você instala.
+
+#### Passo 4 — Preparar o billing (opcional, recomendado)
+
+O custo da AWS vai ser lido de um **export de faturamento no formato FOCUS** que você cria na sua conta, num bucket seu. A AWS só gera esse export daqui para a frente: criar agora faz o histórico já estar lá quando a leitura for liberada. Nada é compartilhado com o Immuno Ops neste passo.
+
+Rode num terminal autenticado na conta, trocando `CONTA` pelo ID de 12 dígitos:
+
+```
+CONTA=123456789012
+BUCKET=immunoops-focus-$CONTA
+
+aws s3api create-bucket --bucket $BUCKET --region us-east-1
+aws s3api put-public-access-block --bucket $BUCKET --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+
+aws s3api put-bucket-policy --bucket $BUCKET --policy '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["billingreports.amazonaws.com","bcm-data-exports.amazonaws.com"]},"Action":["s3:PutObject","s3:GetBucketPolicy"],"Resource":["arn:aws:s3:::'$BUCKET'","arn:aws:s3:::'$BUCKET'/*"],"Condition":{"StringLike":{"aws:SourceAccount":"'$CONTA'"}}}]}'
+```
+
+Depois crie o export no console da AWS:
+
+1. Abra **Billing and Cost Management › Data Exports** e clique em **Create**.
+2. Escolha **FOCUS 1.2 with AWS columns** e o nome `immunoops-focus`.
+3. Em **Data export delivery options**, formato **Parquet**, atualização diária e **Overwrite existing data export file**.
+4. Em **Data export storage settings**, o bucket `immunoops-focus-CONTA` e o prefixo `focus`.
+5. Clique em **Create**. O primeiro arquivo pode levar até 24 horas.
+
+Use exatamente essa política do bucket. Uma variação com `aws:SourceArn`, que aparece em exemplos da AWS, faz a criação do export falhar com `S3 bucket permission validation failed`.
+
+**Conta dentro de uma AWS Organization.** Uma conta-membro pode criar o próprio export, com o custo só dela. Para várias contas de uma vez, o export vai na conta pagadora (management); a seleção de contas por organização no Immuno Ops ainda não está disponível.
+
+#### Quando a leitura do billing for liberada
+
+O Immuno Ops vai pedir um papel IAM somente leitura nesse bucket, criado por um modelo do CloudFormation gerado pelo console. O papel não usa chave de acesso: ele confia na identidade do Immuno Ops no Google, com um valor exclusivo da sua organização, e só lê o prefixo `focus/`. Nenhuma outra organização consegue usar esse papel.
 
 ## Passo 07 — Instrumentar a aplicação
 

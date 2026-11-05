@@ -688,7 +688,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li><a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li><a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li><li><a href="#conta-aws">Conta AWS</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -883,7 +883,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     </table>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="cloudrun-vm" data-keywords="serverless, multicloud, AWS Lambda, Lambda, EC2, AWS, Azure, Azure VM, on-prem, IMDS, IMDSv2, conta AWS, assinatura Azure, Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
+<section class="doc" id="cloudrun-vm" data-keywords="conta AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, serverless, multicloud, AWS Lambda, Lambda, EC2, AWS, Azure, Azure VM, on-prem, IMDS, IMDSv2, conta AWS, assinatura Azure, Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
   <div class="crumbs">Passo 06 · Conectar</div>
   <h1>Serverless e VMs</h1>
   <div class="meta"><span>~3 min cada</span><span>Se você usa esses serviços</span></div>
@@ -914,6 +914,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
           <li>Informe o <strong>nome</strong> da função, a <strong>região</strong> (por exemplo <code>us-east-1</code>) e o <strong>ID da conta AWS</strong>, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em <span class="ui">Registrar</span>.</li>
           <li>Instrumente a função com o SDK e chame <code>flush()</code> antes de retornar. Veja <a href="#lambda-sdk">Lambda com o SDK</a>.</li>
         </ol>
+        <div class="note"><i>i</i><div><b>Permissões na AWS: nenhuma</b><span>O SDK roda dentro da função e envia os dados para <code>app.immunoops.io</code> com a chave de conexão. O Immuno Ops não entra na sua conta AWS, então não há papel IAM nem AssumeRole a liberar. O registro em Serverless só identifica a função no console. A função precisa apenas de saída HTTPS para <code>app.immunoops.io</code>; numa VPC sem internet, isso exige um NAT Gateway. Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (<code>cloudwatch:GetMetricData</code> e leitura de logs). O custo da AWS usa outro papel, descrito em <a href="#conta-aws">Conta AWS</a>.</span></div></div>
         <p>A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como <strong>em breve</strong>.</p>
       </div>
       <figure class="shot">
@@ -1038,6 +1039,58 @@ bq add-iam-policy-binding --member="serviceAccount:aegis-api@immunoops-prod.iam.
       </tbody>
     </table>
     <div class="note warn"><i>!</i><div><b>A última conta fica</b><span>Enquanto houver VM ou Cloud Run, a última conta de nuvem não pode ser removida. Enquanto houver Cloud Run, a última conta GCP não pode ser removida. Cadastre a conta que continua valendo e só então remova a outra.</span></div></div>
+
+    <h3 id="conta-aws">Conta AWS</h3>
+    <p>A conta AWS libera, para a sua organização, os recursos da AWS no Immuno Ops. Quem cadastra é um Administrador; na AWS, alguém com permissão de IAM e de Billing na conta.</p>
+    <table class="tbl">
+      <thead><tr><th>O que</th><th>Situação</th></tr></thead>
+      <tbody>
+        <tr><td>Cluster EKS</td><td>Disponível. Agent via Helm, como no <a href="#cluster">passo 05</a>.</td></tr>
+        <tr><td>VM EC2</td><td>Disponível. O agente detecta conta, região e tipo de instância (<a href="#cloudrun-vm--2">VMs</a>).</td></tr>
+        <tr><td>Lambda</td><td>Disponível pelo SDK (<a href="#serverless-lambda">Serverless: Lambda</a>). Exige a conta AWS cadastrada.</td></tr>
+        <tr><td>Custo da AWS (billing)</td><td><strong>Em breve.</strong> Dá para preparar o export agora, e o histórico começa a contar a partir daí.</td></tr>
+      </tbody>
+    </table>
+    <h4>Passo 1 — Descobrir o ID da conta</h4>
+    <p>No console da AWS, clique no nome da conta no canto superior direito e copie o <strong>Account ID</strong>, com 12 dígitos. Pelo terminal:</p>
+    <pre><code>aws sts get-caller-identity --query Account --output text</code></pre>
+    <h4>Passo 2 — Cadastrar no Immuno Ops</h4>
+    <ol class="steps">
+      <li>Vá em <span class="ui">Infraestrutura</span>, aba <span class="ui">Contas</span>, e clique em <span class="ui">Adicionar conta</span>.</li>
+      <li>Escolha <strong>AWS</strong>.</li>
+      <li>Informe o <strong>ID da conta (12 dígitos)</strong>. O nome é opcional.</li>
+      <li>Clique em <span class="ui">Adicionar conta</span>.</li>
+    </ol>
+    <p>A conta aparece como pendente: o custo da AWS ainda não é lido. Isso não impede EKS, EC2 e Lambda.</p>
+    <h4>Passo 3 — Conectar o que roda nessa conta</h4>
+    <ul>
+      <li><strong>EKS:</strong> <span class="ui">Infraestrutura › Clusters › Conectar cluster</span>, escolha <strong>AWS</strong> e rode o comando <code>helm</code> no cluster (<a href="#cluster">passo 05</a>).</li>
+      <li><strong>EC2:</strong> <span class="ui">Infraestrutura › VMs › Conectar VM</span>, dê um nome e rode o comando na instância. Com o agente em Docker, ajuste o hop limit do IMDSv2 para 2 (<a href="#cloudrun-vm--2">VMs</a>).</li>
+      <li><strong>Lambda:</strong> <span class="ui">Infraestrutura › Serverless › Conectar serviço Serverless</span>, provedor <strong>AWS</strong>, e instrumente a função com o SDK (<a href="#lambda-sdk">Lambda com o SDK</a>).</li>
+    </ul>
+    <p>Nenhum desses passos dá ao Immuno Ops acesso à sua conta AWS: os dados saem do agente ou do SDK que você instala.</p>
+    <h4>Passo 4 — Preparar o billing (opcional, recomendado)</h4>
+    <p>O custo da AWS vai ser lido de um <strong>export de faturamento no formato FOCUS</strong> que você cria na sua conta, num bucket seu. A AWS só gera esse export daqui para a frente: criar agora faz o histórico já estar lá quando a leitura for liberada. Nada é compartilhado com o Immuno Ops neste passo.</p>
+    <p>Rode num terminal autenticado na conta, trocando <code>CONTA</code> pelo ID de 12 dígitos:</p>
+    <pre><code>CONTA=123456789012
+BUCKET=immunoops-focus-$CONTA
+
+aws s3api create-bucket --bucket $BUCKET --region us-east-1
+aws s3api put-public-access-block --bucket $BUCKET --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+
+aws s3api put-bucket-policy --bucket $BUCKET --policy '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["billingreports.amazonaws.com","bcm-data-exports.amazonaws.com"]},"Action":["s3:PutObject","s3:GetBucketPolicy"],"Resource":["arn:aws:s3:::'$BUCKET'","arn:aws:s3:::'$BUCKET'/*"],"Condition":{"StringLike":{"aws:SourceAccount":"'$CONTA'"}}}]}'</code></pre>
+    <p>Depois crie o export no console da AWS:</p>
+    <ol class="steps">
+      <li>Abra <span class="ui">Billing and Cost Management › Data Exports</span> e clique em <span class="ui">Create</span>.</li>
+      <li>Escolha <strong>FOCUS 1.2 with AWS columns</strong> e o nome <code>immunoops-focus</code>.</li>
+      <li>Em <strong>Data export delivery options</strong>, formato <strong>Parquet</strong>, atualização diária e <strong>Overwrite existing data export file</strong>.</li>
+      <li>Em <strong>Data export storage settings</strong>, o bucket <code>immunoops-focus-CONTA</code> e o prefixo <code>focus</code>.</li>
+      <li>Clique em <span class="ui">Create</span>. O primeiro arquivo pode levar até 24 horas.</li>
+    </ol>
+    <div class="note warn"><i>!</i><div><b>Use exatamente essa política do bucket</b><span>Uma variação com <code>aws:SourceArn</code>, que aparece em exemplos da AWS, faz a criação do export falhar com <code>S3 bucket permission validation failed</code>.</span></div></div>
+    <div class="note"><i>i</i><div><b>Conta dentro de uma AWS Organization</b><span>Uma conta-membro pode criar o próprio export, com o custo só dela. Para várias contas de uma vez, o export vai na conta pagadora (management); a seleção de contas por organização no Immuno Ops ainda não está disponível.</span></div></div>
+    <h4>Quando a leitura do billing for liberada</h4>
+    <p>O Immuno Ops vai pedir um papel IAM somente leitura nesse bucket, criado por um modelo do CloudFormation gerado pelo console. O papel não usa chave de acesso: ele confia na identidade do Immuno Ops no Google, com um valor exclusivo da sua organização, e só lê o prefixo <code>focus/</code>. Nenhuma outra organização consegue usar esse papel.</p>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="instrumentar" data-keywords="instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes">
