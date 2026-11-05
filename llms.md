@@ -65,7 +65,9 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 3. [Tour de boas-vindas](#passo-03-tour-de-boas-vindas) — Começar
 4. [Conhecer o console](#passo-04-conhecer-o-console) — Começar
 5. [Conectar um cluster Kubernetes](#passo-05-conectar-um-cluster-kubernetes) — Conectar
-6. [Serverless e VMs](#passo-06-serverless-e-vms) — Conectar. Inclui [conta AWS](#conta-aws), [permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run) e [cadastrar a conta de nuvem e liberar o billing](#conta-de-nuvem).
+6. [Serverless e VMs](#passo-06-serverless-e-vms) — Conectar.
+   - GCP: [permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run) e [conta de nuvem](#conta-de-nuvem).
+   - AWS: [conta AWS](#conta-aws) e [permissões no papel de leitura](#permissoes-no-papel-de-leitura).
 7. [Instrumentar a aplicação](#passo-07-instrumentar-a-aplicacao) — Conectar
 8. [Ler a Visão Geral](#passo-08-ler-a-visao-geral) — Operar
 9. [Investigar um incidente](#passo-09-investigar-um-incidente) — Operar
@@ -190,7 +192,7 @@ Comparado com os outros tipos de recurso: no cluster se instala um agent com Hel
 - Grupo: Conectar
 - Tempo: cerca de 3 minutos cada
 - Quem: quem usa esses serviços
-- Palavras-chave: serverless, Cloud Run, AWS Lambda, Lambda, função, VM, máquina virtual, EC2, Compute Engine, GCE, Azure VM, on-prem, multicloud, GCP, AWS, Azure, Google Cloud, projeto GCP, conta AWS, assinatura Azure, região, zona, docker, agente na VM, IMDS, IMDSv2, metadados, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains
+- Palavras-chave: serverless, Cloud Run, AWS Lambda, Lambda, função, VM, máquina virtual, EC2, Compute Engine, GCE, Azure VM, on-prem, multicloud, GCP, AWS, Azure, Google Cloud, projeto GCP, conta AWS, assinatura Azure, região, zona, docker, agente na VM, IMDS, IMDSv2, metadados, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, s3:ListBucket, s3:GetObject, immunoops-billing-reader, AssumeRoleWithWebIdentity, oaud
 
 O Immuno Ops é multicloud: VMs em GCP, AWS, Azure ou on-prem, e serviços serverless no GCP (Cloud Run) e na AWS (Lambda), na mesma tela.
 
@@ -218,7 +220,7 @@ VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exi
 
 **Permissões na AWS: nenhuma.** O SDK roda dentro da função e envia os dados para `app.immunoops.io` com a chave de conexão. O Immuno Ops não entra na sua conta AWS, então não há papel IAM nem AssumeRole a liberar. O registro em Serverless só identifica a função no console. A função precisa apenas de saída HTTPS para `app.immunoops.io`; numa VPC sem internet, isso exige um NAT Gateway.
 
-Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (`cloudwatch:GetMetricData` e leitura de logs). O custo da AWS usa outro papel, descrito em [Conta AWS](#conta-aws).
+Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (`cloudwatch:GetMetricData` e leitura de logs). O custo da AWS usa outro papel, só de leitura do export, descrito em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura).
 
 A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como **em breve**.
 
@@ -368,7 +370,7 @@ Inclua o customer ID **C011tigzz** como exceção dessa política. A organizaç�
 - Quem cadastra no Immuno Ops: Administrador
 - Quem faz na AWS: alguém com permissão de IAM e de Billing na conta (no console, **Billing and Cost Management**)
 - Onde: **Infraestrutura**, aba **Contas** (`app.immunoops.io/ui/infrastructure?tab=contas`)
-- Palavras-chave: AWS, conta AWS, Amazon, EKS, EC2, Lambda, ID da conta, 12 dígitos, billing AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, conta pagadora, conta-membro
+- Palavras-chave: AWS, conta AWS, Amazon, EKS, EC2, Lambda, ID da conta, 12 dígitos, billing AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, conta pagadora, conta-membro, s3:ListBucket, s3:GetObject, immunoops-billing-reader, AssumeRoleWithWebIdentity, oaud, chave de acesso
 
 A conta AWS é o que libera, para a sua organização, os recursos da AWS no Immuno Ops. O que já funciona e o que ainda vem:
 
@@ -432,9 +434,46 @@ Use exatamente essa política do bucket. Uma variação com `aws:SourceArn`, que
 
 **Conta dentro de uma AWS Organization.** Uma conta-membro pode criar o próprio export, com o custo só dela. Para várias contas de uma vez, o export vai na conta pagadora (management); a seleção de contas por organização no Immuno Ops ainda não está disponível.
 
-#### Quando a leitura do billing for liberada
+#### Permissões no papel de leitura
 
-O Immuno Ops vai pedir um papel IAM somente leitura nesse bucket, criado por um modelo do CloudFormation gerado pelo console. O papel não usa chave de acesso: ele confia na identidade do Immuno Ops no Google, com um valor exclusivo da sua organização, e só lê o prefixo `focus/`. Nenhuma outra organização consegue usar esse papel.
+Quem libera na AWS é alguém que altera o IAM da conta. O papel é somente leitura do export. Nada é criado nem alterado nos recursos da nuvem. Não crie usuário IAM e não gere chave de acesso.
+
+| Ação | Onde | Para quê |
+| --- | --- | --- |
+| `s3:ListBucket` | bucket do export, só o prefixo `focus/` | Listar os arquivos do export |
+| `s3:GetObject` | objetos `focus/*` nesse bucket | Ler o manifesto e os arquivos Parquet |
+
+A confiança do papel aponta para o Google (`accounts.google.com`), para a conta `aegis-worker@immunoops-prod.iam.gserviceaccount.com`. São três condições, todas obrigatórias:
+
+| Condição | Valor |
+| --- | --- |
+| `accounts.google.com:sub` | `101814243271068167435` |
+| `accounts.google.com:aud` | `101814243271068167435` |
+| `accounts.google.com:oaud` | `immunoops-tenant-` + id da organização |
+
+O número é o ID único dessa conta de serviço. A condição `oaud` é exclusiva da organização: com outra audiência, a AWS responde `AccessDenied`.
+
+Não conceda `s3:PutObject`, `s3:*`, `AdministratorAccess` nem papel de faturamento. Essas duas ações cobrem a leitura.
+
+Rode num terminal autenticado na conta. `CONTA` é o ID de 12 dígitos. `BUCKET` é o bucket do passo 4. Troque `AUDIENCIA` por `immunoops-tenant-` seguido do id da organização. A leitura do custo no console ainda está em breve, e esse id entra junto com ela; crie o papel quando o Immuno Ops informar a audiência.
+
+```
+CONTA=123456789012
+BUCKET=immunoops-focus-$CONTA
+AUDIENCIA=immunoops-tenant-ID_DA_ORGANIZACAO
+
+aws iam create-role --role-name immunoops-billing-reader --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Federated":"accounts.google.com"},"Action":"sts:AssumeRoleWithWebIdentity","Condition":{"StringEquals":{"accounts.google.com:sub":"101814243271068167435","accounts.google.com:aud":"101814243271068167435","accounts.google.com:oaud":"'$AUDIENCIA'"}}}]}'
+
+aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-billing-read --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::'$BUCKET'","Condition":{"StringLike":{"s3:prefix":["focus/","focus/*"]}}},{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::'$BUCKET'/focus/*"}]}'
+```
+
+O papel fica `arn:aws:iam::CONTA:role/immunoops-billing-reader`. Guarde esse ARN.
+
+| O que acontece | O que fazer |
+| --- | --- |
+| A criação do export falha com `S3 bucket permission validation failed` | A política do bucket tem `aws:SourceArn`. Use só `aws:SourceAccount`, como no passo 4. |
+| `AccessDenied` ao assumir o papel | Confira `sub`, `aud` e `oaud`. O `oaud` tem que ser o da sua organização. |
+| Pedido de chave de acesso ou de usuário IAM | Não crie. O acesso é só por esse papel. |
 
 ## Passo 07 — Instrumentar a aplicação
 
@@ -596,12 +635,12 @@ O manual não lista preços, nomes de planos nem cotas. Para isso, use este flux
 
 - Grupo: Ajuda
 - Quando: antes de chamar o time
-- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga
+- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso
 
 ### Dados e acesso
 
 **Preciso dar acesso de escrita na minha conta de nuvem?**
-Não. A conta é somente leitura do billing. No GCP, o papel é **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) no dataset do export, para `aegis-worker@immunoops-prod.iam.gserviceaccount.com` e `aegis-api@immunoops-prod.iam.gserviceaccount.com`. O passo a passo está em [Conta de nuvem](#conta-de-nuvem). Métricas e logs do Cloud Run, e ligar ou desligar VM, usam outros papéis de leitura ou de energia da instância, em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
+Não. A conta é somente leitura do billing. No GCP, o papel é **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) no dataset do export, para `aegis-worker@immunoops-prod.iam.gserviceaccount.com` e `aegis-api@immunoops-prod.iam.gserviceaccount.com`. O passo a passo está em [Conta de nuvem](#conta-de-nuvem). Na AWS, o papel `immunoops-billing-reader` só tem `s3:ListBucket` no prefixo `focus/` e `s3:GetObject` em `focus/*`, para a identidade do Google do Immuno Ops. Não há usuário IAM nem chave de acesso. O passo a passo está em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura). Lambda, EKS e EC2 não pedem papel na conta. Métricas e logs do Cloud Run, e ligar ou desligar VM, usam outros papéis de leitura ou de energia da instância, em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
 
 **O Cloud Run não mostra métricas ou logs.**
 No projeto do serviço, conceda `roles/monitoring.viewer` e `roles/logging.viewer` para `aegis-api@immunoops-prod.iam.gserviceaccount.com`. Os comandos estão em [Permissões do Cloud Run](#permissoes-do-cloud-run). Se a tela disser que a coleta de logs ainda não está habilitada para a conta, fale com o suporte: o papel prepara o acesso, e a coleta começa depois dessa liberação.

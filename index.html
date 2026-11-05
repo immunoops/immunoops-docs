@@ -119,6 +119,9 @@ a.mini:hover { border-color: rgba(0,255,65,.45); text-decoration: none; }
 .side li a { display: block; padding: 5px 10px; margin-left: -10px; border-left: 2px solid transparent; font-size: 14px; color: var(--text-2); }
 .side li a:hover { color: var(--text); text-decoration: none; background: var(--surface); }
 .side li a.on { color: var(--action); border-left-color: var(--action); background: var(--surface); font-weight: 700; }
+.side li.nest { margin: 10px 0 2px; }
+.side li.nest > span { display: block; padding: 4px 10px 2px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); }
+.side li.nest ul a { padding-left: 22px; }
 article { min-width: 0; padding: 40px 0 72px; max-width: 760px; }
 .crumbs { font-family: var(--mono); font-size: 11.5px; letter-spacing: .5px; color: var(--text-3); margin-bottom: 18px; }
 .crumbs a { color: var(--text-3); } .crumbs a:hover { color: var(--action); }
@@ -244,6 +247,9 @@ td code { white-space: nowrap; }
   .dh nav { display: none; }
   .side { position: static; transform: none; width: auto; max-height: none; padding: 24px 0 0; border-right: 0; border-bottom: 1px solid var(--line); background: transparent; }
   .side ul { display: flex; flex-wrap: wrap; gap: 2px 14px; }
+  .side li.nest, .side li.nest ul { display: contents; }
+  .side li.nest > span { display: none; }
+  .side li.nest ul a { padding: 4px 0; }
   .side li a { margin-left: 0; padding: 4px 0; border-left: 0; }
   .side li a.on { background: transparent; }
 }
@@ -565,6 +571,9 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
   .side .grp { display: none; }
   .side ul { display: flex; flex-wrap: nowrap; gap: 6px; }
   .side li { flex: none; }
+  .side li.nest, .side li.nest ul { display: contents; }
+  .side li.nest > span { display: none; }
+  .side li.nest ul a { padding: 6px 12px; }
   .side li a { white-space: nowrap; margin: 0; padding: 6px 12px; font-size: 13px; border: 1px solid var(--line-strong); border-radius: 999px; }
   .side li a.on { border-color: var(--action); background: rgba(0,255,65,.08); }
   .doc { padding-top: 40px; }
@@ -688,7 +697,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li><a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li><li><a href="#conta-aws">Conta AWS</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">Conta AWS</a></li><li><a href="#conta-aws-permissoes">Permissões no papel de leitura</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -883,7 +892,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     </table>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="cloudrun-vm" data-keywords="conta AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, serverless, multicloud, AWS Lambda, Lambda, EC2, AWS, Azure, Azure VM, on-prem, IMDS, IMDSv2, conta AWS, assinatura Azure, Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
+<section class="doc" id="cloudrun-vm" data-keywords="conta AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, s3:ListBucket, s3:GetObject, immunoops-billing-reader, AssumeRoleWithWebIdentity, oaud, chave de acesso, serverless, multicloud, AWS Lambda, Lambda, EC2, AWS, Azure, Azure VM, on-prem, IMDS, IMDSv2, conta AWS, assinatura Azure, Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
   <div class="crumbs">Passo 06 · Conectar</div>
   <h1>Serverless e VMs</h1>
   <div class="meta"><span>~3 min cada</span><span>Se você usa esses serviços</span></div>
@@ -914,7 +923,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
           <li>Informe o <strong>nome</strong> da função, a <strong>região</strong> (por exemplo <code>us-east-1</code>) e o <strong>ID da conta AWS</strong>, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em <span class="ui">Registrar</span>.</li>
           <li>Instrumente a função com o SDK e chame <code>flush()</code> antes de retornar. Veja <a href="#lambda-sdk">Lambda com o SDK</a>.</li>
         </ol>
-        <div class="note"><i>i</i><div><b>Permissões na AWS: nenhuma</b><span>O SDK roda dentro da função e envia os dados para <code>app.immunoops.io</code> com a chave de conexão. O Immuno Ops não entra na sua conta AWS, então não há papel IAM nem AssumeRole a liberar. O registro em Serverless só identifica a função no console. A função precisa apenas de saída HTTPS para <code>app.immunoops.io</code>; numa VPC sem internet, isso exige um NAT Gateway. Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (<code>cloudwatch:GetMetricData</code> e leitura de logs). O custo da AWS usa outro papel, descrito em <a href="#conta-aws">Conta AWS</a>.</span></div></div>
+        <div class="note"><i>i</i><div><b>Permissões na AWS: nenhuma</b><span>O SDK roda dentro da função e envia os dados para <code>app.immunoops.io</code> com a chave de conexão. O Immuno Ops não entra na sua conta AWS, então não há papel IAM nem AssumeRole a liberar. O registro em Serverless só identifica a função no console. A função precisa apenas de saída HTTPS para <code>app.immunoops.io</code>; numa VPC sem internet, isso exige um NAT Gateway. Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (<code>cloudwatch:GetMetricData</code> e leitura de logs). O custo da AWS usa outro papel, só de leitura do export, descrito em <a href="#conta-aws-permissoes">Permissões no papel de leitura</a>.</span></div></div>
         <p>A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como <strong>em breve</strong>.</p>
       </div>
       <figure class="shot">
@@ -1089,8 +1098,43 @@ aws s3api put-bucket-policy --bucket $BUCKET --policy '{"Version":"2012-10-17","
     </ol>
     <div class="note warn"><i>!</i><div><b>Use exatamente essa política do bucket</b><span>Uma variação com <code>aws:SourceArn</code>, que aparece em exemplos da AWS, faz a criação do export falhar com <code>S3 bucket permission validation failed</code>.</span></div></div>
     <div class="note"><i>i</i><div><b>Conta dentro de uma AWS Organization</b><span>Uma conta-membro pode criar o próprio export, com o custo só dela. Para várias contas de uma vez, o export vai na conta pagadora (management); a seleção de contas por organização no Immuno Ops ainda não está disponível.</span></div></div>
-    <h4>Quando a leitura do billing for liberada</h4>
-    <p>O Immuno Ops vai pedir um papel IAM somente leitura nesse bucket, criado por um modelo do CloudFormation gerado pelo console. O papel não usa chave de acesso: ele confia na identidade do Immuno Ops no Google, com um valor exclusivo da sua organização, e só lê o prefixo <code>focus/</code>. Nenhuma outra organização consegue usar esse papel.</p>
+    <h4 id="conta-aws-permissoes">Permissões no papel de leitura</h4>
+    <p>Quem libera na AWS é alguém que altera o IAM da conta. O papel é somente leitura do export. Nada é criado nem alterado nos recursos da nuvem. Não crie usuário IAM e não gere chave de acesso.</p>
+    <table class="tbl">
+      <thead><tr><th>Ação</th><th>Onde</th><th>Para quê</th></tr></thead>
+      <tbody>
+        <tr><td><code>s3:ListBucket</code></td><td>bucket do export, só o prefixo <code>focus/</code></td><td>Listar os arquivos do export</td></tr>
+        <tr><td><code>s3:GetObject</code></td><td>objetos <code>focus/*</code> nesse bucket</td><td>Ler o manifesto e os arquivos Parquet</td></tr>
+      </tbody>
+    </table>
+    <p>A confiança do papel aponta para o Google (<code>accounts.google.com</code>), para a conta <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code>. São três condições, todas obrigatórias:</p>
+    <table class="tbl">
+      <thead><tr><th>Condição</th><th>Valor</th></tr></thead>
+      <tbody>
+        <tr><td><code>accounts.google.com:sub</code></td><td><code>101814243271068167435</code></td></tr>
+        <tr><td><code>accounts.google.com:aud</code></td><td><code>101814243271068167435</code></td></tr>
+        <tr><td><code>accounts.google.com:oaud</code></td><td><code>immunoops-tenant-</code> + id da organização</td></tr>
+      </tbody>
+    </table>
+    <p>O número é o ID único dessa conta de serviço. A condição <code>oaud</code> é exclusiva da organização: com outra audiência, a AWS responde <code>AccessDenied</code>.</p>
+    <p>Não conceda <code>s3:PutObject</code>, <code>s3:*</code>, <code>AdministratorAccess</code> nem papel de faturamento. Essas duas ações cobrem a leitura.</p>
+    <p>Rode num terminal autenticado na conta. <code>CONTA</code> é o ID de 12 dígitos. <code>BUCKET</code> é o bucket do passo 4. Troque <code>AUDIENCIA</code> por <code>immunoops-tenant-</code> seguido do id da organização. A leitura do custo no console ainda está em breve, e esse id entra junto com ela; crie o papel quando o Immuno Ops informar a audiência.</p>
+    <pre><code>CONTA=123456789012
+BUCKET=immunoops-focus-$CONTA
+AUDIENCIA=immunoops-tenant-ID_DA_ORGANIZACAO
+
+aws iam create-role --role-name immunoops-billing-reader --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Federated":"accounts.google.com"},"Action":"sts:AssumeRoleWithWebIdentity","Condition":{"StringEquals":{"accounts.google.com:sub":"101814243271068167435","accounts.google.com:aud":"101814243271068167435","accounts.google.com:oaud":"'$AUDIENCIA'"}}}]}'
+
+aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-billing-read --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::'$BUCKET'","Condition":{"StringLike":{"s3:prefix":["focus/","focus/*"]}}},{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::'$BUCKET'/focus/*"}]}'</code></pre>
+    <p>O papel fica <code>arn:aws:iam::CONTA:role/immunoops-billing-reader</code>. Guarde esse ARN.</p>
+    <table class="tbl">
+      <thead><tr><th>O que acontece</th><th>O que fazer</th></tr></thead>
+      <tbody>
+        <tr><td>A criação do export falha com <code>S3 bucket permission validation failed</code></td><td>A política do bucket tem <code>aws:SourceArn</code>. Use só <code>aws:SourceAccount</code>, como no passo 4.</td></tr>
+        <tr><td><code>AccessDenied</code> ao assumir o papel</td><td>Confira <code>sub</code>, <code>aud</code> e <code>oaud</code>. O <code>oaud</code> tem que ser o da sua organização.</td></tr>
+        <tr><td>Pedido de chave de acesso ou de usuário IAM</td><td>Não crie. O acesso é só por esse papel.</td></tr>
+      </tbody>
+    </table>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="instrumentar" data-keywords="instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes">
@@ -1345,14 +1389,14 @@ exports.handler = async (event) =&gt; {
     </div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, billing export, BigQuery, dataViewer, domínio, Sem tabela, C011tigzz, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga">
+<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, billing export, BigQuery, dataViewer, domínio, Sem tabela, C011tigzz, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso">
   <div class="crumbs">Ajuda</div>
   <h1>Perguntas frequentes</h1>
   <div class="meta"><span>Antes de chamar o time</span></div>
   
 
     <p class="faq-group">Dados e acesso</p>
-    <details class="faq"><summary>Preciso dar acesso de escrita na minha conta de nuvem?</summary><div>Não. A conta é somente leitura do billing. No GCP, o papel é <strong>BigQuery Data Viewer</strong> (<code>roles/bigquery.dataViewer</code>) no dataset do export, para <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code> e <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>. O passo a passo está em <a href="#conta-nuvem">Conta de nuvem</a>. Métricas e logs do Cloud Run, e ligar ou desligar VM, usam outros papéis de leitura ou de energia da instância, em <a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a>.</div></details>
+    <details class="faq"><summary>Preciso dar acesso de escrita na minha conta de nuvem?</summary><div>Não. A conta é somente leitura do billing. No GCP, o papel é <strong>BigQuery Data Viewer</strong> (<code>roles/bigquery.dataViewer</code>) no dataset do export, para <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code> e <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>. O passo a passo está em <a href="#conta-nuvem">Conta de nuvem</a>. Na AWS, o papel <code>immunoops-billing-reader</code> só tem <code>s3:ListBucket</code> no prefixo <code>focus/</code> e <code>s3:GetObject</code> em <code>focus/*</code>, para a identidade do Google do Immuno Ops. Não há usuário IAM nem chave de acesso. O passo a passo está em <a href="#conta-aws-permissoes">Permissões no papel de leitura</a>. Lambda, EKS e EC2 não pedem papel na conta. Métricas e logs do Cloud Run, e ligar ou desligar VM, usam outros papéis de leitura ou de energia da instância, em <a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a>.</div></details>
     <details class="faq"><summary>O Cloud Run não mostra métricas ou logs</summary><div>No projeto do serviço, conceda <code>roles/monitoring.viewer</code> e <code>roles/logging.viewer</code> para <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>. Os comandos estão em <a href="#cloudrun-permissoes">Cloud Run</a>. Se a tela disser que a coleta de logs ainda não está habilitada para a conta, fale com o suporte: o papel prepara o acesso, e a coleta começa depois dessa liberação.</div></details>
     <details class="faq"><summary>A política de suspensão não desliga a VM</summary><div>A conta <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code> precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel <code>immunoOpsVmPower</code> estão em <a href="#vm-permissoes">VM</a>. A VM também precisa do agente instalado e de saída HTTPS para <code>app.immunoops.io</code> para enviar métricas e logs.</div></details>
     <details class="faq"><summary>A organização bloqueia a conta do Immuno Ops no IAM</summary><div>A política <code>iam.allowedPolicyMemberDomains</code> está recusando um membro de fora. Inclua o customer ID <strong>C011tigzz</strong> (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.</div></details>
@@ -1478,22 +1522,35 @@ exports.handler = async (event) =&gt; {
     });
   });
 
-  /* Destaca no menu a seção que está na tela */
+  /* Destaca no menu o trecho que está na tela. Se o passo e um título de GCP ou AWS
+     caem juntos na faixa, fica o que vem por último no texto. */
   var side = document.querySelector('.side');
   var links = Array.prototype.slice.call(document.querySelectorAll('.side a'));
   if ('IntersectionObserver' in window) {
+    var visible = [];
+    function mark() {
+      var current = null;
+      visible.forEach(function (el) {
+        if (!current || (current.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)) current = el;
+      });
+      links.forEach(function (a) {
+        var on = !!current && a.getAttribute('href') === '#' + current.id;
+        a.classList.toggle('on', on);
+        if (on && side.scrollWidth > side.clientWidth) side.scrollTo({ left: a.offsetLeft - (side.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' });
+      });
+    }
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        links.forEach(function (a) {
-          var on = a.getAttribute('href') === '#' + e.target.id;
-          a.classList.toggle('on', on);
-          // * Na faixa que rola para o lado (tablet e celular), mantém o passo atual à vista:::
-          if (on && side.scrollWidth > side.clientWidth) side.scrollTo({ left: a.offsetLeft - (side.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' });
-        });
+        var i = visible.indexOf(e.target);
+        if (e.isIntersecting && i < 0) visible.push(e.target);
+        if (!e.isIntersecting && i >= 0) visible.splice(i, 1);
       });
+      mark();
     }, { rootMargin: '-15% 0px -75% 0px' });
-    document.querySelectorAll('section.doc').forEach(function (s) { io.observe(s); });
+    links.forEach(function (a) {
+      var el = document.getElementById((a.getAttribute('href') || '').slice(1));
+      if (el) io.observe(el);
+    });
   }
 })();
 </script>
