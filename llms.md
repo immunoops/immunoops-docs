@@ -245,7 +245,7 @@ Para ajustar o hop limit numa EC2 existente:
 aws ec2 modify-instance-metadata-options --instance-id ID_DA_INSTANCIA --http-tokens required --http-put-response-hop-limit 2
 ```
 
-**Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs no Compute Engine por horário, por exemplo desligar staging fora do expediente. O acesso está em [Permissões da VM](#permissoes-da-vm). Na EC2, listar, ligar e desligar ficam no papel do billing, em [Ligar e desligar a VM](#ligar-e-desligar-a-vm).
+**Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs por horário, no Compute Engine ou na EC2. No GCP, o acesso está em [Permissões da VM](#permissoes-da-vm). Na EC2, a nuvem da política é AWS e as ações estão em [Ligar e desligar a VM](#ligar-e-desligar-a-vm).
 
 ### Permissões de VM e Cloud Run
 
@@ -290,14 +290,15 @@ Quem libera na AWS altera o papel `immunoops-billing-reader`, o mesmo que o work
 | --- | --- | --- |
 | `cloudwatch:GetMetricData` | namespace `AWS/Lambda` | Invocações, p95 da duração e pico de execuções simultâneas |
 | `cloudwatch:ListMetrics` | namespace `AWS/Lambda` | Encontrar as métricas da função |
+| `logs:FilterLogEvents` | grupo `/aws/lambda/*` | Ler as linhas da função na aba de logs |
 
-Os logs da função não entram aqui. A leitura do export continua no mesmo papel, em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura).
+O worker lê o grupo `/aws/lambda/` seguido do nome da função. As linhas aparecem na aba de logs. A leitura do export continua no mesmo papel, em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura).
 
 ```
-aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-lambda-cloudwatch --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["cloudwatch:GetMetricData","cloudwatch:ListMetrics"],"Resource":"*","Condition":{"StringEquals":{"cloudwatch:namespace":"AWS/Lambda"}}}]}'
+aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-lambda-cloudwatch --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["cloudwatch:GetMetricData","cloudwatch:ListMetrics"],"Resource":"*","Condition":{"StringEquals":{"cloudwatch:namespace":"AWS/Lambda"}}},{"Effect":"Allow","Action":["logs:FilterLogEvents"],"Resource":["arn:aws:logs:*:*:log-group:/aws/lambda/*","arn:aws:logs:*:*:log-group:/aws/lambda/*:*"]}]}'
 ```
 
-Sem essas ações, a função fica cadastrada e os números do CloudWatch não chegam.
+Sem as ações de métrica, a função fica cadastrada e os números do CloudWatch não chegam. Sem `logs:FilterLogEvents`, a aba de logs fica sem as linhas da função.
 
 ### Ligar e desligar a VM
 
@@ -665,7 +666,7 @@ O manual não lista preços, nomes de planos nem cotas. Para isso, use este flux
 
 - Grupo: Ajuda
 - Quando: antes de chamar o time
-- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso, CloudWatch, cloudwatch:GetMetricData, ec2:StartInstances, ec2:StopInstances, Lambda sem métricas
+- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso, CloudWatch, cloudwatch:GetMetricData, logs:FilterLogEvents, ec2:StartInstances, ec2:StopInstances, Lambda sem métricas
 
 ### Dados e acesso
 
@@ -679,7 +680,7 @@ No projeto do serviço, conceda `roles/monitoring.viewer` e `roles/logging.viewe
 No GCP, a conta do worker `aegis-worker@immunoops-prod.iam.gserviceaccount.com` precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel `immunoOpsVmPower` estão em [Permissões da VM](#permissoes-da-vm). A VM também precisa do agente instalado e de saída HTTPS para `app.immunoops.io` para enviar métricas e logs. Na EC2, listar, ligar e desligar estão no papel `immunoops-billing-reader`, em [Ligar e desligar a VM](#ligar-e-desligar-a-vm).
 
 **A Lambda não mostra invocações, duração ou concorrência.**
-O worker lê isso no CloudWatch. No papel `immunoops-billing-reader`, conceda `cloudwatch:GetMetricData` e `cloudwatch:ListMetrics` no namespace `AWS/Lambda`. Os comandos estão em [CloudWatch da Lambda](#cloudwatch-da-lambda).
+O worker lê isso no CloudWatch. No papel `immunoops-billing-reader`, conceda `cloudwatch:GetMetricData` e `cloudwatch:ListMetrics` no namespace `AWS/Lambda`. Sem `logs:FilterLogEvents` no grupo `/aws/lambda/*`, a aba de logs fica sem as linhas da função. Os comandos estão em [CloudWatch da Lambda](#cloudwatch-da-lambda).
 
 **A organização bloqueia a conta do Immuno Ops no IAM.**
 A política `iam.allowedPolicyMemberDomains` está recusando um membro de fora. Inclua o customer ID **C011tigzz** (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.
