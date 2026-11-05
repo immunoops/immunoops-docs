@@ -66,8 +66,8 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 4. [Conhecer o console](#passo-04-conhecer-o-console) — Começar
 5. [Conectar um cluster Kubernetes](#passo-05-conectar-um-cluster-kubernetes) — Conectar
 6. [Serverless e VMs](#passo-06-serverless-e-vms) — Conectar.
-   - GCP: [permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run) e [conta de nuvem](#conta-de-nuvem).
-   - AWS: [conta AWS](#conta-aws) e [permissões no papel de leitura](#permissoes-no-papel-de-leitura).
+   - GCP: [GCP · conta](#conta-de-nuvem), [GCP · Cloud Run](#permissoes-do-cloud-run) e [GCP · ligar e desligar a VM](#permissoes-da-vm).
+   - AWS: [AWS · conta](#conta-aws), [AWS · permissões do billing](#permissoes-no-papel-de-leitura), [AWS · CloudWatch da Lambda](#cloudwatch-da-lambda) e [AWS · ligar e desligar a VM](#ligar-e-desligar-a-vm).
 7. [Instrumentar a aplicação](#passo-07-instrumentar-a-aplicacao) — Conectar
 8. [Ler a Visão Geral](#passo-08-ler-a-visao-geral) — Operar
 9. [Investigar um incidente](#passo-09-investigar-um-incidente) — Operar
@@ -218,11 +218,9 @@ VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exi
 3. Informe o nome da função, a região (por exemplo `us-east-1`) e o ID da conta AWS, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em **Registrar**.
 4. Instrumente a função com o SDK, como no [passo 07](#passo-07-instrumentar-a-aplicacao), e chame `flush()` antes de a função retornar. Veja [Lambda com o SDK](#lambda-com-o-sdk).
 
-**Permissões na AWS: nenhuma.** O SDK roda dentro da função e envia os dados para `app.immunoops.io` com a chave de conexão. O Immuno Ops não entra na sua conta AWS, então não há papel IAM nem AssumeRole a liberar. O registro em Serverless só identifica a função no console. A função precisa apenas de saída HTTPS para `app.immunoops.io`; numa VPC sem internet, isso exige um NAT Gateway.
+O SDK, se a função o usar, envia os dados para `app.immunoops.io` com a chave de conexão e não pede papel na função. Numa VPC sem internet, a função precisa de um NAT Gateway para essa saída.
 
-Quando a leitura automática do CloudWatch chegar, o agente do cluster EKS na sua conta vai precisar de leitura do CloudWatch (`cloudwatch:GetMetricData` e leitura de logs). O custo da AWS usa outro papel, só de leitura do export, descrito em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura).
-
-A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como **em breve**.
+As métricas da função (invocações, duração e execuções simultâneas) vêm do CloudWatch, lidas pelo worker com o papel `immunoops-billing-reader`. As ações estão em [CloudWatch da Lambda](#cloudwatch-da-lambda). Os logs da função ainda não são coletados. O custo da AWS usa o mesmo papel, em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura). Azure Functions aparece como **em breve**.
 
 ### VMs
 
@@ -247,15 +245,15 @@ Para ajustar o hop limit numa EC2 existente:
 aws ec2 modify-instance-metadata-options --instance-id ID_DA_INSTANCIA --http-tokens required --http-put-response-hop-limit 2
 ```
 
-**Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente. Hoje a suspensão funciona para VMs do GCP. O acesso para isso está em [Permissões da VM](#permissoes-da-vm).
+**Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs no Compute Engine por horário, por exemplo desligar staging fora do expediente. O acesso está em [Permissões da VM](#permissoes-da-vm). Na EC2, listar, ligar e desligar ficam no papel do billing, em [Ligar e desligar a VM](#ligar-e-desligar-a-vm).
 
 ### Permissões de VM e Cloud Run
 
-Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é `aegis-api@immunoops-prod.iam.gserviceaccount.com`, a conta da API, que também lê o billing em [Conta de nuvem](#conta-de-nuvem). Se a organização bloqueia contas de fora, inclua o customer ID **C011tigzz** neste projeto também, do mesmo jeito descrito em [Se a organização bloqueia contas de fora](#se-a-organizacao-bloqueia-contas-de-fora).
+Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é a do worker, `aegis-worker@immunoops-prod.iam.gserviceaccount.com`, a mesma do billing em [Conta de nuvem](#conta-de-nuvem). Se a organização bloqueia contas de fora, inclua o customer ID **C011tigzz** neste projeto também, do mesmo jeito descrito em [Se a organização bloqueia contas de fora](#se-a-organizacao-bloqueia-contas-de-fora).
 
 #### Permissões do Cloud Run
 
-O Immuno Ops lê o Cloud Monitoring e o Cloud Logging do projeto. Nada é instalado no container. No projeto GCP do serviço, essa conta precisa de dois papéis de leitura:
+O worker lê o Cloud Monitoring e o Cloud Logging do projeto. Nada é instalado no container. No projeto GCP do serviço, a conta do worker precisa de dois papéis de leitura:
 
 | Papel | ID | Onde | Para quê |
 | --- | --- | --- | --- |
@@ -263,8 +261,8 @@ O Immuno Ops lê o Cloud Monitoring e o Cloud Logging do projeto. Nada é instal
 | Logs Viewer | `roles/logging.viewer` | projeto do serviço | Logs de stdout, stderr e requisições |
 
 ```
-gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/monitoring.viewer"
-gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/logging.viewer"
+gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-worker@immunoops-prod.iam.gserviceaccount.com" --role="roles/monitoring.viewer"
+gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-worker@immunoops-prod.iam.gserviceaccount.com" --role="roles/logging.viewer"
 ```
 
 Troque `PROJETO` pelo ID do projeto do serviço. No exemplo da tela, é `acme-prod-123`. Rode os dois num terminal autenticado no Google Cloud.
@@ -275,21 +273,56 @@ Sem o papel de Monitoring, os números do serviço ficam sem leitura. Sem o pape
 
 Métricas e logs da VM saem do agente instalado no host. Quem instala precisa rodar o comando na máquina, e a VM precisa de saída HTTPS para `app.immunoops.io`.
 
-A aba **Suspensão** liga e desliga a instância no Compute Engine. Para isso, a mesma conta precisa listar, iniciar e parar instâncias nesse projeto. Crie um papel só com essas três permissões e conceda à conta:
+A aba **Suspensão** liga e desliga a instância no Compute Engine. Para isso, a conta do worker precisa listar, iniciar e parar instâncias nesse projeto. Crie um papel só com essas três permissões e conceda à conta:
 
 ```
 gcloud iam roles create immunoOpsVmPower --project=PROJETO --title="Immuno Ops VM power" --permissions=compute.instances.list,compute.instances.start,compute.instances.stop --stage=GA
-gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="projects/PROJETO/roles/immunoOpsVmPower"
+gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-worker@immunoops-prod.iam.gserviceaccount.com" --role="projects/PROJETO/roles/immunoOpsVmPower"
 ```
 
 Troque `PROJETO` pelo ID do projeto da VM. O papel cobre listar, iniciar e parar. A coleta do agente segue com a instalação no host.
+
+### CloudWatch da Lambda
+
+Quem libera na AWS altera o papel `immunoops-billing-reader`, o mesmo que o worker já assume para o billing. A função não precisa de cluster nem de EC2. Nada é instalado na função. O worker lê o CloudWatch.
+
+| Ação | Onde | Para quê |
+| --- | --- | --- |
+| `cloudwatch:GetMetricData` | namespace `AWS/Lambda` | Invocações, p95 da duração e pico de execuções simultâneas |
+| `cloudwatch:ListMetrics` | namespace `AWS/Lambda` | Encontrar as métricas da função |
+
+Os logs da função não entram aqui. A leitura do export continua no mesmo papel, em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura).
+
+```
+aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-lambda-cloudwatch --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["cloudwatch:GetMetricData","cloudwatch:ListMetrics"],"Resource":"*","Condition":{"StringEquals":{"cloudwatch:namespace":"AWS/Lambda"}}}]}'
+```
+
+Sem essas ações, a função fica cadastrada e os números do CloudWatch não chegam.
+
+### Ligar e desligar a VM
+
+Métricas e logs da EC2 saem do agente instalado no host. O worker liga e desliga a instância com o mesmo papel do billing. A conta não precisa de cluster.
+
+| Ação | Onde | Para quê |
+| --- | --- | --- |
+| `ec2:DescribeInstances` | conta | Listar a instância |
+| `ec2:StartInstances` | instâncias da conta | Ligar |
+| `ec2:StopInstances` | instâncias da conta | Desligar |
+
+No GCP, as três permissões equivalentes estão em [Permissões da VM](#permissoes-da-vm).
+
+```
+aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-vm-power --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"ec2:DescribeInstances","Resource":"*"},{"Effect":"Allow","Action":["ec2:StartInstances","ec2:StopInstances"],"Resource":"arn:aws:ec2:*:*:instance/*"}]}'
+```
+
+Sem `StartInstances` e `StopInstances`, o worker não liga nem desliga a EC2.
 
 ### Conta de nuvem
 
 - Quem cadastra no Immuno Ops: Administrador
 - Quem libera no Google Cloud: alguém que altera o IAM do dataset de billing e, se a organização restringe domínios, a política do projeto
 - Onde: **Infraestrutura**, aba **Contas** (`app.immunoops.io/ui/infrastructure?tab=contas`)
-- Palavras-chave: conta de nuvem, adicionar conta, billing export, BigQuery, tabela, projeto.dataset.tabela, dataViewer, aegis-api, aegis-worker, customer ID, C011tigzz, domínio, Sem tabela, testar conexão
+- Palavras-chave: conta de nuvem, adicionar conta, billing export, BigQuery, tabela, projeto.dataset.tabela, dataViewer, aegis-worker, customer ID, C011tigzz, domínio, Sem tabela, testar conexão
 
 A conta é somente leitura do billing. Nada é criado nem alterado nos recursos da nuvem. Uma conta GCP traz o custo do projeto. Uma conta AWS ou Azure conta como “ao menos uma conta” para uma VM, mas não substitui a conta GCP do Cloud Run.
 
@@ -313,32 +346,29 @@ A primeira linha do export pode levar algumas horas para aparecer. O teste de co
 
 #### Permissões no dataset
 
-No dataset do export, as duas contas de serviço do Immuno Ops precisam do papel **BigQuery Data Viewer** (`roles/bigquery.dataViewer`). É leitura. Não conceda papéis de edição, de administração do projeto nem de faturamento.
+No dataset do export, a conta do worker precisa do papel **BigQuery Data Viewer** (`roles/bigquery.dataViewer`). É leitura. Não conceda papéis de edição, de administração do projeto nem de faturamento.
 
 | Conta de serviço | Papel | Onde |
 | --- | --- | --- |
 | `aegis-worker@immunoops-prod.iam.gserviceaccount.com` | `roles/bigquery.dataViewer` | dataset do export |
-| `aegis-api@immunoops-prod.iam.gserviceaccount.com` | `roles/bigquery.dataViewer` | dataset do export |
 
-Depois de salvar a tabela, a conta no console mostra os dois comandos já com o dataset preenchido. Copie de lá. A forma, com `PROJETO:DATASET` no lugar do dataset (os dois primeiros trechos de `projeto.dataset.tabela`, separados por `:`), é:
+Depois de salvar a tabela, a conta no console mostra o comando já com o dataset preenchido. Copie de lá. A forma, com `PROJETO:DATASET` no lugar do dataset (os dois primeiros trechos de `projeto.dataset.tabela`, separados por `:`), é:
 
 ```
 bq add-iam-policy-binding --member="serviceAccount:aegis-worker@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.dataViewer" PROJETO:DATASET
-bq add-iam-policy-binding --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.dataViewer" PROJETO:DATASET
 ```
 
-Rode os dois num terminal autenticado no Google Cloud, com permissão para alterar o IAM desse dataset. No exemplo ilustrativo, `PROJETO:DATASET` é `acme-billing:billing_export`.
+Rode o comando num terminal autenticado no Google Cloud, com permissão para alterar o IAM desse dataset. No exemplo ilustrativo, `PROJETO:DATASET` é `acme-billing:billing_export`.
 
 #### Permissão para executar queries
 
-As contas de serviço também precisam submeter queries ao BigQuery no projeto de plataforma (`immunoops-prod`). Elas precisam do papel **BigQuery Job User** (`roles/bigquery.jobUser`) nesse projeto. Sem isso, o teste de conexão falha com `export_query_failed`.
+A conta do worker também precisa submeter queries ao BigQuery no projeto de plataforma (`immunoops-prod`). Ela precisa do papel **BigQuery Job User** (`roles/bigquery.jobUser`) nesse projeto. Sem isso, o teste de conexão falha com `export_query_failed`.
 
 ```
 gcloud projects add-iam-policy-binding immunoops-prod --member="serviceAccount:aegis-worker@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.jobUser" --condition=None
-gcloud projects add-iam-policy-binding immunoops-prod --member="serviceAccount:aegis-api@immunoops-prod.iam.gserviceaccount.com" --role="roles/bigquery.jobUser" --condition=None
 ```
 
-Rode os dois com uma conta que tenha permissão para alterar o IAM do projeto `immunoops-prod`.
+Rode o comando com uma conta que tenha permissão para alterar o IAM do projeto `immunoops-prod`.
 
 #### Se a organização bloqueia contas de fora
 
@@ -349,7 +379,7 @@ Inclua o customer ID **C011tigzz** como exceção dessa política. A organizaç�
 1. No Google Cloud, abra **IAM e administrador › Políticas da organização** no projeto do billing.
 2. Abra a restrição **Domain restricted sharing** (`constraints/iam.allowedPolicyMemberDomains`).
 3. Adicione **C011tigzz** aos valores permitidos, sem remover os que já existem.
-4. Salve e rode de novo os dois comandos `bq`.
+4. Salve e rode de novo o comando `bq`.
 
 #### Testar
 
@@ -360,7 +390,7 @@ Inclua o customer ID **C011tigzz** como exceção dessa política. A organizaç�
 | --- | --- |
 | Sem tabela | Informe `projeto.dataset.tabela` e salve. |
 | A organização bloqueia contas de fora | Inclua o customer ID C011tigzz e teste de novo. |
-| Não foi possível ler o export | Confira se os dois comandos `bq` rodaram no dataset certo, e se `roles/bigquery.jobUser` foi concedido no projeto immunoops-prod. Teste de novo. |
+| Não foi possível ler o export | Confira se o comando `bq` rodou no dataset certo, e se `roles/bigquery.jobUser` foi concedido no projeto immunoops-prod. Teste de novo. |
 | Custo chegou, mas logs mostram erro de permissão | Conceda `roles/logging.viewer` ao dataset ou ao projeto, e teste de novo. |
 
 **A última conta fica.** Enquanto houver VM ou Cloud Run, a última conta de nuvem não pode ser removida. Enquanto houver Cloud Run, a última conta GCP não pode ser removida. Cadastre a conta que continua valendo e só então remova a outra.
@@ -635,18 +665,21 @@ O manual não lista preços, nomes de planos nem cotas. Para isso, use este flux
 
 - Grupo: Ajuda
 - Quando: antes de chamar o time
-- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso
+- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso, CloudWatch, cloudwatch:GetMetricData, ec2:StartInstances, ec2:StopInstances, Lambda sem métricas
 
 ### Dados e acesso
 
 **Preciso dar acesso de escrita na minha conta de nuvem?**
-Não. A conta é somente leitura do billing. No GCP, o papel é **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) no dataset do export, para `aegis-worker@immunoops-prod.iam.gserviceaccount.com` e `aegis-api@immunoops-prod.iam.gserviceaccount.com`. O passo a passo está em [Conta de nuvem](#conta-de-nuvem). Na AWS, o papel `immunoops-billing-reader` só tem `s3:ListBucket` no prefixo `focus/` e `s3:GetObject` em `focus/*`, para a identidade do Google do Immuno Ops. Não há usuário IAM nem chave de acesso. O passo a passo está em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura). Lambda, EKS e EC2 não pedem papel na conta. Métricas e logs do Cloud Run, e ligar ou desligar VM, usam outros papéis de leitura ou de energia da instância, em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
+Não. A conta é somente leitura do billing. No GCP, o papel é **BigQuery Data Viewer** (`roles/bigquery.dataViewer`) no dataset do export, para `aegis-worker@immunoops-prod.iam.gserviceaccount.com`. O passo a passo está em [Conta de nuvem](#conta-de-nuvem). Na AWS, o papel `immunoops-billing-reader` só tem `s3:ListBucket` no prefixo `focus/` e `s3:GetObject` em `focus/*`, para a identidade do Google do Immuno Ops. Não há usuário IAM nem chave de acesso. O passo a passo está em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura). Métricas da Lambda usam leitura do CloudWatch no papel `immunoops-billing-reader`, em [CloudWatch da Lambda](#cloudwatch-da-lambda). Métricas e logs do Cloud Run, e ligar ou desligar VM no GCP, usam a conta do worker, em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run). Na EC2, listar, iniciar e parar estão no papel `immunoops-billing-reader`, em [Ligar e desligar a VM](#ligar-e-desligar-a-vm).
 
 **O Cloud Run não mostra métricas ou logs.**
-No projeto do serviço, conceda `roles/monitoring.viewer` e `roles/logging.viewer` para `aegis-api@immunoops-prod.iam.gserviceaccount.com`. Os comandos estão em [Permissões do Cloud Run](#permissoes-do-cloud-run). Se a tela disser que a coleta de logs ainda não está habilitada para a conta, fale com o suporte: o papel prepara o acesso, e a coleta começa depois dessa liberação.
+No projeto do serviço, conceda `roles/monitoring.viewer` e `roles/logging.viewer` para `aegis-worker@immunoops-prod.iam.gserviceaccount.com`. Os comandos estão em [Permissões do Cloud Run](#permissoes-do-cloud-run). Se a tela disser que a coleta de logs ainda não está habilitada para a conta, fale com o suporte: o papel prepara o acesso, e a coleta começa depois dessa liberação.
 
 **A política de suspensão não desliga a VM.**
-A conta `aegis-api@immunoops-prod.iam.gserviceaccount.com` precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel `immunoOpsVmPower` estão em [Permissões da VM](#permissoes-da-vm). A VM também precisa do agente instalado e de saída HTTPS para `app.immunoops.io` para enviar métricas e logs.
+No GCP, a conta do worker `aegis-worker@immunoops-prod.iam.gserviceaccount.com` precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel `immunoOpsVmPower` estão em [Permissões da VM](#permissoes-da-vm). A VM também precisa do agente instalado e de saída HTTPS para `app.immunoops.io` para enviar métricas e logs. Na EC2, listar, ligar e desligar estão no papel `immunoops-billing-reader`, em [Ligar e desligar a VM](#ligar-e-desligar-a-vm).
+
+**A Lambda não mostra invocações, duração ou concorrência.**
+O worker lê isso no CloudWatch. No papel `immunoops-billing-reader`, conceda `cloudwatch:GetMetricData` e `cloudwatch:ListMetrics` no namespace `AWS/Lambda`. Os comandos estão em [CloudWatch da Lambda](#cloudwatch-da-lambda).
 
 **A organização bloqueia a conta do Immuno Ops no IAM.**
 A política `iam.allowedPolicyMemberDomains` está recusando um membro de fora. Inclua o customer ID **C011tigzz** (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.
