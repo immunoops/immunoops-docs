@@ -673,7 +673,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
   <div class="grid-4">
       <a class="card" href="#investigar"><span class="tag">Operar · Investigar</span><h4>Confiabilidade & Incidentes</h4><p>Alertas consistentes entre todas as telas e correlação real de causa raiz.</p><span class="go">Passos 08 e 09 →</span></a>
       <a class="card" href="#custo"><span class="tag">Analisar</span><h4>FinOps & Custo</h4><p>Preço real de vCPU, RAM e SKUs de nuvem, e o FinOps Score do cluster.</p><span class="go">Passo 10 →</span></a>
-      <a class="card" href="#cluster"><span class="tag">Administrar</span><h4>Governança Multi-Cluster</h4><p>Clusters, VMs, Cloud Run e equipe administrados de um único lugar.</p><span class="go">Passos 05, 06 e 11 →</span></a>
+      <a class="card" href="#cluster"><span class="tag">Administrar</span><h4>Governança Multi-Cluster</h4><p>Clusters, VMs, Serverless e equipe administrados de um único lugar.</p><span class="go">Passos 05, 06 e 11 →</span></a>
       <a class="card" href="#instrumentar"><span class="tag">Investigar · Administrar</span><h4>Observabilidade Nativa</h4><p>Métricas, logs e traces sem depender do editor do Grafana.</p><span class="go">Passos 07 e 09 →</span></a>
     </div>
 </section>
@@ -688,7 +688,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Cloud Run e VMs</a></li><li><a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li><a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a></li><li><a href="#conta-nuvem">Conta de nuvem</a></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -831,7 +831,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
       <table class="tbl">
         <thead><tr><th>Grupo</th><th>Itens</th></tr></thead>
         <tbody>
-          <tr><td>Administrar</td><td>Clusters, VMs, Cloud Run, Instrumentação, Equipe e Empresa.</td></tr>
+          <tr><td>Administrar</td><td>Clusters, VMs, Serverless, Instrumentação, Equipe e Empresa.</td></tr>
           <tr><td>Investigar</td><td>Workloads, Alertas e Incidentes e Observabilidade, com Dashboards dentro de Observabilidade.</td></tr>
           <tr><td>Analisar</td><td>Kubernetes FinOps e FOCUS Normalizer.</td></tr>
           <tr><td>Operar</td><td>Visão Geral: status, alertas e clusters. É a tela que abre depois do login.</td></tr>
@@ -883,31 +883,38 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     </table>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="cloudrun-vm" data-keywords="Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
+<section class="doc" id="cloudrun-vm" data-keywords="serverless, multicloud, AWS Lambda, Lambda, EC2, AWS, Azure, Azure VM, on-prem, IMDS, IMDSv2, conta AWS, assinatura Azure, Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
   <div class="crumbs">Passo 06 · Conectar</div>
-  <h1>Cloud Run e VMs</h1>
+  <h1>Serverless e VMs</h1>
   <div class="meta"><span>~3 min cada</span><span>Se você usa esses serviços</span></div>
-  
+  <p>O Immuno Ops é multicloud: VMs em GCP, AWS, Azure ou on-prem, e serviços serverless no GCP (Cloud Run) e na AWS (Lambda), na mesma tela.</p>
 
-    <div class="note"><i>i</i><div><b>Antes, a conta de nuvem</b><span>VM e Cloud Run exigem ao menos uma conta cadastrada. Cloud Run exige uma conta GCP. Sem ela, <span class="ui">Conectar VM</span> e <span class="ui">Conectar Cloud Run</span> abrem <span class="ui">Adicionar conta</span>. O cadastro da conta está em <a href="#conta-nuvem">Conta de nuvem</a>. Os papéis no projeto do recurso estão em <a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a>.</span></div></div>
-    <div class="grid-3" style="margin:8px 0 8px">
-      <div class="card compact"><span class="tag">Cluster</span><h4 style="font-size:17px">Instala um agent</h4><p>Helm no cluster. Traz workloads, métricas, logs e traces.</p></div>
-      <div class="card compact"><span class="tag">Cloud Run</span><h4 style="font-size:17px">Nada para instalar</h4><p>As métricas vêm do Cloud Monitoring do seu projeto GCP.</p></div>
-      <div class="card compact"><span class="tag">VM</span><h4 style="font-size:17px">Agente no host</h4><p>Comando de instalação na VM do Compute Engine.</p></div>
-    </div>
+    <div class="note"><i>i</i><div><b>Antes, a conta de nuvem</b><span>VM e Serverless exigem ao menos uma conta cadastrada. Cloud Run exige uma conta GCP; Lambda exige uma conta AWS. Sem ela, <span class="ui">Conectar VM</span> e <span class="ui">Conectar serviço Serverless</span> abrem <span class="ui">Adicionar conta</span>. O cadastro da conta está em <a href="#conta-nuvem">Conta de nuvem</a>. Os papéis no projeto do recurso estão em <a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a>.</span></div></div>
+    <table class="tbl">
+      <thead><tr><th>Tipo</th><th>Nuvem</th><th>O que instalar</th><th>O que chega</th></tr></thead>
+      <tbody>
+        <tr><td>Cluster</td><td>GKE, EKS, AKS ou outro Kubernetes</td><td>Agent via Helm no cluster.</td><td>Workloads, métricas, logs e traces.</td></tr>
+        <tr><td>Cloud Run</td><td>GCP</td><td>Nada.</td><td>Métricas e logs do Cloud Monitoring e do Cloud Logging do projeto.</td></tr>
+        <tr><td>Lambda</td><td>AWS</td><td>O SDK na função (<a href="#instrumentar">passo 07</a>).</td><td>Métricas, logs e eventos que a função envia.</td></tr>
+        <tr><td>VM</td><td>GCP, AWS, Azure ou on-prem</td><td>Agente no host (container Docker ou binário).</td><td>CPU, memória, logs do host e dos containers, tipo de máquina e sistema.</td></tr>
+      </tbody>
+    </table>
     <div class="two" style="margin-top:32px">
       <div>
-        <h3 id="cloudrun-vm--1" style="margin-top:0">Cloud Run</h3>
+        <h3 id="cloudrun-vm--1" style="margin-top:0">Serverless: Cloud Run (GCP)</h3>
         <ol class="steps">
-          <li>Vá em <span class="ui">Administrar › Cloud Run</span> e clique em <span class="ui">Conectar Cloud Run</span>.</li>
-          <li>Informe <strong>nome</strong>, <strong>ID do projeto GCP</strong> e <strong>região</strong>. Clique em <span class="ui">Registrar</span>.</li>
+          <li>Vá em <span class="ui">Infraestrutura › Serverless</span> e clique em <span class="ui">Conectar serviço Serverless</span>.</li>
+          <li>Em <strong>Provedor</strong>, escolha <strong>GCP</strong>.</li>
+          <li>Informe o <strong>nome</strong> do serviço (exatamente como no Cloud Run), o <strong>ID do projeto GCP</strong> e a <strong>região</strong>. Clique em <span class="ui">Registrar</span>.</li>
         </ol>
-        <h3 id="cloudrun-vm--2">VMs</h3>
+        <h3 id="serverless-lambda">Serverless: Lambda (AWS)</h3>
         <ol class="steps">
-          <li>Vá em <span class="ui">Administrar › VMs</span> e clique em <span class="ui">Conectar VM</span>.</li>
-          <li>Informe <strong>nome</strong>, <strong>ID do projeto GCP</strong> e <strong>zona</strong>. Clique em <span class="ui">Registrar</span>.</li>
-          <li>Copie o comando em <strong>Instalar o agente</strong>, rode na VM e clique em <span class="ui">Concluir</span>.</li>
+          <li>Vá em <span class="ui">Infraestrutura › Serverless</span> e clique em <span class="ui">Conectar serviço Serverless</span>.</li>
+          <li>Em <strong>Provedor</strong>, escolha <strong>AWS</strong>.</li>
+          <li>Informe o <strong>nome</strong> da função, a <strong>região</strong> (por exemplo <code>us-east-1</code>) e o <strong>ID da conta AWS</strong>, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em <span class="ui">Registrar</span>.</li>
+          <li>Instrumente a função com o SDK e chame <code>flush()</code> antes de retornar. Veja <a href="#lambda-sdk">Lambda com o SDK</a>.</li>
         </ol>
+        <p>A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como <strong>em breve</strong>.</p>
       </div>
       <figure class="shot">
         <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/cloud-run</div></div>
@@ -922,10 +929,30 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
                 <div class="mf"><span class="abtn g">Cancelar</span><span class="abtn p">Registrar</span></div>
               </div></div></div></div></div>
         </div>
-        <figcaption>Administrar › Cloud Run · registro de serviço</figcaption>
+        <figcaption>Infraestrutura › Serverless · Cloud Run no GCP</figcaption>
       </figure>
     </div>
-    <div class="note tip"><i>✓</i><div><b>Economize com a aba Suspensão</b><span>Em <span class="ui">VMs › Suspensão</span>, use <span class="ui">Nova política</span> para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente. O acesso para isso está em <a href="#vm-permissoes">Permissões da VM</a>.</span></div></div>
+
+    <h3 id="cloudrun-vm--2">VMs</h3>
+    <p>O cadastro pede só o nome. O agente descobre sozinho onde a VM roda, lendo o serviço de metadados da nuvem: GCP (Compute Engine), AWS (EC2, IMDSv2) ou Azure. Fora de uma nuvem, a VM aparece como <strong>On-prem</strong>.</p>
+    <ol class="steps">
+      <li>Vá em <span class="ui">Infraestrutura › VMs</span> e clique em <span class="ui">Conectar VM</span>.</li>
+      <li>Dê um <strong>nome</strong> à VM, do jeito que você quer vê-la no console. Clique em <span class="ui">Registrar</span>.</li>
+      <li>Copie o comando em <strong>Instalar o agente</strong>, rode na VM e clique em <span class="ui">Concluir</span>.</li>
+    </ol>
+    <p>Quando o agente manda o primeiro dado, o cartão da VM mostra o provedor (GCP, AWS, Azure ou On-prem), a zona ou região, a conta (projeto GCP, conta AWS ou assinatura Azure) e o tipo de máquina.</p>
+    <table class="tbl">
+      <thead><tr><th>Nuvem</th><th>O que o agente detecta</th><th>Cuidado</th></tr></thead>
+      <tbody>
+        <tr><td>GCP</td><td>Projeto, zona, nome da instância e tipo de máquina</td><td>Nada.</td></tr>
+        <tr><td>AWS (EC2)</td><td>Conta, região, zona, ID da instância e tipo de instância</td><td>Com o agente em Docker, o IMDSv2 precisa de <code>HttpPutResponseHopLimit</code> 2 (o padrão do EC2 é 1 e bloqueia o container).</td></tr>
+        <tr><td>Azure</td><td>Assinatura, região, zona, nome e tamanho da VM</td><td>Nada.</td></tr>
+        <tr><td>On-prem</td><td>Nada de nuvem: só host, sistema e uso</td><td>Nada.</td></tr>
+      </tbody>
+    </table>
+    <p>Para ajustar o hop limit numa EC2 existente:</p>
+    <pre><code>aws ec2 modify-instance-metadata-options --instance-id ID_DA_INSTANCIA --http-tokens required --http-put-response-hop-limit 2</code></pre>
+    <div class="note tip"><i>✓</i><div><b>Economize com a aba Suspensão</b><span>Em <span class="ui">VMs › Suspensão</span>, use <span class="ui">Nova política</span> para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente. Hoje a suspensão funciona para VMs do GCP. O acesso para isso está em <a href="#vm-permissoes">Permissões da VM</a>.</span></div></div>
 
     <h3 id="permissoes-vm-cloudrun">Permissões de VM e Cloud Run</h3>
     <p>Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é <code>aegis-api@immunoops-prod.iam.gserviceaccount.com</code>, a conta da API, que também lê o billing em <a href="#conta-nuvem">Conta de nuvem</a>. Se a organização bloqueia contas de fora, inclua o customer ID <strong>C011tigzz</strong> neste projeto também, do mesmo jeito descrito em <a href="#conta-nuvem-dominio">Se a organização bloqueia contas de fora</a>.</p>
@@ -1041,6 +1068,25 @@ bq add-iam-policy-binding --member="serviceAccount:aegis-api@immunoops-prod.iam.
       </ol>
     </div>
     <div class="note"><i>i</i><div><b>Atalho para Cloud Run e VMs</b><span>Na linha de um serviço já registrado, <span class="ui">Instrumentar minha aplicação</span> gera token e snippet OpenTelemetry prontos para colar.</span></div></div>
+    <h3 id="lambda-sdk">Lambda com o SDK</h3>
+    <p>A Lambda congela o processo assim que a função retorna. Por isso, envie os dados antes de retornar:</p>
+    <pre><code>const { ImmunoClient } = require("@immunoops/sdk");
+
+const immuno = new ImmunoClient().init({
+  apiKey: process.env.IMMUNOOPS_API_KEY,
+  endpoint: "https://app.immunoops.io/agent/ingest",
+  serviceName: "checkout",
+  environment: "production",
+});
+
+exports.handler = async (event) =&gt; {
+  await immuno.time("checkout.duration_ms", () =&gt; processar(event));
+  immuno.increment("checkout.orders", 1, { status: "ok" });
+  immuno.event("checkout.completed", { total: 49.9 });
+  await immuno.flush(); // obrigatório na Lambda
+  return { ok: true };
+};</code></pre>
+    <p>Guarde a chave numa variável de ambiente da função (ou no Secrets Manager), nunca no código.</p>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="visao-geral" data-keywords="visão geral, overview, dashboard inicial, status, saudável, atenção, crítico, alertas disparando, heartbeat, tela vazia, primeiro recurso, home, início">
@@ -1074,7 +1120,7 @@ bq add-iam-policy-binding --member="serviceAccount:aegis-api@immunoops-prod.iam.
         <figcaption>Operar › Visão Geral · dados ilustrativos</figcaption>
       </figure>
     </div>
-    <div class="note"><i>i</i><div><b>Tela vazia?</b><span><strong>Conecte seu primeiro recurso</strong> quer dizer que nenhum cluster, VM ou Cloud Run mandou dado ainda. Volte ao passo 05. Não mostramos número inventado enquanto isso.</span></div></div>
+    <div class="note"><i>i</i><div><b>Tela vazia?</b><span><strong>Conecte seu primeiro recurso</strong> quer dizer que nenhum cluster, VM ou serviço Serverless mandou dado ainda. Volte ao passo 05. Não mostramos número inventado enquanto isso.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="investigar" data-keywords="investigar, incidente, alerta, alertas e incidentes, workloads, pods, CrashLoop, restart, observabilidade, logs, traces, métricas, OpenTelemetry, dashboards, Grafana, causa raiz, troubleshooting, latência, erro 5xx">
