@@ -24,7 +24,7 @@ O menu da esquerda tem quatro grupos, nesta ordem. Clique no nome do grupo para 
 
 | Grupo | Itens |
 | --- | --- |
-| Administrar | Clusters, VMs, Cloud Run, Instrumentação, Equipe e Empresa. |
+| Administrar | Clusters, VMs, Serverless, Instrumentação, Equipe e Empresa. |
 | Investigar | Workloads, Alertas e Incidentes e Observabilidade. Dashboards fica dentro de Observabilidade. |
 | Analisar | Kubernetes FinOps e FOCUS Normalizer. |
 | Operar | Visão Geral: status, alertas e clusters. É a tela que abre depois do login. |
@@ -39,7 +39,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 | --- | --- | --- |
 | Confiabilidade e incidentes | Operar e Investigar. Alertas consistentes entre as telas e correlação de causa raiz. | 08 e 09 |
 | FinOps e custo | Analisar. Preço real de vCPU, RAM e SKUs de nuvem, e o FinOps Score do cluster. | 10 |
-| Governança multi-cluster | Administrar. Clusters, VMs, Cloud Run e equipe num único lugar. | 05, 06 e 11 |
+| Governança multi-cluster | Administrar. Clusters, VMs, Serverless e equipe num único lugar. | 05, 06 e 11 |
 | Observabilidade nativa | Investigar e Administrar. Métricas, logs e traces sem depender do editor do Grafana. | 07 e 09 |
 
 ### Caminhos do console citados no manual
@@ -65,7 +65,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 3. [Tour de boas-vindas](#passo-03-tour-de-boas-vindas) — Começar
 4. [Conhecer o console](#passo-04-conhecer-o-console) — Começar
 5. [Conectar um cluster Kubernetes](#passo-05-conectar-um-cluster-kubernetes) — Conectar
-6. [Cloud Run e VMs](#passo-06-cloud-run-e-vms) — Conectar. Inclui [permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run) e [cadastrar a conta de nuvem e liberar o billing](#conta-de-nuvem).
+6. [Serverless e VMs](#passo-06-serverless-e-vms) — Conectar. Inclui [permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run) e [cadastrar a conta de nuvem e liberar o billing](#conta-de-nuvem).
 7. [Instrumentar a aplicação](#passo-07-instrumentar-a-aplicacao) — Conectar
 8. [Ler a Visão Geral](#passo-08-ler-a-visao-geral) — Operar
 9. [Investigar um incidente](#passo-09-investigar-um-incidente) — Operar
@@ -183,35 +183,65 @@ O comando exibido na janela segue a forma `helm upgrade --install` do agent, com
 | Conectado | O agent está mandando dados. | Nada. Os dados já aparecem em Investigar. |
 | Desconectado | O último sinal tem mais de 5 minutos. | Verifique o agent no cluster: pods, rede de saída e token. |
 
-Comparado com os outros tipos de recurso: no cluster se instala um agent com Helm, e ele traz workloads, métricas, logs e traces. Cloud Run e VM estão no passo 06.
+Comparado com os outros tipos de recurso: no cluster se instala um agent com Helm, e ele traz workloads, métricas, logs e traces. Serverless e VM estão no passo 06.
 
-## Passo 06 — Cloud Run e VMs
+## Passo 06 — Serverless e VMs
 
 - Grupo: Conectar
 - Tempo: cerca de 3 minutos cada
 - Quem: quem usa esses serviços
-- Palavras-chave: Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains
+- Palavras-chave: serverless, Cloud Run, AWS Lambda, Lambda, função, VM, máquina virtual, EC2, Compute Engine, GCE, Azure VM, on-prem, multicloud, GCP, AWS, Azure, Google Cloud, projeto GCP, conta AWS, assinatura Azure, região, zona, docker, agente na VM, IMDS, IMDSv2, metadados, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains
 
-VM e Cloud Run exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exige uma conta GCP. Sem essa conta, **Conectar VM** e **Conectar Cloud Run** abrem **Adicionar conta** em vez do formulário do recurso. O cadastro da conta está em [Conta de nuvem](#conta-de-nuvem). Os papéis no projeto do recurso estão em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
+O Immuno Ops é multicloud: VMs em GCP, AWS, Azure ou on-prem, e serviços serverless no GCP (Cloud Run) e na AWS (Lambda), na mesma tela.
 
-| Tipo | O que instalar | O que chega |
-| --- | --- | --- |
-| Cluster | Agent via Helm no cluster. | Workloads, métricas, logs e traces. |
-| Cloud Run | Nada. | As métricas vêm do Cloud Monitoring do projeto GCP. |
-| VM | Agente no host, com comando de instalação na VM do Compute Engine. | Dados do host. |
+VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exige uma conta GCP; Lambda exige uma conta AWS. Sem essa conta, **Conectar VM** e **Conectar serviço Serverless** abrem **Adicionar conta** em vez do formulário do recurso. O cadastro da conta está em [Conta de nuvem](#conta-de-nuvem). Os papéis no projeto do recurso estão em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
 
-### Cloud Run
+| Tipo | Nuvem | O que instalar | O que chega |
+| --- | --- | --- | --- |
+| Cluster | GKE, EKS, AKS ou outro Kubernetes | Agent via Helm no cluster. | Workloads, métricas, logs e traces. |
+| Cloud Run | GCP | Nada. | Métricas e logs do Cloud Monitoring e do Cloud Logging do projeto. |
+| Lambda | AWS | O SDK na função (passo 07). | Métricas, logs e eventos que a função envia. |
+| VM | GCP, AWS, Azure ou on-prem | Agente no host (container Docker ou binário). | CPU, memória, logs do host e dos containers, tipo de máquina e sistema. |
 
-1. Vá em **Administrar › Cloud Run** e clique em **Conectar Cloud Run**.
-2. Informe nome, ID do projeto GCP e região. Clique em **Registrar**.
+### Serverless: Cloud Run (GCP)
+
+1. Vá em **Infraestrutura › Serverless** e clique em **Conectar serviço Serverless**.
+2. Em **Provedor**, escolha **GCP**.
+3. Informe o nome do serviço (exatamente como no Cloud Run), o ID do projeto GCP e a região. Clique em **Registrar**.
+
+### Serverless: Lambda (AWS)
+
+1. Vá em **Infraestrutura › Serverless** e clique em **Conectar serviço Serverless**.
+2. Em **Provedor**, escolha **AWS**.
+3. Informe o nome da função, a região (por exemplo `us-east-1`) e o ID da conta AWS, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em **Registrar**.
+4. Instrumente a função com o SDK, como no [passo 07](#passo-07-instrumentar-a-aplicacao), e chame `flush()` antes de a função retornar. Veja [Lambda com o SDK](#lambda-com-o-sdk).
+
+A leitura automática do CloudWatch (invocações, duração, erros e concorrência, sem SDK) ainda não está disponível. Até lá, os dados da Lambda vêm do SDK. Azure Functions aparece como **em breve**.
 
 ### VMs
 
-1. Vá em **Administrar › VMs** e clique em **Conectar VM**.
-2. Informe nome, ID do projeto GCP e zona. Clique em **Registrar**.
+O cadastro pede só o nome. O agente descobre sozinho onde a VM roda, lendo o serviço de metadados da nuvem: GCP (Compute Engine), AWS (EC2, IMDSv2) ou Azure. Fora de uma nuvem, a VM aparece como **On-prem**.
+
+1. Vá em **Infraestrutura › VMs** e clique em **Conectar VM**.
+2. Dê um nome à VM, do jeito que você quer vê-la no console. Clique em **Registrar**.
 3. Copie o comando em **Instalar o agente**, rode na VM e clique em **Concluir**.
 
-**Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente. O acesso para isso está em [Permissões da VM](#permissoes-da-vm).
+Quando o agente manda o primeiro dado, o cartão da VM mostra o provedor (GCP, AWS, Azure ou On-prem), a zona ou região, a conta (projeto GCP, conta AWS ou assinatura Azure) e o tipo de máquina.
+
+| Nuvem | O que o agente detecta | Cuidado |
+| --- | --- | --- |
+| GCP | Projeto, zona, nome da instância e tipo de máquina | Nada. |
+| AWS (EC2) | Conta, região, zona, ID da instância e tipo de instância | Com o agente em Docker, o IMDSv2 precisa de `HttpPutResponseHopLimit` 2 (o padrão do EC2 é 1 e bloqueia o container). |
+| Azure | Assinatura, região, zona, nome e tamanho da VM | Nada. |
+| On-prem | Nada de nuvem: só host, sistema e uso | Nada. |
+
+Para ajustar o hop limit numa EC2 existente:
+
+```
+aws ec2 modify-instance-metadata-options --instance-id ID_DA_INSTANCIA --http-tokens required --http-put-response-hop-limit 2
+```
+
+**Economize com a aba Suspensão.** Em **VMs › Suspensão**, use **Nova política** para ligar e desligar VMs por horário, por exemplo desligar staging fora do expediente. Hoje a suspensão funciona para VMs do GCP. O acesso para isso está em [Permissões da VM](#permissoes-da-vm).
 
 ### Permissões de VM e Cloud Run
 
@@ -349,6 +379,31 @@ A lista de aplicações mostra, entre outros, estes estados: **Conectada** (com 
 
 **Atalho para Cloud Run e VMs.** Na linha de um serviço já registrado, **Instrumentar minha aplicação** gera token e snippet OpenTelemetry prontos para colar.
 
+### Lambda com o SDK
+
+A Lambda congela o processo assim que a função retorna. Por isso, envie os dados antes de retornar:
+
+```js
+const { ImmunoClient } = require("@immunoops/sdk");
+
+const immuno = new ImmunoClient().init({
+  apiKey: process.env.IMMUNOOPS_API_KEY,
+  endpoint: "https://app.immunoops.io/agent/ingest",
+  serviceName: "checkout",
+  environment: "production",
+});
+
+exports.handler = async (event) => {
+  await immuno.time("checkout.duration_ms", () => processar(event));
+  immuno.increment("checkout.orders", 1, { status: "ok" });
+  immuno.event("checkout.completed", { total: 49.9 });
+  await immuno.flush(); // obrigatório na Lambda
+  return { ok: true };
+};
+```
+
+Guarde a chave numa variável de ambiente da função (ou no Secrets Manager), nunca no código.
+
 ## Passo 08 — Ler a Visão Geral
 
 - Grupo: Operar
@@ -364,7 +419,7 @@ Menu: **Operar › Visão Geral**. Há o botão **Atualizar status**.
 3. **Alertas disparando:** cada linha traz o problema e leva à regra em Alertas e Incidentes.
 4. **Clusters:** a conexão do agent de cada cluster.
 
-**Tela vazia?** **Conecte seu primeiro recurso** quer dizer que nenhum cluster, VM ou Cloud Run mandou dado ainda. Volte ao passo 05. A tela não mostra número inventado enquanto não há dado.
+**Tela vazia?** **Conecte seu primeiro recurso** quer dizer que nenhum cluster, VM ou serviço Serverless mandou dado ainda. Volte ao passo 05. A tela não mostra número inventado enquanto não há dado.
 
 ## Passo 09 — Investigar um incidente
 
