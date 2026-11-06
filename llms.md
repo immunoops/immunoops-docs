@@ -302,21 +302,24 @@ Sem as ações de métrica, a função fica cadastrada e os números do CloudWat
 
 ### Ligar e desligar a VM
 
-Métricas e logs da EC2 saem do agente instalado no host. O worker liga e desliga a instância com o mesmo papel do billing. A conta não precisa de cluster.
+Métricas e logs da EC2 saem do agente instalado no host. A conta não precisa de cluster. Ligar e desligar usa um papel **separado e opcional**, `immunoops-power`: quem só quer custo, métricas e logs não dá permissão de escrita ao Immuno Ops.
 
-| Ação | Onde | Para quê |
-| --- | --- | --- |
-| `ec2:DescribeInstances` | conta | Listar a instância |
-| `ec2:StartInstances` | instâncias da conta | Ligar |
-| `ec2:StopInstances` | instâncias da conta | Desligar |
+| Papel | Ação | Onde | Para quê |
+| --- | --- | --- | --- |
+| `immunoops-billing-reader` | `ec2:DescribeInstances` | conta | Listar a instância |
+| `immunoops-power` | `ec2:StartInstances` | instâncias da conta | Ligar |
+| `immunoops-power` | `ec2:StopInstances` | instâncias da conta | Desligar |
 
-No GCP, as três permissões equivalentes estão em [Permissões da VM](#permissoes-da-vm).
+O `immunoops-power` tem a mesma confiança do papel de leitura: a conta `aegis-worker@immunoops-prod.iam.gserviceaccount.com` no Google e a audiência da sua organização (a mesma `AUDIENCIA` de [Conta AWS](#conta-aws)). No GCP, as permissões equivalentes estão em [Permissões da VM](#permissoes-da-vm).
 
 ```
-aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-vm-power --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"ec2:DescribeInstances","Resource":"*"},{"Effect":"Allow","Action":["ec2:StartInstances","ec2:StopInstances"],"Resource":"arn:aws:ec2:*:*:instance/*"}]}'
+aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-ec2-describe --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"ec2:DescribeInstances","Resource":"*"}]}'
+
+aws iam create-role --role-name immunoops-power --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Federated":"accounts.google.com"},"Action":"sts:AssumeRoleWithWebIdentity","Condition":{"StringEquals":{"accounts.google.com:sub":"101814243271068167435","accounts.google.com:aud":"101814243271068167435","accounts.google.com:oaud":"'$AUDIENCIA'"}}}]}'
+aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-power --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["ec2:StartInstances","ec2:StopInstances"],"Resource":"arn:aws:ec2:*:*:instance/*"}]}'
 ```
 
-Sem `StartInstances` e `StopInstances`, o worker não liga nem desliga a EC2.
+Sem o papel `immunoops-power`, a política de Suspensão não liga nem desliga a EC2; o resto continua funcionando. No CloudTrail, cada ação aparece com a sessão `immunoops-<ID da organização>`.
 
 ### Conta de nuvem
 
@@ -677,7 +680,7 @@ Não. A conta é somente leitura do billing. No GCP, o papel é **BigQuery Data 
 No projeto do serviço, conceda `roles/monitoring.viewer` e `roles/logging.viewer` para `aegis-worker@immunoops-prod.iam.gserviceaccount.com`. Os comandos estão em [Permissões do Cloud Run](#permissoes-do-cloud-run). Se a tela disser que a coleta de logs ainda não está habilitada para a conta, fale com o suporte: o papel prepara o acesso, e a coleta começa depois dessa liberação.
 
 **A política de suspensão não desliga a VM.**
-No GCP, a conta do worker `aegis-worker@immunoops-prod.iam.gserviceaccount.com` precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel `immunoOpsVmPower` estão em [Permissões da VM](#permissoes-da-vm). A VM também precisa do agente instalado e de saída HTTPS para `app.immunoops.io` para enviar métricas e logs. Na EC2, listar, ligar e desligar estão no papel `immunoops-billing-reader`, em [Ligar e desligar a VM](#ligar-e-desligar-a-vm).
+No GCP, a conta do worker `aegis-worker@immunoops-prod.iam.gserviceaccount.com` precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel `immunoOpsVmPower` estão em [Permissões da VM](#permissoes-da-vm). A VM também precisa do agente instalado e de saída HTTPS para `app.immunoops.io` para enviar métricas e logs. Na EC2, listar fica no papel `immunoops-billing-reader` e ligar e desligar no papel `immunoops-power`, em [Ligar e desligar a VM](#ligar-e-desligar-a-vm).
 
 **A Lambda não mostra invocações, duração ou concorrência.**
 O worker lê isso no CloudWatch. No papel `immunoops-billing-reader`, conceda `cloudwatch:GetMetricData` e `cloudwatch:ListMetrics` no namespace `AWS/Lambda`. Sem `logs:FilterLogEvents` no grupo `/aws/lambda/*`, a aba de logs fica sem as linhas da função. Os comandos estão em [CloudWatch da Lambda](#cloudwatch-da-lambda).
