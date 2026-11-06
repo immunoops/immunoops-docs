@@ -849,6 +849,19 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     </div>
     <div class="note"><i>i</i><div><b>A barra do topo</b><span>Mostra onde você está, por exemplo <strong>ADMINISTRAR / CLUSTERS</strong>. À direita ficam o idioma, o seletor de organização e o agente de IA.</span></div></div>
     <div class="note"><i>i</i><div><b>Seu papel define o que aparece</b><span>Quem tem papel <strong>Leitura</strong> vê painéis, alertas e custos, mas não os botões de conectar ou convidar. <strong>Equipe</strong> e <strong>Empresa</strong> só aparecem para quem tem permissão.</span></div></div>
+      <h3 id="agente-ia">Agente de IA</h3>
+    <p>O botão ✦ no topo (atalho ⌘J) abre o <strong>Agente IA</strong>, um especialista em SRE, DevOps e FinOps que responde com os dados reais da sua organização. Antes de responder, ele consulta sozinho o que a pergunta precisa:</p>
+    <table class="tbl">
+      <thead><tr><th>Pergunte sobre</th><th>O agente consulta</th></tr></thead>
+      <tbody>
+        <tr><td>Saúde, "o que está quebrado", um workload</td><td>Workloads: status, taxa de erro, p95, reinícios, réplicas, CPU e memória contra o pedido</td></tr>
+        <tr><td>Custo, "onde gasto mais", tendência</td><td>Custo do mês por provedor, serviço e namespace, gasto diário e custo de um workload</td></tr>
+        <tr><td>Incidentes e alertas</td><td>Incidentes abertos ou resolvidos e alertas que dispararam</td></tr>
+        <tr><td>"Por que não chegam dados"</td><td>VMs, Cloud Run, Lambda, apps e contas de nuvem, com o status de cada um</td></tr>
+      </tbody>
+    </table>
+    <p>Exemplos: "Onde estou gastando mais este mês?", "Tem incidente aberto?", "Como está o checkout-api?", "Minha Lambda não manda dados, por quê?". A resposta vem no idioma da pergunta, com hipótese e próximos passos quando houver.</p>
+    <div class="note"><i>i</i><div><b>Só a sua organização</b><span>O agente só vê os dados da organização selecionada e não executa ações: ele lê e explica. Confira a evidência antes de agir.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="cluster" data-keywords="cluster, kubernetes, k8s, conectar cluster, agente, agent, instalar agente, helm, kubectl, chart, token, GKE, EKS, AKS, pendente, conectado, desconectado, heartbeat, status do cluster, namespace">
@@ -923,7 +936,8 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
           <li>Informe o <strong>nome</strong> da função, a <strong>região</strong> (por exemplo <code>us-east-1</code>) e o <strong>ID da conta AWS</strong>, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em <span class="ui">Registrar</span>.</li>
           <li>Instrumente a função com o SDK e chame <code>flush()</code> antes de retornar. Veja <a href="#lambda-sdk">Lambda com o SDK</a>.</li>
         </ol>
-        <div class="note"><i>i</i><div><b>Métricas pelo CloudWatch</b><span>O SDK, se a função o usar, envia os dados para <code>app.immunoops.io</code> com a chave de conexão e não pede papel na função. Numa VPC sem internet, a função precisa de um NAT Gateway para essa saída. Invocações, duração e execuções simultâneas vêm do CloudWatch, lidas pelo worker com o papel <code>immunoops-billing-reader</code>. As ações estão em <a href="#aws-lambda-cloudwatch">CloudWatch da Lambda</a>. Os logs da função ainda não são coletados. O custo usa o mesmo papel, em <a href="#conta-aws-permissoes">Permissões no papel de leitura</a>.</span></div></div>
+        <div class="note"><i>i</i><div><b>Métricas pelo CloudWatch</b><span>O SDK, se a função o usar, envia os dados para <code>app.immunoops.io</code> com a chave de conexão e não pede papel na função. Numa VPC sem internet, a função precisa de um NAT Gateway para essa saída. Invocações, duração, execuções simultâneas e os logs do grupo <code>/aws/lambda/&lt;função&gt;</code> vêm do CloudWatch, lidos pelo worker com o papel <code>immunoops-billing-reader</code>, criado com um clique em <a href="#conta-aws">Conta AWS</a> (<span class="ui">Conectar à AWS</span>).</span></div></div>
+        <div class="note warn"><i>!</i><div><b>"Falta conectar a conta AWS"</b><span>É o que a aba de logs da função mostra quando a conta AWS dela ainda não tem o papel. Clique em <span class="ui">Conectar à AWS</span> ali mesmo. Depois de criada a pilha, o Immuno Ops tenta de novo em até 15 minutos e os dados começam a chegar.</span></div></div>
         <p>Azure Functions aparece como <strong>em breve</strong>.</p>
       </div>
       <figure class="shot">
@@ -1085,8 +1099,8 @@ aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-p
       <tbody>
         <tr><td>Cluster EKS</td><td>Disponível. Agent via Helm, como no <a href="#cluster">passo 05</a>.</td></tr>
         <tr><td>VM EC2</td><td>Disponível. O agente detecta conta, região e tipo de instância (<a href="#cloudrun-vm--2">VMs</a>).</td></tr>
-        <tr><td>Lambda</td><td>Disponível pelo SDK (<a href="#serverless-lambda">Serverless: Lambda</a>). Exige a conta AWS cadastrada.</td></tr>
-        <tr><td>Custo da AWS (billing)</td><td><strong>Em breve.</strong> Dá para preparar o export agora, e o histórico começa a contar a partir daí.</td></tr>
+        <tr><td>Lambda</td><td>Disponível. Métricas e logs pelo CloudWatch depois de <span class="ui">Conectar à AWS</span>; ou pelo SDK, sem nada na conta.</td></tr>
+        <tr><td>Custo da AWS (billing)</td><td>O export FOCUS é criado no <span class="ui">Conectar à AWS</span>. A leitura do custo no console está <strong>em breve</strong>; o histórico já começa a contar.</td></tr>
       </tbody>
     </table>
     <h4>Passo 1 — Descobrir o ID da conta</h4>
@@ -1100,14 +1114,31 @@ aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-p
       <li>Clique em <span class="ui">Adicionar conta</span>.</li>
     </ol>
     <p>A conta aparece como pendente: o custo da AWS ainda não é lido. Isso não impede EKS, EC2 e Lambda.</p>
+    <h4 id="conta-aws-um-clique">Passo 2b — Conectar à AWS (um clique)</h4>
+    <p>É como nas outras ferramentas de observabilidade: você não escreve IAM.</p>
+    <ol class="steps">
+      <li>No cartão da conta AWS, em <span class="ui">Infraestrutura › Contas</span>, clique em <span class="ui">Conectar à AWS</span>.</li>
+      <li>O console da AWS abre no <strong>CloudFormation</strong>, na região <code>us-east-1</code>, com a pilha <code>immunoops-integration</code> já preenchida para a sua organização. Entre com um usuário que possa criar papéis IAM.</li>
+      <li>Marque a confirmação de criação de recursos IAM e clique em <span class="ui">Criar pilha</span>. Leva cerca de 2 minutos.</li>
+    </ol>
+    <table class="tbl">
+      <thead><tr><th>A pilha cria</th><th>Para quê</th></tr></thead>
+      <tbody>
+        <tr><td>Papel <code>immunoops-billing-reader</code></td><td>Leitura: CloudWatch e logs da Lambda, listar EC2 e funções, ler o export de custo. Sem chave de acesso: confia no Immuno Ops só com a audiência da sua organização</td></tr>
+        <tr><td>Bucket <code>immunoops-focus-CONTA</code> e export <code>immunoops-focus</code></td><td>Custo diário no formato FOCUS 1.2. O primeiro arquivo chega em até 24 horas</td></tr>
+        <tr><td>Papel <code>immunoops-power</code> (opcional, <code>EnablePower=true</code>)</td><td>Ligar e desligar EC2 nas políticas de Suspensão</td></tr>
+      </tbody>
+    </table>
+    <p>Para conferir antes de criar, abra <span class="ui">Detalhes da conexão</span> no cartão: aparecem a audiência e o ARN do papel. Para remover o acesso, apague a pilha no CloudFormation; o bucket do export fica guardado.</p>
+    <p>O passo 4 e as seções seguintes descrevem a mesma configuração feita à mão, para quem não pode usar o CloudFormation.</p>
     <h4>Passo 3 — Conectar o que roda nessa conta</h4>
     <ul>
       <li><strong>EKS:</strong> <span class="ui">Infraestrutura › Clusters › Conectar cluster</span>, escolha <strong>AWS</strong> e rode o comando <code>helm</code> no cluster (<a href="#cluster">passo 05</a>).</li>
       <li><strong>EC2:</strong> <span class="ui">Infraestrutura › VMs › Conectar VM</span>, dê um nome e rode o comando na instância. Com o agente em Docker, ajuste o hop limit do IMDSv2 para 2 (<a href="#cloudrun-vm--2">VMs</a>).</li>
-      <li><strong>Lambda:</strong> <span class="ui">Infraestrutura › Serverless › Conectar serviço Serverless</span>, provedor <strong>AWS</strong>, e instrumente a função com o SDK (<a href="#lambda-sdk">Lambda com o SDK</a>).</li>
+      <li><strong>Lambda:</strong> <span class="ui">Infraestrutura › Serverless › Conectar serviço Serverless</span>, provedor <strong>AWS</strong>. Métricas e logs chegam pelo CloudWatch depois do passo 2b; o SDK (<a href="#lambda-sdk">Lambda com o SDK</a>) é opcional, para métricas de negócio.</li>
     </ul>
-    <p>Nenhum desses passos dá ao Immuno Ops acesso à sua conta AWS: os dados saem do agente ou do SDK que você instala.</p>
-    <h4>Passo 4 — Preparar o billing (opcional, recomendado)</h4>
+    <p>Os passos de EKS, EC2 e SDK não dão ao Immuno Ops acesso à conta: os dados saem do agente ou do SDK. O acesso de leitura à conta vem só da pilha do passo 2b.</p>
+    <h4>Passo 4 — Preparar o billing à mão (sem CloudFormation)</h4>
     <p>O custo da AWS vai ser lido de um <strong>export de faturamento no formato FOCUS</strong> que você cria na sua conta, num bucket seu. A AWS só gera esse export daqui para a frente: criar agora faz o histórico já estar lá quando a leitura for liberada. Nada é compartilhado com o Immuno Ops neste passo.</p>
     <p>Rode num terminal autenticado na conta, trocando <code>CONTA</code> pelo ID de 12 dígitos:</p>
     <pre><code>CONTA=123456789012
@@ -1147,7 +1178,7 @@ aws s3api put-bucket-policy --bucket $BUCKET --policy '{"Version":"2012-10-17","
     </table>
     <p>O número é o ID único dessa conta de serviço. A condição <code>oaud</code> é exclusiva da organização: com outra audiência, a AWS responde <code>AccessDenied</code>.</p>
     <p>Não conceda <code>s3:PutObject</code>, <code>s3:*</code>, <code>AdministratorAccess</code> nem papel de faturamento. Essas duas ações cobrem a leitura.</p>
-    <p>Rode num terminal autenticado na conta. <code>CONTA</code> é o ID de 12 dígitos. <code>BUCKET</code> é o bucket do passo 4. Troque <code>AUDIENCIA</code> por <code>immunoops-tenant-</code> seguido do id da organização. A leitura do custo no console ainda está em breve, e esse id entra junto com ela; crie o papel quando o Immuno Ops informar a audiência.</p>
+    <p>Rode num terminal autenticado na conta. <code>CONTA</code> é o ID de 12 dígitos. <code>BUCKET</code> é o bucket do passo 4. Troque <code>AUDIENCIA</code> por <code>immunoops-tenant-</code> seguido do id da organização. A audiência aparece em <span class="ui">Detalhes da conexão</span>, no cartão da conta AWS.</p>
     <pre><code>CONTA=123456789012
 BUCKET=immunoops-focus-$CONTA
 AUDIENCIA=immunoops-tenant-ID_DA_ORGANIZACAO

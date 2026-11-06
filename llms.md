@@ -157,6 +157,21 @@ O menu da esquerda tem quatro grupos, nesta ordem: **Administrar**, **Investigar
 
 A composição dos grupos e o efeito do papel estão em [Mapa do console](#mapa-do-console).
 
+### Agente de IA
+
+O botão ✦ no topo (atalho ⌘J) abre o **Agente IA**, um especialista em SRE, DevOps e FinOps que responde com os dados reais da sua organização. Antes de responder, ele consulta sozinho o que a pergunta precisa:
+
+| Pergunte sobre | O agente consulta |
+| --- | --- |
+| Saúde, "o que está quebrado", um workload | Workloads: status, taxa de erro, p95, reinícios, réplicas, CPU e memória contra o pedido |
+| Custo, "onde gasto mais", tendência | Custo do mês por provedor, serviço e namespace, gasto diário e custo de um workload |
+| Incidentes e alertas | Incidentes abertos ou resolvidos e alertas que dispararam |
+| "Por que não chegam dados" | VMs, Cloud Run, Lambda, apps e contas de nuvem, com o status de cada um |
+
+Exemplos: "Onde estou gastando mais este mês?", "Tem incidente aberto?", "Como está o checkout-api?", "Minha Lambda não manda dados, por quê?". A resposta vem no idioma da pergunta, com hipótese e próximos passos quando houver.
+
+O agente só vê os dados da organização selecionada e não executa ações: ele lê e explica. Confira a evidência antes de agir.
+
 ## Passo 05 — Conectar um cluster Kubernetes
 
 - Grupo: Conectar
@@ -220,7 +235,9 @@ VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exi
 
 O SDK, se a função o usar, envia os dados para `app.immunoops.io` com a chave de conexão e não pede papel na função. Numa VPC sem internet, a função precisa de um NAT Gateway para essa saída.
 
-As métricas da função (invocações, duração e execuções simultâneas) vêm do CloudWatch, lidas pelo worker com o papel `immunoops-billing-reader`. As ações estão em [CloudWatch da Lambda](#cloudwatch-da-lambda). Os logs da função ainda não são coletados. O custo da AWS usa o mesmo papel, em [Permissões no papel de leitura](#permissoes-no-papel-de-leitura). Azure Functions aparece como **em breve**.
+As métricas da função (invocações, duração e execuções simultâneas) e os logs do grupo `/aws/lambda/<função>` vêm do CloudWatch, lidos pelo worker com o papel `immunoops-billing-reader`. Esse papel é criado com um clique em [Conta AWS](#conta-aws) (**Conectar à AWS**). Azure Functions aparece como **em breve**.
+
+**"Falta conectar a conta AWS".** É o que a aba de logs da função mostra quando a conta AWS dela ainda não tem o papel. Clique em **Conectar à AWS** ali mesmo. Depois de criada a pilha no CloudFormation, o Immuno Ops tenta de novo em até 15 minutos e os dados começam a chegar.
 
 ### VMs
 
@@ -404,7 +421,7 @@ Inclua o customer ID **C011tigzz** como exceção dessa política. A organizaç�
 - Quem cadastra no Immuno Ops: Administrador
 - Quem faz na AWS: alguém com permissão de IAM e de Billing na conta (no console, **Billing and Cost Management**)
 - Onde: **Infraestrutura**, aba **Contas** (`app.immunoops.io/ui/infrastructure?tab=contas`)
-- Palavras-chave: AWS, conta AWS, Amazon, EKS, EC2, Lambda, ID da conta, 12 dígitos, billing AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, conta pagadora, conta-membro, s3:ListBucket, s3:GetObject, immunoops-billing-reader, AssumeRoleWithWebIdentity, oaud, chave de acesso
+- Palavras-chave: Conectar à AWS, um clique, CloudFormation, pilha, stack, immunoops-integration, role_missing, Falta conectar a conta AWS, AWS, conta AWS, Amazon, EKS, EC2, Lambda, ID da conta, 12 dígitos, billing AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, conta pagadora, conta-membro, s3:ListBucket, s3:GetObject, immunoops-billing-reader, AssumeRoleWithWebIdentity, oaud, chave de acesso
 
 A conta AWS é o que libera, para a sua organização, os recursos da AWS no Immuno Ops. O que já funciona e o que ainda vem:
 
@@ -412,8 +429,8 @@ A conta AWS é o que libera, para a sua organização, os recursos da AWS no Imm
 | --- | --- |
 | Cluster EKS | Disponível. Agent via Helm, como no [passo 05](#passo-05-conectar-um-cluster-kubernetes). |
 | VM EC2 | Disponível. O agente detecta conta, região e tipo de instância ([VMs](#vms)). |
-| Lambda | Disponível pelo SDK ([Serverless: Lambda](#serverless-lambda-aws)). Exige a conta AWS cadastrada. |
-| Custo da AWS (billing) | **Em breve.** Dá para preparar o export agora, e o histórico começa a contar a partir daí. |
+| Lambda | Disponível. Métricas e logs pelo CloudWatch depois de **Conectar à AWS**; ou pelo SDK, sem nada na conta. |
+| Custo da AWS (billing) | O export FOCUS é criado no **Conectar à AWS**. A leitura do custo no console está **em breve**; o histórico já começa a contar. |
 
 #### Passo 1 — Descobrir o ID da conta
 
@@ -432,15 +449,35 @@ aws sts get-caller-identity --query Account --output text
 
 A conta aparece como pendente: o custo da AWS ainda não é lido. Isso não impede EKS, EC2 e Lambda.
 
+#### Passo 2b — Conectar à AWS (um clique)
+
+É como nas outras ferramentas de observabilidade: você não escreve IAM.
+
+1. No cartão da conta AWS, em **Infraestrutura › Contas**, clique em **Conectar à AWS**.
+2. O console da AWS abre no **CloudFormation**, na região `us-east-1`, com a pilha `immunoops-integration` já preenchida para a sua organização. Entre com um usuário que possa criar papéis IAM.
+3. Marque a confirmação de criação de recursos IAM e clique em **Criar pilha**. Leva cerca de 2 minutos.
+
+A pilha cria:
+
+| Recurso | Para quê |
+| --- | --- |
+| Papel `immunoops-billing-reader` | Leitura: CloudWatch e logs da Lambda, listar EC2 e funções, ler o export de custo. Sem chave de acesso: confia no Immuno Ops só com a audiência da sua organização |
+| Bucket `immunoops-focus-CONTA` e export `immunoops-focus` | Custo diário no formato FOCUS 1.2. O primeiro arquivo chega em até 24 horas |
+| Papel `immunoops-power` (opcional, `EnablePower=true`) | Ligar e desligar EC2 nas políticas de Suspensão |
+
+Para conferir antes de criar, abra **Detalhes da conexão** no cartão: aparecem a audiência e o ARN do papel. Para remover o acesso, apague a pilha no CloudFormation; o bucket do export fica guardado.
+
+Os passos 4 e as seções seguintes descrevem a mesma configuração feita à mão, para quem não pode usar o CloudFormation.
+
 #### Passo 3 — Conectar o que roda nessa conta
 
 - **EKS:** **Infraestrutura › Clusters › Conectar cluster**, escolha **AWS** e rode o comando `helm` no cluster ([passo 05](#passo-05-conectar-um-cluster-kubernetes)).
 - **EC2:** **Infraestrutura › VMs › Conectar VM**, dê um nome e rode o comando na instância. Com o agente em Docker, ajuste o hop limit do IMDSv2 para 2 ([VMs](#vms)).
-- **Lambda:** **Infraestrutura › Serverless › Conectar serviço Serverless**, provedor **AWS**, e instrumente a função com o SDK ([Lambda com o SDK](#lambda-com-o-sdk)).
+- **Lambda:** **Infraestrutura › Serverless › Conectar serviço Serverless**, provedor **AWS**. Métricas e logs chegam pelo CloudWatch depois do passo 2b; o SDK ([Lambda com o SDK](#lambda-com-o-sdk)) é opcional, para métricas de negócio.
 
-Nenhum desses passos dá ao Immuno Ops acesso à sua conta AWS: os dados saem do agente ou do SDK que você instala.
+Os passos de EKS, EC2 e SDK não dão ao Immuno Ops acesso à conta: os dados saem do agente ou do SDK. O acesso de leitura à conta vem só da pilha do passo 2b.
 
-#### Passo 4 — Preparar o billing (opcional, recomendado)
+#### Passo 4 — Preparar o billing à mão (sem CloudFormation)
 
 O custo da AWS vai ser lido de um **export de faturamento no formato FOCUS** que você cria na sua conta, num bucket seu. A AWS só gera esse export daqui para a frente: criar agora faz o histórico já estar lá quando a leitura for liberada. Nada é compartilhado com o Immuno Ops neste passo.
 
@@ -489,7 +526,7 @@ O número é o ID único dessa conta de serviço. A condição `oaud` é exclusi
 
 Não conceda `s3:PutObject`, `s3:*`, `AdministratorAccess` nem papel de faturamento. Essas duas ações cobrem a leitura.
 
-Rode num terminal autenticado na conta. `CONTA` é o ID de 12 dígitos. `BUCKET` é o bucket do passo 4. Troque `AUDIENCIA` por `immunoops-tenant-` seguido do id da organização. A leitura do custo no console ainda está em breve, e esse id entra junto com ela; crie o papel quando o Immuno Ops informar a audiência.
+Rode num terminal autenticado na conta. `CONTA` é o ID de 12 dígitos. `BUCKET` é o bucket do passo 4. Troque `AUDIENCIA` por `immunoops-tenant-` seguido do id da organização. A audiência aparece em **Detalhes da conexão**, no cartão da conta AWS.
 
 ```
 CONTA=123456789012
