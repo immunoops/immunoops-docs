@@ -697,7 +697,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#conta-nuvem">GCP · Conta</a></li><li><a href="#cloudrun-permissoes">GCP · Cloud Run</a></li><li><a href="#vm-permissoes">GCP · Ligar e desligar a VM</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">AWS · Conta</a></li><li><a href="#conta-aws-permissoes">AWS · Permissões do billing</a></li><li><a href="#aws-lambda-cloudwatch">AWS · CloudWatch da Lambda</a></li><li><a href="#aws-vm-power">AWS · Ligar e desligar a VM</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#conta-nuvem">GCP · Conta</a></li><li><a href="#cloudrun-permissoes">GCP · Cloud Run</a></li><li><a href="#vm-permissoes">GCP · Ligar e desligar a VM</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">AWS · Conta</a></li><li><a href="#conta-aws-permissoes">AWS · Permissões do billing</a></li><li><a href="#aws-lambda-cloudwatch">AWS · CloudWatch da Lambda</a></li><li><a href="#aws-vm-power">AWS · Ligar e desligar a VM</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li><li><a href="#opentelemetry">OpenTelemetry (Go, Python, Java…)</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -1197,11 +1197,11 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
     </table>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="instrumentar" data-keywords="instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes">
+<section class="doc" id="instrumentar" data-keywords="OpenTelemetry Collector, OTLP, OTLP/HTTP, OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_HEADERS, Go, Golang, Python, Java, .NET, traces, @immunoops/sdk, npm install, instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes">
   <div class="crumbs">Passo 07 · Conectar</div>
   <h1>Instrumentar a aplicação</h1>
   <div class="meta"><span>~10 min</span><span>Time de desenvolvimento</span><span>Opcional</span></div>
-  <p class="lead">O agent já mostra a saúde da infraestrutura. Para ver métricas de negócio, logs e eventos de dentro do seu código, conecte a aplicação pelo SDK.</p>
+  <p class="lead">O agent já mostra a saúde da infraestrutura. Para ver métricas de negócio, logs, traces e eventos de dentro do código, conecte a aplicação pelo SDK Node.js ou por OpenTelemetry, em qualquer linguagem.</p>
 
     <div class="two">
       <figure class="shot">
@@ -1217,19 +1217,213 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
         <figcaption>Administrar › Instrumentação · dados ilustrativos</figcaption>
       </figure>
       <ol class="steps">
-        <li>Vá em <span class="ui">Administrar › Instrumentação</span> e clique em <span class="ui">Conectar via SDK</span>.</li>
+        <li>Vá em <span class="ui">Infraestrutura › Instrumentação</span> e clique em <span class="ui">Conectar via SDK</span>.</li>
         <li>Dê um nome à aplicação e clique em <span class="ui">Gerar chave</span>.</li>
         <li><strong>Instale o pacote</strong> do SDK com o comando mostrado.</li>
         <li><strong>Inicialize o client</strong> colando a chave de conexão em <code>apiKey</code>.</li>
         <li><strong>Envie o primeiro dado</strong>. O status muda sozinho para <span class="pill ok">Conectada</span>.</li>
       </ol>
     </div>
-    <div class="note"><i>i</i><div><b>Atalho para Cloud Run e VMs</b><span>Na linha de um serviço já registrado, <span class="ui">Instrumentar minha aplicação</span> gera token e snippet OpenTelemetry prontos para colar.</span></div></div>
+    
+<table class="tbl">
+<thead>
+<tr>
+<th>Caminho</th>
+<th>Para quem</th>
+<th>O que chega</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#sdk-nodejs">SDK Node.js</a> (<code>@immunoops/sdk</code>)</td>
+<td>Apps em Node.js e TypeScript</td>
+<td>Métricas, logs e eventos de negócio, com mascaramento de dados pessoais</td>
+</tr>
+<tr>
+<td><a href="#opentelemetry">OpenTelemetry</a></td>
+<td>Qualquer linguagem (Go, Python, Java, .NET, Ruby, PHP…) ou um OpenTelemetry Collector</td>
+<td>Traces, métricas e logs no padrão OTLP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="instrumentar-chave">Gerar a chave de conexão</h3>
+<ol class="steps">
+<li>Vá em <strong>Infraestrutura › Instrumentação</strong> e clique em <strong>Conectar via SDK</strong>.</li>
+<li>Dê um nome à aplicação e clique em <strong>Gerar chave</strong>.</li>
+<li>Copie a chave: ela só aparece inteira agora. Se perder, gere outra nos detalhes da conexão; a anterior deixa de valer.</li>
+</ol>
+<p>O status muda sozinho de <strong>Aguardando primeiro dado</strong> para <strong>Conectada</strong> quando o primeiro dado chega. <strong>Sem dados recentes</strong> quer dizer que a aplicação parou de enviar.</p>
+<p>Guarde a chave numa variável de ambiente ou num cofre de segredos, nunca no código.</p>
+<h3 id="sdk-nodejs">SDK Node.js</h3>
+<p>O pacote é público no npm: <a href="https://www.npmjs.com/package/@immunoops/sdk"><code>@immunoops/sdk</code></a>. Node.js 18 ou mais novo.</p>
+<pre><code>npm install @immunoops/sdk
+</code></pre>
+<pre><code class="language-js">import immuno from '@immunoops/sdk';
+
+immuno.init({
+  serviceName: 'checkout-api',
+  apiKey: process.env.IMMUNOOPS_API_KEY,
+  endpoint: 'https://app.immunoops.io/agent/ingest',
+});
+
+immuno.event('app_started', {});
+</code></pre>
+<p>Funciona igual com <code>require</code>: <code>const immuno = require('@immunoops/sdk');</code>. As chamadas principais:</p>
+<table class="tbl">
+<thead>
+<tr>
+<th>Chamada</th>
+<th>Para quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>immuno.increment('pedidos', 1, { status: 'ok' })</code></td>
+<td>Contador</td>
+</tr>
+<tr>
+<td><code>immuno.metric('fila.tamanho', 42)</code></td>
+<td>Valor medido (gauge)</td>
+</tr>
+<tr>
+<td><code>await immuno.time('checkout.duration_ms', () =&gt; processar())</code></td>
+<td>Mede a duração de uma função</td>
+</tr>
+<tr>
+<td><code>immuno.info('mensagem', { contexto })</code> / <code>warn</code> / <code>error</code></td>
+<td>Logs da aplicação</td>
+</tr>
+<tr>
+<td><code>immuno.event('pedido.pago', { total: 49.9 })</code></td>
+<td>Evento de negócio</td>
+</tr>
+<tr>
+<td><code>await immuno.flush()</code></td>
+<td>Envia o que está na fila agora (obrigatório antes de encerrar o processo e na Lambda)</td>
+</tr>
+</tbody>
+</table>
+<p>O SDK manda os dados em lotes a cada 5 segundos e mascara CPF, número de cartão, senhas e tokens antes de enviar. Para ver no terminal o que foi enviado, use <code>debug: true</code> no <code>init</code>.</p>
+<h3 id="opentelemetry">OpenTelemetry</h3>
+<p>Qualquer aplicação instrumentada com OpenTelemetry, em qualquer linguagem, envia direto para o Immuno Ops pelo protocolo OTLP/HTTP. Não precisa do SDK do Immuno Ops nem de agent. Use a mesma chave de conexão.</p>
+<table class="tbl">
+<thead>
+<tr>
+<th>Configuração</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Endpoint OTLP/HTTP</td>
+<td><code>https://app.immunoops.io/agent/ingest</code></td>
+</tr>
+<tr>
+<td>Caminhos</td>
+<td><code>/v1/traces</code>, <code>/v1/metrics</code> e <code>/v1/logs</code> (o exporter acrescenta sozinho)</td>
+</tr>
+<tr>
+<td>Cabeçalho</td>
+<td><code>Authorization: Bearer &lt;chave de conexão&gt;</code></td>
+</tr>
+<tr>
+<td>Protocolo</td>
+<td><code>http/protobuf</code> (padrão) ou <code>http/json</code>. gRPC não é aceito</td>
+</tr>
+</tbody>
+</table>
+<p>O jeito mais simples é configurar pelas variáveis de ambiente padrão do OpenTelemetry, que todas as linguagens leem:</p>
+<pre><code>export OTEL_SERVICE_NAME=checkout-api
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://app.immunoops.io/agent/ingest
+export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+export OTEL_EXPORTER_OTLP_HEADERS=&quot;Authorization=Bearer SUA_CHAVE&quot;
+</code></pre>
+<h4 id="otel-go">Exemplo em Go</h4>
+<p>Com as variáveis acima, o exporter HTTP do OpenTelemetry já sabe para onde enviar e com qual chave:</p>
+<pre><code class="language-go">import (
+    &quot;go.opentelemetry.io/otel&quot;
+    &quot;go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp&quot;
+    &quot;go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp&quot;
+    sdkmetric &quot;go.opentelemetry.io/otel/sdk/metric&quot;
+    sdktrace &quot;go.opentelemetry.io/otel/sdk/trace&quot;
+)
+
+func setupOTel(ctx context.Context) (func(context.Context) error, error) {
+    traceExp, err := otlptracehttp.New(ctx) // lê OTEL_EXPORTER_OTLP_*
+    if err != nil {
+        return nil, err
+    }
+    metricExp, err := otlpmetrichttp.New(ctx)
+    if err != nil {
+        return nil, err
+    }
+    tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(traceExp))
+    mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)))
+    otel.SetTracerProvider(tp)
+    otel.SetMeterProvider(mp)
+    return func(ctx context.Context) error { // chame ao encerrar
+        _ = tp.Shutdown(ctx)
+        return mp.Shutdown(ctx)
+    }, nil
+}
+</code></pre>
+<p>Logs seguem o mesmo padrão com <code>otlploghttp</code>. Para HTTP e gRPC do próprio Go, os pacotes <code>otelhttp</code> e <code>otelgrpc</code> criam os spans de cada requisição.</p>
+<h4 id="otel-outras">Outras linguagens</h4>
+<p>Com as mesmas variáveis de ambiente:</p>
+<ul>
+<li><strong>Python:</strong> <code>pip install opentelemetry-distro opentelemetry-exporter-otlp &amp;&amp; opentelemetry-bootstrap -a install</code>, depois rode a aplicação com <code>opentelemetry-instrument python app.py</code>.</li>
+<li><strong>Java:</strong> baixe o <code>opentelemetry-javaagent.jar</code> e rode com <code>java -javaagent:opentelemetry-javaagent.jar -jar app.jar</code>.</li>
+<li><strong>Node.js com OpenTelemetry</strong> (em vez do SDK do Immuno Ops): <code>npm install @opentelemetry/auto-instrumentations-node</code> e rode com <code>node --require @opentelemetry/auto-instrumentations-node/register app.js</code>.</li>
+<li><strong>.NET, Ruby, PHP:</strong> o SDK de OpenTelemetry da linguagem com o exporter OTLP/HTTP.</li>
+</ul>
+<h4 id="otel-collector">Pelo OpenTelemetry Collector</h4>
+<p>Se você já tem um Collector, acrescente um exporter OTLP/HTTP e coloque-o nos pipelines. Nas versões 0.165 em diante o nome é <code>otlp_http</code>; nas anteriores, <code>otlphttp</code>:</p>
+<pre><code class="language-yaml">exporters:
+  otlphttp/immunoops:
+    endpoint: https://app.immunoops.io/agent/ingest
+    headers:
+      Authorization: &quot;Bearer ${env:IMMUNOOPS_TOKEN}&quot;
+
+service:
+  pipelines:
+    traces:  { receivers: [otlp], processors: [batch], exporters: [otlphttp/immunoops] }
+    metrics: { receivers: [otlp], processors: [batch], exporters: [otlphttp/immunoops] }
+    logs:    { receivers: [otlp], processors: [batch], exporters: [otlphttp/immunoops] }
+</code></pre>
+<p>Rode o Collector com a variável <code>IMMUNOOPS_TOKEN</code> com a chave de conexão. O exporter comprime em gzip por padrão; o Immuno Ops aceita.</p>
+<h4 id="otel-problemas">Se não chega nada</h4>
+<table class="tbl">
+<thead>
+<tr>
+<th>O que aparece</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>401</code> no exporter</td>
+<td>A chave está errada ou foi trocada por uma nova. Gere outra nos detalhes da conexão e use a última</td>
+</tr>
+<tr>
+<td>Endpoint com <code>/v1/traces</code> duas vezes</td>
+<td>Use <code>https://app.immunoops.io/agent/ingest</code> sem caminho em <code>OTEL_EXPORTER_OTLP_ENDPOINT</code>; o exporter acrescenta</td>
+</tr>
+<tr>
+<td>Exporter gRPC (porta 4317)</td>
+<td>Troque para OTLP/HTTP (<code>http/protobuf</code>)</td>
+</tr>
+<tr>
+<td>Status continua <strong>Aguardando primeiro dado</strong></td>
+<td>Confira se a aplicação tem saída HTTPS para <code>app.immunoops.io</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Atalho para Cloud Run e VMs:</strong> Na linha de um serviço já registrado, <strong>Instrumentar minha aplicação</strong> gera a chave e o snippet prontos para colar.</p>
     <h3 id="lambda-sdk">Lambda com o SDK</h3>
     <p>A Lambda congela o processo assim que a função retorna. Por isso, envie os dados antes de retornar:</p>
-    <pre><code>const { ImmunoClient } = require("@immunoops/sdk");
+    <pre><code>const immuno = require("@immunoops/sdk");
 
-const immuno = new ImmunoClient().init({
+immuno.init({
   apiKey: process.env.IMMUNOOPS_API_KEY,
   endpoint: "https://app.immunoops.io/agent/ingest",
   serviceName: "checkout",
