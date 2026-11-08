@@ -552,28 +552,161 @@ O papel fica `arn:aws:iam::CONTA:role/immunoops-billing-reader`. Guarde esse ARN
 - Tempo: cerca de 10 minutos
 - Quem: time de desenvolvimento
 - Opcional
-- Palavras-chave: instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes
+- Palavras-chave: OpenTelemetry Collector, OTLP, OTLP/HTTP, OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_HEADERS, Go, Golang, Python, Java, .NET, traces, spans, @immunoops/sdk, npm install, instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes
 
-O agent já mostra a saúde da infraestrutura. Para ver métricas de negócio, logs e eventos de dentro do código, conecte a aplicação pelo SDK.
+O agent já mostra a saúde da infraestrutura. Para ver métricas de negócio, logs, traces e eventos de dentro do código, conecte a aplicação. Há dois caminhos, e os dois usam a mesma chave de conexão:
 
-1. Vá em **Administrar › Instrumentação** e clique em **Conectar via SDK**.
+| Caminho | Para quem | O que chega |
+| --- | --- | --- |
+| [SDK Node.js](#sdk-nodejs) (`@immunoops/sdk`) | Apps em Node.js e TypeScript | Métricas, logs e eventos de negócio, com mascaramento de dados pessoais |
+| [OpenTelemetry](#opentelemetry) | Qualquer linguagem (Go, Python, Java, .NET, Ruby, PHP…) ou um OpenTelemetry Collector | Traces, métricas e logs no padrão OTLP |
+
+### Gerar a chave de conexão
+
+1. Vá em **Infraestrutura › Instrumentação** e clique em **Conectar via SDK**.
 2. Dê um nome à aplicação e clique em **Gerar chave**.
-3. Instale o pacote do SDK com o comando mostrado na tela.
-4. Inicialize o client colando a chave de conexão em `apiKey`.
-5. Envie o primeiro dado. O status muda sozinho para Conectada.
+3. Copie a chave: ela só aparece inteira agora. Se perder, gere outra nos detalhes da conexão; a anterior deixa de valer.
 
-A lista de aplicações mostra, entre outros, estes estados: **Conectada** (com o tempo desde o último dado), **Aguardando primeiro dado** e **Sem dados recentes**.
+O status muda sozinho de **Aguardando primeiro dado** para **Conectada** quando o primeiro dado chega. **Sem dados recentes** quer dizer que a aplicação parou de enviar.
 
-**Atalho para Cloud Run e VMs.** Na linha de um serviço já registrado, **Instrumentar minha aplicação** gera token e snippet OpenTelemetry prontos para colar.
+Guarde a chave numa variável de ambiente ou num cofre de segredos, nunca no código.
+
+### SDK Node.js
+
+O pacote é público no npm: [`@immunoops/sdk`](https://www.npmjs.com/package/@immunoops/sdk). Node.js 18 ou mais novo.
+
+```
+npm install @immunoops/sdk
+```
+
+```js
+import immuno from '@immunoops/sdk';
+
+immuno.init({
+  serviceName: 'checkout-api',
+  apiKey: process.env.IMMUNOOPS_API_KEY,
+  endpoint: 'https://app.immunoops.io/agent/ingest',
+});
+
+immuno.event('app_started', {});
+```
+
+Funciona igual com `require`: `const immuno = require('@immunoops/sdk');`. As chamadas principais:
+
+| Chamada | Para quê |
+| --- | --- |
+| `immuno.increment('pedidos', 1, { status: 'ok' })` | Contador |
+| `immuno.metric('fila.tamanho', 42)` | Valor medido (gauge) |
+| `await immuno.time('checkout.duration_ms', () => processar())` | Mede a duração de uma função |
+| `immuno.info('mensagem', { contexto })` / `warn` / `error` | Logs da aplicação |
+| `immuno.event('pedido.pago', { total: 49.9 })` | Evento de negócio |
+| `await immuno.flush()` | Envia o que está na fila agora (obrigatório antes de encerrar o processo e na Lambda) |
+
+O SDK manda os dados em lotes a cada 5 segundos e mascara CPF, número de cartão, senhas e tokens antes de enviar. Para ver no terminal o que foi enviado, use `debug: true` no `init`.
+
+### OpenTelemetry
+
+Qualquer aplicação instrumentada com OpenTelemetry, em qualquer linguagem, envia direto para o Immuno Ops pelo protocolo OTLP/HTTP. Não precisa do SDK do Immuno Ops nem de agent. Use a mesma chave de conexão.
+
+| Configuração | Valor |
+| --- | --- |
+| Endpoint OTLP/HTTP | `https://app.immunoops.io/agent/ingest` |
+| Caminhos | `/v1/traces`, `/v1/metrics` e `/v1/logs` (o exporter acrescenta sozinho) |
+| Cabeçalho | `Authorization: Bearer <chave de conexão>` |
+| Protocolo | `http/protobuf` (padrão) ou `http/json`. gRPC não é aceito |
+
+O jeito mais simples é configurar pelas variáveis de ambiente padrão do OpenTelemetry, que todas as linguagens leem:
+
+```
+export OTEL_SERVICE_NAME=checkout-api
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://app.immunoops.io/agent/ingest
+export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer SUA_CHAVE"
+```
+
+#### Exemplo em Go
+
+Com as variáveis acima, o exporter HTTP do OpenTelemetry já sabe para onde enviar e com qual chave:
+
+```go
+import (
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+)
+
+func setupOTel(ctx context.Context) (func(context.Context) error, error) {
+	traceExp, err := otlptracehttp.New(ctx) // lê OTEL_EXPORTER_OTLP_*
+	if err != nil {
+		return nil, err
+	}
+	metricExp, err := otlpmetrichttp.New(ctx)
+	if err != nil {
+		return nil, err
+	}
+	tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(traceExp))
+	mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)))
+	otel.SetTracerProvider(tp)
+	otel.SetMeterProvider(mp)
+	return func(ctx context.Context) error { // chame ao encerrar
+		_ = tp.Shutdown(ctx)
+		return mp.Shutdown(ctx)
+	}, nil
+}
+```
+
+Logs seguem o mesmo padrão com `otlploghttp`. Para HTTP e gRPC do próprio Go, os pacotes `otelhttp` e `otelgrpc` criam os spans de cada requisição.
+
+#### Outras linguagens
+
+Com as mesmas variáveis de ambiente:
+
+- **Python:** `pip install opentelemetry-distro opentelemetry-exporter-otlp && opentelemetry-bootstrap -a install`, depois rode a aplicação com `opentelemetry-instrument python app.py`.
+- **Java:** baixe o `opentelemetry-javaagent.jar` e rode com `java -javaagent:opentelemetry-javaagent.jar -jar app.jar`.
+- **Node.js com OpenTelemetry** (em vez do SDK do Immuno Ops): `npm install @opentelemetry/auto-instrumentations-node` e rode com `node --require @opentelemetry/auto-instrumentations-node/register app.js`.
+- **.NET, Ruby, PHP:** o SDK de OpenTelemetry da linguagem com o exporter OTLP/HTTP.
+
+#### Pelo OpenTelemetry Collector
+
+Se você já tem um Collector, acrescente um exporter OTLP/HTTP e coloque-o nos pipelines. Nas versões 0.165 em diante o nome é `otlp_http`; nas anteriores, `otlphttp`:
+
+```yaml
+exporters:
+  otlphttp/immunoops:
+    endpoint: https://app.immunoops.io/agent/ingest
+    headers:
+      Authorization: "Bearer ${env:IMMUNOOPS_TOKEN}"
+
+service:
+  pipelines:
+    traces:  { receivers: [otlp], processors: [batch], exporters: [otlphttp/immunoops] }
+    metrics: { receivers: [otlp], processors: [batch], exporters: [otlphttp/immunoops] }
+    logs:    { receivers: [otlp], processors: [batch], exporters: [otlphttp/immunoops] }
+```
+
+Rode o Collector com a variável `IMMUNOOPS_TOKEN` com a chave de conexão. O exporter comprime em gzip por padrão; o Immuno Ops aceita.
+
+#### Se não chega nada
+
+| O que aparece | O que fazer |
+| --- | --- |
+| `401` no exporter | A chave está errada ou foi trocada por uma nova. Gere outra nos detalhes da conexão e use a última |
+| Endpoint com `/v1/traces` duas vezes | Use `https://app.immunoops.io/agent/ingest` sem caminho em `OTEL_EXPORTER_OTLP_ENDPOINT`; o exporter acrescenta |
+| Exporter gRPC (porta 4317) | Troque para OTLP/HTTP (`http/protobuf`) |
+| Status continua **Aguardando primeiro dado** | Confira se a aplicação tem saída HTTPS para `app.immunoops.io` |
+
+**Atalho para Cloud Run e VMs.** Na linha de um serviço já registrado, **Instrumentar minha aplicação** gera a chave e o snippet prontos para colar.
 
 ### Lambda com o SDK
 
 A Lambda congela o processo assim que a função retorna. Por isso, envie os dados antes de retornar:
 
 ```js
-const { ImmunoClient } = require("@immunoops/sdk");
+const immuno = require("@immunoops/sdk");
 
-const immuno = new ImmunoClient().init({
+immuno.init({
   apiKey: process.env.IMMUNOOPS_API_KEY,
   endpoint: "https://app.immunoops.io/agent/ingest",
   serviceName: "checkout",
