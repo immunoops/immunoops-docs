@@ -537,6 +537,7 @@ Quem libera na AWS é alguém que altera o IAM da conta. O papel é somente leit
 | --- | --- | --- |
 | `s3:ListBucket` | bucket do export, só o prefixo `focus/` | Listar os arquivos do export |
 | `s3:GetObject` | objetos `focus/*` nesse bucket | Ler o manifesto e os arquivos Parquet |
+| `pricing:GetProducts` | conta (tabela de preços pública da AWS) | Preço de tabela das instâncias EC2 em **Custos › SKUs de nuvem**. Não acessa nenhum recurso da conta |
 
 A confiança do papel aponta para o Google (`accounts.google.com`), para a conta `aegis-worker@immunoops-prod.iam.gserviceaccount.com`. São três condições, todas obrigatórias:
 
@@ -548,7 +549,7 @@ A confiança do papel aponta para o Google (`accounts.google.com`), para a conta
 
 O número é o ID único dessa conta de serviço. A condição `oaud` é exclusiva da organização: com outra audiência, a AWS responde `AccessDenied`.
 
-Não conceda `s3:PutObject`, `s3:*`, `AdministratorAccess` nem papel de faturamento. Essas duas ações cobrem a leitura.
+Não conceda `s3:PutObject`, `s3:*`, `AdministratorAccess` nem papel de faturamento. Essas ações cobrem a leitura.
 
 Rode num terminal autenticado na conta. `CONTA` é o ID de 12 dígitos. `BUCKET` é o bucket do passo 4. Troque `AUDIENCIA` por `immunoops-tenant-` seguido do id da organização. A audiência aparece em **Detalhes da conexão**, no cartão da conta AWS.
 
@@ -560,7 +561,11 @@ AUDIENCIA=immunoops-tenant-ID_DA_ORGANIZACAO
 aws iam create-role --role-name immunoops-billing-reader --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Federated":"accounts.google.com"},"Action":"sts:AssumeRoleWithWebIdentity","Condition":{"StringEquals":{"accounts.google.com:sub":"101814243271068167435","accounts.google.com:aud":"101814243271068167435","accounts.google.com:oaud":"'$AUDIENCIA'"}}}]}'
 
 aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-billing-read --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::'$BUCKET'","Condition":{"StringLike":{"s3:prefix":["focus/","focus/*"]}}},{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::'$BUCKET'/focus/*"}]}'
+
+aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immunoops-pricing-read --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"pricing:GetProducts","Resource":"*"}]}'
 ```
+
+Quem conectou pelo **Conectar à AWS** antes desta permissão: atualize a pilha `immunoops-integration` no CloudFormation (**Atualizar › Substituir o modelo atual**, com o modelo do link **Conectar à AWS**) ou rode só o último comando acima. Sem ela, **SKUs de nuvem** lista os tipos da AWS sem preço e diz qual permissão falta.
 
 O papel fica `arn:aws:iam::CONTA:role/immunoops-billing-reader`. Guarde esse ARN.
 
