@@ -760,25 +760,25 @@ Menu de Investigar: Workloads, Alertas e Incidentes, Observabilidade, e Dashboar
 
 ## Passo 10 — Custo e FinOps
 
-- Grupo: Costs (barra do topo)
+- Grupo: Custos (barra do topo)
 - Quando: a pergunta é “quanto estou gastando, onde e o que sobra?”
 - Onde: `app.immunoops.io/ui/costs`
 - Palavras-chave: custo, custos, Costs, FinOps, FinOps Score, desperdício, economia, billing, fatura, FOCUS, FOCUS Normalizer, gasto diário, orçamento, namespaces, Kubernetes FinOps, Cloud SKUs, SKU, preço, AWS, GCP, USD, BRL, moeda, conversão, câmbio, EKS, Visão 360, exportar CSV, reimportar
 
-O custo vem da fatura das contas de nuvem (export de billing do Google Cloud e export FOCUS da AWS) e do uso real dos clusters, nunca de amostra. A tela **Costs** tem quatro abas:
+O custo vem da fatura das contas de nuvem (export de billing do Google Cloud e export FOCUS da AWS) e do uso real dos clusters, nunca de amostra. A tela **Custos** tem quatro abas:
 
 | Aba | O que mostra |
 | --- | --- |
-| Summary (Resumo) | **Gasto diário** de 7, 30 ou 90 dias, com uma barra por provedor e o total e a % de cada um. **Orçamento do mês** (**Set a budget**). **Namespaces que mais custam** e **CPU pedida × usada** por cluster. |
+| Resumo | **Gasto diário** de 7, 30 ou 90 dias, com uma barra por provedor e o total e a % de cada um. **Orçamento do mês** (**Definir orçamento**). **Namespaces que mais custam** e **CPU pedida × usada** por cluster. |
 | Kubernetes FinOps | Um cartão por cluster (GKE, EKS…): custo do mês, eficiência de CPU e desperdício, na moeda da fatura do cluster. |
-| Cloud SKUs | Preço por tipo de instância, com filtro por provedor e busca. |
+| SKUs de nuvem | Preço por tipo de instância, com filtro por provedor e busca. |
 | FOCUS Normalizer | A fatura de cada nuvem no padrão FOCUS 1.2: um cartão por provedor com o total e o maior serviço, e a tabela de recursos com provedor, região, serviço e custo efetivo. **Export CSV** baixa a tabela; **Reimport** lê o export de novo. |
 
-1. Abra **Costs › Summary** e escolha o período (**7d**, **30d** ou **90d**).
+1. Abra **Custos › Resumo** e escolha o período (**7d**, **30d** ou **90d**).
 2. Leia a legenda do gráfico: cada provedor com o total no período e a sua parte em %. A barra de hoje é menor porque o dia ainda está sendo faturado.
 3. Em **Kubernetes FinOps**, compare custo, eficiência de CPU e desperdício entre clusters.
 4. Em **FOCUS Normalizer**, veja recurso por recurso de onde vem cada valor.
-5. O custo de um workload fica na Visão 360, em **Cost of this workload**.
+5. O custo de um workload fica na Visão 360, em **Custo deste workload**.
 
 ### Mais de uma nuvem e mais de uma moeda
 
@@ -895,7 +895,7 @@ Sim. Todo dado vem do cluster e da conta de nuvem. Quando ainda não há dado, a
 Cada nuvem fatura na sua moeda e o Immuno Ops mostra cada valor na moeda da fatura. No gasto diário, o dólar é convertido pela taxa do export de billing do Google de cada dia.
 
 **Conectei a AWS e o custo ainda não aparece.**
-O primeiro arquivo do export FOCUS chega em até 24 horas. Depois, a leitura é a cada 6 horas; para ler na hora, use **Testar conexão** no cartão da conta em **Infrastructure › Accounts**. Meses anteriores à criação do export não aparecem.
+O primeiro arquivo do export FOCUS chega em até 24 horas. Depois, a leitura é a cada 6 horas; para ler na hora, use **Testar conexão** no cartão da conta em **Infraestrutura › Contas**. Meses anteriores à criação do export não aparecem.
 
 ### Problemas comuns
 

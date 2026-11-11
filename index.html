@@ -1505,42 +1505,29 @@ exports.handler = async (event) =&gt; {
   <div class="crumbs">Passo 10 · Custos</div>
   <h1>Custo e FinOps</h1>
   <div class="meta"><span>Quando a pergunta é “quanto estou gastando, onde e o que sobra?”</span></div>
-  <p class="lead">Clique em <span class="ui">Costs</span> na barra do topo. O custo vem da fatura das suas contas de nuvem (export de billing do Google Cloud e export FOCUS da AWS) e do uso real dos clusters, nunca de amostra. A tela tem quatro abas.</p>
+  <p class="lead">Clique em <span class="ui">Custos</span> na barra do topo. O custo vem da fatura das suas contas de nuvem (export de billing do Google Cloud e export FOCUS da AWS) e do uso real dos clusters, nunca de amostra. A tela tem quatro abas.</p>
 
     <table class="tbl">
       <thead><tr><th>Aba</th><th>O que mostra</th></tr></thead>
       <tbody>
-        <tr><td><span class="ui">Summary</span> (Resumo)</td><td><strong>Gasto diário</strong> dos últimos 7, 30 ou 90 dias, com uma barra por provedor e o total e a % de cada um. <strong>Orçamento do mês</strong> (defina em <span class="ui">Set a budget</span>). <strong>Namespaces que mais custam</strong> e <strong>CPU pedida × usada</strong> por cluster.</td></tr>
+        <tr><td><span class="ui">Resumo</span></td><td><strong>Gasto diário</strong> dos últimos 7, 30 ou 90 dias, com uma barra por provedor e o total e a % de cada um. <strong>Orçamento do mês</strong> (defina em <span class="ui">Definir orçamento</span>). <strong>Namespaces que mais custam</strong> e <strong>CPU pedida × usada</strong> por cluster.</td></tr>
         <tr><td><span class="ui">Kubernetes FinOps</span></td><td>Um cartão por cluster (GKE, EKS…): custo do mês, eficiência de CPU e desperdício, cada um na moeda da fatura do cluster.</td></tr>
-        <tr><td><span class="ui">Cloud SKUs</span></td><td>Preço por tipo de instância, com filtro por provedor (GCP, AWS, Azure) e busca.</td></tr>
+        <tr><td><span class="ui">SKUs de nuvem</span></td><td>Preço por tipo de instância, com filtro por provedor (GCP, AWS, Azure) e busca.</td></tr>
         <tr><td><span class="ui">FOCUS Normalizer</span></td><td>A fatura de cada nuvem no mesmo formato (padrão FOCUS 1.2): um cartão por provedor com o total e o maior serviço, e a tabela de recursos com provedor, região, serviço e custo efetivo. <span class="ui">Export CSV</span> baixa a tabela; <span class="ui">Reimport</span> lê o export de novo.</td></tr>
       </tbody>
     </table>
 
     <div class="two">
       <ol class="steps">
-        <li>Abra <span class="ui">Costs › Summary</span> e escolha o período (<span class="ui">7d</span>, <span class="ui">30d</span> ou <span class="ui">90d</span>).</li>
+        <li>Abra <span class="ui">Custos › Resumo</span> e escolha o período (<span class="ui">7d</span>, <span class="ui">30d</span> ou <span class="ui">90d</span>).</li>
         <li>Leia a legenda do gráfico: cada provedor aparece com o total no período e a sua parte em %. A barra de hoje é menor porque o dia ainda está sendo faturado.</li>
         <li>Em <span class="ui">Kubernetes FinOps</span>, compare custo, eficiência de CPU e desperdício entre clusters. O cluster com mais desperdício é onde começar.</li>
         <li>Em <span class="ui">FOCUS Normalizer</span>, veja recurso por recurso de onde vem cada valor da fatura.</li>
-        <li>O custo de um workload aparece na <a href="#investigar">Visão 360</a>, em <strong>Cost of this workload</strong>.</li>
+        <li>O custo de um workload aparece na <a href="#investigar">Visão 360</a>, em <strong>Custo deste workload</strong>.</li>
       </ol>
       <figure class="shot">
-        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/costs</div></div>
-          <div class="app" style="padding:12px">
-            <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:10px;margin-bottom:10px"><span class="ui">Home</span><span class="ui" style="background:#00ff4c">Costs</span><span class="ui">Decisions</span><span class="ui">Operations</span><span class="ui">Infrastructure</span></div>
-            <div class="acard">
-              <div style="font-size:10px;opacity:.7">Gasto diário · últimos 30 dias</div>
-              <div class="num" style="font-size:22px;font-weight:800">R$ 12.480</div>
-              <div style="display:flex;align-items:flex-end;gap:3px;height:60px;margin:8px 0">
-                <i style="flex:1;height:55%;background:#3b8fc4"></i><i style="flex:1;height:60%;background:#3b8fc4"></i><i style="flex:1;height:58%;background:#3b8fc4"></i><i style="flex:1;height:62%;background:linear-gradient(#5b5bd6 25%,#3b8fc4 25%)"></i><i style="flex:1;height:66%;background:linear-gradient(#5b5bd6 25%,#3b8fc4 25%)"></i><i style="flex:1;height:64%;background:linear-gradient(#5b5bd6 25%,#3b8fc4 25%)"></i><i style="flex:1;height:20%;background:#3b8fc4"></i>
-              </div>
-              <div style="font-size:9.5px">● Google Cloud R$ 11.230 · 90,0% &nbsp; ● AWS R$ 1.250 · 10,0%</div>
-              <div style="font-size:9px;opacity:.7">AWS faturou US$ 220, convertido pela taxa do export de billing do Google de cada dia.</div>
-            </div>
-          </div>
-        </div>
-        <figcaption>Costs › Summary · números ilustrativos</figcaption>
+        <img src="img/custos/custos-resumo.png" alt="Custos › Resumo: gasto diário por provedor, com % e a AWS convertida" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Custos › Resumo: gasto diário por provedor, com % e a AWS convertida</figcaption>
       </figure>
     </div>
 
@@ -1562,6 +1549,22 @@ exports.handler = async (event) =&gt; {
         <tr><td>Demais serviços</td><td>Uma linha por recurso (NAT, ENI, CloudWatch, S3, KMS…), com o provedor AWS e a região.</td></tr>
       </tbody>
     </table>
+    <figure class="shot">
+        <img src="img/custos/custos-kubernetes.png" alt="Kubernetes FinOps" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Custos › Kubernetes FinOps: GKE em R$ e EKS em US$, cada um na moeda da fatura</figcaption>
+      </figure>
+    <figure class="shot">
+        <img src="img/custos/custos-focus.png" alt="FOCUS Normalizer" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Custos › FOCUS Normalizer: um cartão por provedor e a tabela de recursos</figcaption>
+      </figure>
+    <figure class="shot">
+        <img src="img/custos/w360-custo.png" alt="Custo deste workload" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Visão 360 › Custo deste workload: a parte do coredns na fatura do EKS</figcaption>
+      </figure>
+    <figure class="shot">
+        <img src="img/custos/contas.png" alt="Contas de nuvem" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Infraestrutura › Contas: billing do GCP e da AWS em dia</figcaption>
+      </figure>
     <div class="note tip"><i>✓</i><div><b>“Maior: Amazon EKS (89%)”</b><span>No cartão do provedor, o serviço ao lado do total é o que mais pesou na fatura e a % é a parte dele, não o total inteiro.</span></div></div>
     <div class="note tip"><i>✓</i><div><b>FinOps Score</b><span>A nota de 0 a 100 por cluster continua em <span class="ui">Kubernetes FinOps</span>: 100 menos o desperdício ponderado por custo. As barras (Capacidade, Requests, Autoscaling, Storage, Rede e Dono) mostram onde está o desperdício.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
@@ -1689,7 +1692,7 @@ exports.handler = async (event) =&gt; {
     <details class="faq"><summary>A conta GCP está “Sem tabela”</summary><div>Abra a conta, informe a tabela no formato <code>projeto.dataset.tabela</code> e clique em <span class="ui">Salvar tabela</span>. Sem essa tabela a conta não entra no billing.</div></details>
     <details class="faq"><summary>Os números são reais?</summary><div>Sim. Todo dado vem do seu cluster e da sua conta de nuvem. Quando ainda não há dado, a tela diz isso em vez de mostrar um número inventado.</div></details>
     <details class="faq"><summary>Por que a AWS aparece em dólar e o Google Cloud em real?</summary><div>Cada nuvem fatura na sua moeda e o Immuno Ops mostra cada valor na moeda da fatura. No gasto diário, o valor em dólar é convertido pela taxa do export de billing do Google de cada dia. Detalhes em <a href="#custo-moedas">Mais de uma nuvem e mais de uma moeda</a>.</div></details>
-    <details class="faq"><summary>Conectei a AWS e o custo ainda não aparece</summary><div>A AWS gera o primeiro arquivo do export FOCUS em até 24 horas. Depois disso, o Immuno Ops lê a cada 6 horas; para ler na hora, use <span class="ui">Testar conexão</span> no cartão da conta em <span class="ui">Infrastructure › Accounts</span>. A AWS só gera o export daqui para a frente: meses anteriores não aparecem.</div></details>
+    <details class="faq"><summary>Conectei a AWS e o custo ainda não aparece</summary><div>A AWS gera o primeiro arquivo do export FOCUS em até 24 horas. Depois disso, o Immuno Ops lê a cada 6 horas; para ler na hora, use <span class="ui">Testar conexão</span> no cartão da conta em <span class="ui">Infraestrutura › Contas</span>. A AWS só gera o export daqui para a frente: meses anteriores não aparecem.</div></details>
     <p class="faq-group">Problemas comuns</p>
     <details class="faq"><summary>Meu cluster está como “Pendente” há muito tempo</summary><div>O agent nunca mandou dado. Confira se o comando <code>helm</code> terminou sem erro, se os pods do agent estão <code>Running</code> e se o cluster tem saída de rede para o Immuno Ops.</div></details>
     <details class="faq"><summary>O cluster está conectado, mas Workloads está vazio</summary><div>O inventário pode levar alguns minutos para chegar depois da conexão. Se a tela disser “Ainda não recebemos workloads de…”, teste a conexão e confira os logs do agent.</div></details>
