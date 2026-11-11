@@ -20,43 +20,43 @@ O manual cobre o caminho do cadastro até a primeira investigação.
 
 ## Mapa do console
 
-O menu da esquerda tem quatro grupos, nesta ordem. Clique no nome do grupo para abrir os itens. O grupo da tela atual já fica aberto. No rodapé do menu ficam o usuário e o atalho para Segurança da conta.
+A navegação fica na barra do topo, com cinco áreas, nesta ordem. Cada área tem abas. À esquerda fica o seletor de organização; à direita, a busca (⌘K), o agente de IA (✦), o tema, o sino de notificações, o idioma e o avatar, que abre Configurações.
 
-| Grupo | Itens |
+| Área | Abas e o que tem |
 | --- | --- |
-| Administrar | Clusters, VMs, Serverless, Instrumentação, Equipe e Empresa. |
-| Investigar | Workloads, Alertas e Incidentes e Observabilidade. Dashboards fica dentro de Observabilidade. |
-| Analisar | Kubernetes FinOps e FOCUS Normalizer. |
-| Operar | Visão Geral: status, alertas e clusters. É a tela que abre depois do login. |
+| Início | Primeira tela depois do login: alertas disparando, anomalias, conexões com problema, o que pede atenção e para onde vai o dinheiro. |
+| Custos | Resumo, Kubernetes FinOps, SKUs de nuvem e FOCUS Normalizer. |
+| Decisões | Recomendações e a fila de aprovação. |
+| Operação | Visão geral, Incidentes, Workloads, Mobile, Monitoramento e Dashboards. Cada serviço abre na Visão 360. |
+| Infraestrutura | Clusters, VMs, Serverless, Instrumentação e Contas de nuvem. |
+| Configurações (avatar) | Políticas, Notificações, Equipe, Empresa e plano e Segurança. |
 
-A barra do topo mostra onde a pessoa está, por exemplo `ADMINISTRAR / CLUSTERS`. À direita ficam o idioma, o seletor de organização e o agente de IA.
+A área aberta fica destacada em verde na barra do topo.
 
-O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e custos, mas não os botões de conectar ou convidar. Equipe e Empresa só aparecem para quem tem permissão.
+O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e custos, mas não os botões de conectar ou convidar. Equipe e Empresa e plano só aparecem para quem tem permissão.
 
 ### Onde cada assunto fica
 
 | Assunto | Onde | Passos |
 | --- | --- | --- |
-| Confiabilidade e incidentes | Operar e Investigar. Alertas consistentes entre as telas e correlação de causa raiz. | 08 e 09 |
-| FinOps e custo | Costs. Gasto diário por nuvem, custo por cluster, namespace e recurso, fatura FOCUS da AWS e do GCP, e o FinOps Score. | 10 |
-| Governança multi-cluster | Administrar. Clusters, VMs, Serverless e equipe num único lugar. | 05, 06 e 11 |
-| Observabilidade nativa | Investigar e Administrar. Métricas, logs e traces sem depender do editor do Grafana. | 07 e 09 |
+| Confiabilidade e incidentes | Início e Operação. Alertas consistentes entre as telas e correlação de causa raiz. | 08 e 09 |
+| FinOps e custo | Custos. Gasto diário por nuvem, custo por cluster, namespace e recurso, fatura FOCUS da AWS e do GCP, e o FinOps Score. | 10 |
+| Governança multi-cluster | Infraestrutura e Configurações. Clusters, VMs, Serverless e equipe num único lugar. | 05, 06 e 11 |
+| Observabilidade nativa | Operação e Infraestrutura. Métricas, logs e traces sem depender do editor do Grafana. | 07 e 09 |
 
 ### Caminhos do console citados no manual
 
 - Login: https://app.immunoops.io/ui/login
 - Cadastro: `app.immunoops.io/ui/signup`
 - Aceite de convite: `app.immunoops.io/ui/accept-invite`
-- Visão Geral: `app.immunoops.io/ui/`
-- Clusters: `app.immunoops.io/ui/clusters`
-- Cloud Run: `app.immunoops.io/ui/cloud-run`
-- Contas de nuvem: `app.immunoops.io/ui/infrastructure?tab=contas`
-- Instrumentação: `app.immunoops.io/ui/instrumentation`
-- Workloads: `app.immunoops.io/ui/workloads`
-- Custos: `app.immunoops.io/ui/costs` (abas Summary, Kubernetes FinOps, Cloud SKUs e FOCUS Normalizer: `?tab=focus`)
-- Equipe: `app.immunoops.io/ui/team`
-- Segurança da conta: `app.immunoops.io/ui/account/security`
-- Empresa: `app.immunoops.io/ui/company`
+- Início: `app.immunoops.io/ui/`
+- Custos: `app.immunoops.io/ui/costs` (abas: `?tab=k8s`, `?tab=skus`, `?tab=focus`)
+- Decisões: `app.immunoops.io/ui/decisions`
+- Operação: `app.immunoops.io/ui/operations` (abas: `?tab=incidentes`, `?tab=workloads`, `?tab=monitoramento`, `?tab=dashboards`)
+- Infraestrutura: `app.immunoops.io/ui/infrastructure` (abas: `?tab=clusters`, `?tab=vms`, `?tab=cloudrun`, `?tab=instrumentacao`, `?tab=contas`)
+- Equipe: `app.immunoops.io/ui/settings/equipe`
+- Empresa e plano: `app.immunoops.io/ui/settings/empresa`
+- Segurança: `app.immunoops.io/ui/settings/seguranca`
 
 ## Índice
 
@@ -132,17 +132,18 @@ A tela de login também oferece **Criar conta →** para quem ainda não tem con
 - Quando: abre sozinho no primeiro acesso
 - Palavras-chave: tour, boas-vindas, onboarding, guia inicial, primeiro acesso, pular tour, tutorial, passo a passo
 
-Logo depois do cadastro, e enquanto nenhum serviço estiver conectado, um tour guiado abre por cima da Visão Geral. Ele ilumina cada item do menu e mostra onde conectar os serviços.
+Logo depois do cadastro, e enquanto nenhum serviço estiver conectado, um tour guiado abre por cima do **Início**. Ele ilumina a barra do topo e as abas de **Infraestrutura** e mostra onde conectar os serviços.
 
 | Passo do tour | O que mostra |
 | --- | --- |
 | 1 | Boas-vindas |
-| 2 e 3 | Clusters: onde ficam e como conectar |
-| 4 e 5 | Cloud Run: onde fica e como registrar |
-| 6 | Instrumentar a aplicação com OpenTelemetry |
-| 7 | VMs e a aba Suspensão |
+| 2 | Seus serviços ficam em Infraestrutura |
+| 3 | Conectar um cluster Kubernetes (**Ir para Clusters**) |
+| 4 e 5 | Serverless: onde fica e como registrar |
+| 6 | Sua aplicação em Instrumentação (SDK) |
+| 7 | VMs e o agente no host |
 
-O passo que ilumina Clusters diz: “Seus serviços ficam em Clusters. É aqui que você conecta e acompanha tudo o que o Immuno Ops monitora.” Os botões do tour são **Pular**, **Voltar** e, nesse passo, **Ir para Clusters**.
+O passo de Infraestrutura diz: “Clusters, VMs, Serverless e aplicações instrumentadas moram aqui, cada um na sua aba.” Os botões do tour são **Pular**, **Voltar**, **Próximo** e, no passo de clusters, **Ir para Clusters**.
 
 **Pode pular.** **Pular** ou `Esc` fecham o tour. Ele volta no próximo login enquanto nada estiver conectado. Os passos 05 a 07 deste manual cobrem o mesmo caminho com mais detalhe.
 
@@ -151,11 +152,11 @@ O passo que ilumina Clusters diz: “Seus serviços ficam em Clusters. É aqui q
 - Grupo: Começar
 - Tempo: cerca de 2 minutos
 - Quem: leitura
-- Palavras-chave: menu, navegação, menu lateral, Administrar, Investigar, Analisar, Operar, barra do topo, idioma, seletor de organização, agente de IA, papel, permissão, onde fica
+- Palavras-chave: menu, navegação, barra do topo, Início, Custos, Decisões, Operação, Infraestrutura, Configurações, idioma, seletor de organização, agente de IA, papel, permissão, onde fica
 
-O menu da esquerda tem quatro grupos, nesta ordem: **Administrar**, **Investigar**, **Analisar** e **Operar**. Clique no nome do grupo para abrir os itens. O grupo da tela em que a pessoa está já fica aberto. No rodapé do menu ficam o usuário e o atalho para **Segurança da conta**.
+A navegação fica na barra do topo: **Início**, **Custos**, **Decisões**, **Operação** e **Infraestrutura**. O avatar, no canto direito, abre **Configurações** (Políticas, Notificações, Equipe, Empresa e plano e Segurança).
 
-A composição dos grupos e o efeito do papel estão em [Mapa do console](#mapa-do-console).
+As abas de cada área e o efeito do papel estão em [Mapa do console](#mapa-do-console).
 
 ### Agente de IA
 
@@ -182,7 +183,7 @@ O agente só vê os dados da organização selecionada e não executa ações: e
 
 É o passo mais importante. Com o agent instalado, métricas, logs, traces e o inventário de workloads começam a chegar sozinhos.
 
-1. No menu, vá em **Administrar › Clusters** e clique em **Conectar cluster**.
+1. Vá em **Infraestrutura › Clusters** e clique em **Conectar cluster**.
 2. Em **Escolha a nuvem**, selecione o provedor.
 3. Dê um nome ao cluster, escolha o ambiente (produção, staging ou outro) e clique em **Registrar cluster**.
 4. A janela **Instale o agent** mostra um comando `helm` já com o token de conexão. Clique em **Copiar comando** e rode num terminal com acesso ao cluster.
@@ -197,7 +198,7 @@ O comando exibido na janela segue a forma `helm upgrade --install` do agent, com
 | Status | O que significa | O que fazer |
 | --- | --- | --- |
 | Pendente | Cluster registrado, mas o agent nunca mandou dado. | Confira se o comando rodou sem erro e se os pods do agent estão `Running`. |
-| Conectado | O agent está mandando dados. | Nada. Os dados já aparecem em Investigar. |
+| Conectado | O agent está mandando dados. | Nada. Os dados já aparecem em Operação. |
 | Desconectado | O último sinal tem mais de 5 minutos. | Verifique o agent no cluster: pods, rede de saída e token. |
 
 Comparado com os outros tipos de recurso: no cluster se instala um agent com Helm, e ele traz workloads, métricas, logs e traces. Serverless e VM estão no passo 06.
@@ -730,14 +731,12 @@ Guarde a chave numa variável de ambiente da função (ou no Secrets Manager), n
 - Quando: todo dia. É a primeira tela depois do login.
 - Palavras-chave: visão geral, overview, dashboard inicial, status, saudável, atenção, crítico, alertas disparando, heartbeat, tela vazia, primeiro recurso, home, início
 
-A Visão Geral responde uma pergunta: está tudo bem agora? Os números são os mesmos em todas as telas: um alerta crítico aqui é o mesmo alerta em Alertas e Incidentes.
+O **Início** e **Operação › Visão geral** respondem uma pergunta: está tudo bem agora? Os números são os mesmos em todas as telas: um alerta aqui é o mesmo alerta em **Operação › Incidentes**.
 
-Menu: **Operar › Visão Geral**. Há o botão **Atualizar status**.
-
-1. **Faixa de status:** Saudável, Atenção ou Crítico, com a frase que explica o porquê.
-2. **Números do topo:** alertas disparando, clusters conectados, workloads monitorados e o último sinal recebido (heartbeat).
-3. **Alertas disparando:** cada linha traz o problema e leva à regra em Alertas e Incidentes.
-4. **Clusters:** a conexão do agent de cada cluster.
+1. **Início:** a frase de status (“Tudo sob controle”, ou quantos itens pedem atenção), alertas disparando, anomalias abertas e conexões com problema.
+2. **Pede sua atenção:** cada linha traz o recurso com problema e o atalho para resolver.
+3. **Para onde vai o dinheiro:** custo por provedor, com atalho para Custos.
+4. **Operação › Visão geral:** serviços monitorados, com problema agora, incidentes abertos e cobertura de traces, e a lista de serviços com estado, erros, latência p95, saturação e os sinais M, L, T e E (métricas, logs, traces e eventos).
 
 **Tela vazia?** **Conecte seu primeiro recurso** quer dizer que nenhum cluster, VM ou serviço Serverless mandou dado ainda. Volte ao passo 05. A tela não mostra número inventado enquanto não há dado.
 
@@ -749,18 +748,16 @@ Menu: **Operar › Visão Geral**. Há o botão **Atualizar status**.
 
 Resposta a incidente com contexto, não alerta solto. Roteiro do alerta à causa:
 
-1. **Alertas e Incidentes — triagem.** Veja a linha do tempo ao vivo e reconheça o alerta, para o time saber que alguém está olhando.
-2. **Workloads — qual serviço.** Filtre por namespace, ambiente e severidade. Cada workload traz a evidência e a ação recomendada. A tela se chama Workloads operacionais e cobre saúde de runtime, risco de confiabilidade, capacidade e custo. Filtros citados: namespace, ambiente e severidade. A tabela mostra workload, restarts, ação recomendada e severidade. Exemplos de ação recomendada na tela ilustrativa: investigar CrashLoop e validar probes; ajustar requests de CPU e memória.
-3. **Observabilidade — por quê.** Métricas, logs e traces da última hora cruzados. Sinais correlacionados junta pico de erro, logs de erro e spans lentos.
-4. **Dashboards — acompanhar.** Dashboards do time com painéis reais, sem depender do editor do Grafana. Dashboards fica dentro de Observabilidade.
+1. **Operação › Incidentes — triagem.** Veja os incidentes abertos e resolvidos e reconheça o alerta, para o time saber que alguém está olhando.
+2. **Operação › Workloads — qual serviço.** Filtre por nome, namespace ou cluster. Cada workload mostra réplicas, CPU pedida → sugerida, memória e economia, e abre a Visão 360.
+3. **Visão 360 e Monitoramento — por quê.** Na Visão 360, métricas, logs, traces e eventos no mesmo eixo de tempo, padrões de log, traces mais lentos, dependências e custo do workload.
+4. **Operação › Dashboards — acompanhar.** Dashboards do time com painéis reais, sem depender do editor do Grafana.
 
-Menu de Investigar: Workloads, Alertas e Incidentes, Observabilidade, e Dashboards como subitem.
-
-**Logs e traces vazios?** Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam visíveis em **Entidades do Cluster**.
+**Logs e traces vazios?** Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam com métricas e eventos do agent na Visão 360.
 
 ## Passo 10 — Custo e FinOps
 
-- Grupo: Custos (barra do topo)
+- Grupo: Operar
 - Quando: a pergunta é “quanto estou gastando, onde e o que sobra?”
 - Onde: `app.immunoops.io/ui/costs`
 - Palavras-chave: custo, custos, Costs, FinOps, FinOps Score, desperdício, economia, billing, fatura, FOCUS, FOCUS Normalizer, gasto diário, orçamento, namespaces, Kubernetes FinOps, Cloud SKUs, SKU, preço, AWS, GCP, USD, BRL, moeda, conversão, câmbio, EKS, Visão 360, exportar CSV, reimportar
@@ -807,10 +804,10 @@ No cartão do provedor, “Maior: Amazon EKS (89%)” é o serviço que mais pes
 - Quem: Administrador
 - Palavras-chave: equipe, time, usuários, pessoas, convidar, convite, papel, papéis, permissões, administrador, admin, operador, leitura, viewer, suspender, remover, reenviar convite, RBAC
 
-1. Vá em **Administrar › Equipe** e clique em **Convidar funcionário**.
+1. Clique no avatar e vá em **Configurações › Equipe**; clique em **Convidar pessoa**.
 2. Informe o e-mail. O nome é opcional. Escolha o papel.
-3. Clique em **Convidar**. A pessoa aparece como **Convite pendente** até aceitar.
-4. No menu **Ações** de cada linha dá para reenviar ou revogar convites, alterar o papel, suspender ou remover alguém da organização.
+3. Clique em **Convidar**. A pessoa aparece como **Convite enviado** até aceitar.
+4. Em cada linha dá para trocar o papel (**Leitura**, **Operador** ou **Admin**), reenviar um convite expirado em **Reenviar** ou remover a pessoa pelo ícone de lixeira.
 
 **O e-mail não saiu?** A tela mostra o link do convite. Copie e envie direto para a pessoa.
 
@@ -832,7 +829,7 @@ Quem está com Leitura não vê os botões de conectar ou convidar. Peça a um a
 
 A tela Segurança da conta pede uma senha forte e uma segunda etapa no login.
 
-1. Clique no ícone de **Segurança da conta** no rodapé do menu, ao lado do nome.
+1. Clique no avatar, no canto direito da barra do topo, e escolha **Segurança** (**Configurações › Segurança**).
 2. Em **Verificação em duas etapas**, clique em **Ativar verificação em duas etapas**.
 3. Leia o QR Code com o app autenticador. Sem câmera, use **Copiar chave** e cole no app.
 4. Digite o código de 6 dígitos e clique em **Confirmar e ativar**.
@@ -850,7 +847,7 @@ Apps citados no manual: Google Authenticator, 1Password, Authy ou outro.
 
 Para ampliar os limites ou contratar com SSO e SLA, fale com o time direto pelo console. O uso já vai junto no pedido.
 
-1. Vá em **Administrar › Empresa** e, no painel **Plano**, clique em **Falar com vendas**.
+1. Clique no avatar e vá em **Configurações › Empresa e plano**; no painel do plano, clique em **Falar com vendas**.
 2. Escolha o assunto:
    - **Trocar de plano** — ver outro plano que caiba melhor no uso.
    - **Aumentar volume de créditos** — mais créditos por mês para o uso da plataforma.
