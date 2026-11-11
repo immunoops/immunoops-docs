@@ -171,6 +171,28 @@ O botão ✦ no topo (atalho ⌘J) abre o **Agente IA**, um especialista em SRE,
 
 Exemplos: "Onde estou gastando mais este mês?", "Tem incidente aberto?", "Como está o checkout-api?", "Minha Lambda não manda dados, por quê?". A resposta vem no idioma da pergunta, com hipótese e próximos passos quando houver.
 
+#### Como ler a resposta
+
+| Parte | O que é |
+| --- | --- |
+| Hipótese | A explicação mais provável, em poucas frases. |
+| Confiança | Alta, média ou baixa. Fica baixa quando a evidência é pouca ou quando a hipótese não se apoia no que o agente leu. |
+| Evidências | O que o agente consultou para responder (“Leu os logs recebidos dos serverless e apps”, “Consultou os workloads da organização”). No texto, `[E1]`, `[E2]`… apontam para cada uma. |
+| Não confirmado | O que o agente não conseguiu verificar. Confira antes de agir. |
+| Outras explicações | Hipóteses alternativas, quando houver. |
+| Próximos passos | O que olhar ou fazer em seguida, com o caminho no console. |
+
+#### Conversas de exemplo
+
+| Tema | Pergunta | O que vem na resposta |
+| --- | --- | --- |
+| Custo | “Onde estou gastando mais este mês?” | Custo do mês por provedor, serviço e namespace, cada um na moeda da fatura (AWS em US$, Google Cloud em R$). |
+| Saúde de um serviço | “Como está a saúde da lambda-teste?” | Status, erros e latência, logs recentes e o que mudou antes do problema. Use o nome do serviço, não o link da tela. |
+| Triagem | “Quais workloads pedem atenção?” | Workloads com reinícios, erro, CPU ou memória perto do limite, do mais grave para o menos. |
+| Dados que não chegam | “Por que a VM CRIA 1 não manda dados?” | Status da conexão, quando chegou o último dado e o que conferir no host ou na conta de nuvem. |
+
+Perguntas que funcionam melhor: uma por vez, com o nome do serviço, cluster ou VM como aparece no console, e o período quando importa (“nas últimas 24 horas”, “este mês”). Responda na mesma conversa para aprofundar.
+
 O agente só vê os dados da organização selecionada e não executa ações: ele lê e explica. Confira a evidência antes de agir.
 
 ## Passo 05 — Conectar um cluster Kubernetes

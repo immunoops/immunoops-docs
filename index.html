@@ -834,6 +834,26 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
       </tbody>
     </table>
     <p>Exemplos: "Onde estou gastando mais este mês?", "Tem incidente aberto?", "Como está o checkout-api?", "Minha Lambda não manda dados, por quê?". A resposta vem no idioma da pergunta, com hipótese e próximos passos quando houver.</p>
+    <h4 id="agente-ia-ler">Como ler a resposta</h4>
+    <table class="tbl">
+      <thead><tr><th>Parte</th><th>O que é</th></tr></thead>
+      <tbody>
+        <tr><td>Hipótese</td><td>A explicação mais provável, em poucas frases.</td></tr>
+        <tr><td>Confiança</td><td><strong>Alta</strong>, <strong>média</strong> ou <strong>baixa</strong>. Fica baixa quando a evidência é pouca ou quando a hipótese não se apoia no que o agente leu.</td></tr>
+        <tr><td>Evidências</td><td>O que o agente consultou para responder, como “Leu os logs recebidos dos serverless e apps” ou “Consultou os workloads da organização”. No texto, <code>[E1]</code>, <code>[E2]</code>… apontam para cada uma.</td></tr>
+        <tr><td>Não confirmado</td><td>O que o agente não conseguiu verificar com os dados que tem. Confira antes de agir.</td></tr>
+        <tr><td>Outras explicações</td><td>Hipóteses alternativas, quando houver.</td></tr>
+        <tr><td>Próximos passos</td><td>O que olhar ou fazer em seguida, com o caminho no console.</td></tr>
+      </tbody>
+    </table>
+    <h4 id="agente-ia-exemplos">Conversas de exemplo</h4>
+    <div class="grid-2">
+      <div class="card compact"><span class="tag">Custo</span><h4 style="font-size:17px">“Onde estou gastando mais este mês?”</h4><p>Custo do mês por provedor, serviço e namespace, com a moeda de cada fatura (AWS em US$, Google Cloud em R$) e o maior gasto primeiro.</p></div>
+      <div class="card compact"><span class="tag">Saúde de um serviço</span><h4 style="font-size:17px">“Como está a saúde da lambda-teste?”</h4><p>Status, erros e latência do serviço, os logs recentes e o que mudou antes do problema. Use o nome do serviço, não o link da tela.</p></div>
+      <div class="card compact"><span class="tag">Triagem</span><h4 style="font-size:17px">“Quais workloads pedem atenção?”</h4><p>Workloads com reinícios, erro, CPU ou memória perto do limite, do mais grave para o menos.</p></div>
+      <div class="card compact"><span class="tag">Dados que não chegam</span><h4 style="font-size:17px">“Por que a VM CRIA 1 não manda dados?”</h4><p>Status da conexão, quando chegou o último dado e o que conferir no host ou na conta de nuvem.</p></div>
+    </div>
+    <div class="note tip"><i>✓</i><div><b>Perguntas que funcionam melhor</b><span>Uma pergunta por vez, com o nome do serviço, cluster ou VM como aparece no console. Para comparar períodos, diga o período (“nas últimas 24 horas”, “este mês”). Responda na mesma conversa para aprofundar.</span></div></div>
     <div class="note"><i>i</i><div><b>Só a sua organização</b><span>O agente só vê os dados da organização selecionada e não executa ações: ele lê e explica. Confira a evidência antes de agir.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
