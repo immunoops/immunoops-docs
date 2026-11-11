@@ -847,23 +847,23 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
       </tbody>
     </table>
     <h4 id="agente-ia-exemplos">Conversas de exemplo</h4>
-    <p>Quatro conversas reais com o agente, na organização Portifolio.</p>
-    <div class="grid-2">
+    <div class="two">
+      <div>
+        <p>Perguntas que o agente responde bem, uma por tema:</p>
+        <table class="tbl">
+          <thead><tr><th>Tema</th><th>Pergunta</th></tr></thead>
+          <tbody>
+            <tr><td>Custo</td><td>“Onde estou gastando mais este mês?”</td></tr>
+            <tr><td>Saúde de um serviço</td><td>“Como está a saúde do checkout-api?”</td></tr>
+            <tr><td>Triagem</td><td>“Quais workloads pedem atenção?”</td></tr>
+            <tr><td>Dados que não chegam</td><td>“Por que a VM CRIA 1 não manda dados?”</td></tr>
+          </tbody>
+        </table>
+        <p>Na conversa ao lado, real, o agente consultou os logs da aplicação, viu que nenhuma linha chegou na última hora e que o último sinal foi em 14 de outubro. A confiança é alta porque a hipótese se apoia no que ele leu. Em <strong>Ainda não confirmado</strong> ele diz o que não tem como verificar (mudança no código, erros que não viraram telemetria) e em <strong>Próximos passos</strong> o que conferir: o processo, a chave do SDK e a rede até o Immuno Ops.</p>
+      </div>
       <figure class="shot">
-        <img src="img/ia-custo.png" alt="Custo · “Onde estou gastando mais este mês?” Consulta custo por provedor, serviço e namespace e aponta os maiores gastos." style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
-        <figcaption>Custo · “Onde estou gastando mais este mês?” Consulta custo por provedor, serviço e namespace e aponta os maiores gastos.</figcaption>
-      </figure>
-      <figure class="shot">
-        <img src="img/ia-lambda.png" alt="Saúde de um serviço · “Como está a saúde da lambda-teste?” Encontrou dois registros com o mesmo nome e pede para desambiguar." style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
-        <figcaption>Saúde de um serviço · “Como está a saúde da lambda-teste?” Encontrou dois registros com o mesmo nome e pede para desambiguar.</figcaption>
-      </figure>
-      <figure class="shot">
-        <img src="img/ia-workloads.png" alt="Triagem · “Quais workloads pedem atenção?” Nenhuma falha ativa, mas workloads usando muito mais memória que o pedido." style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
-        <figcaption>Triagem · “Quais workloads pedem atenção?” Nenhuma falha ativa, mas workloads usando muito mais memória que o pedido.</figcaption>
-      </figure>
-      <figure class="shot">
-        <img src="img/ia-vm.png" alt="Dados que não chegam · “Por que a VM CRIA 1 não manda dados?” Confiança alta: sem log na última hora, último sinal em 14/10." style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
-        <figcaption>Dados que não chegam · “Por que a VM CRIA 1 não manda dados?” Confiança alta: sem log na última hora, último sinal em 14/10.</figcaption>
+        <img src="img/ia-vm.png" alt="Agente IA respondendo por que a VM CRIA 1 não manda dados" style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
+        <figcaption>Agente IA · “Por que a VM CRIA 1 não manda dados?”</figcaption>
       </figure>
     </div>
     <div class="note tip"><i>✓</i><div><b>Perguntas que funcionam melhor</b><span>Uma pergunta por vez, com o nome do serviço, cluster ou VM como aparece no console. Para comparar períodos, diga o período (“nas últimas 24 horas”, “este mês”). Responda na mesma conversa para aprofundar.</span></div></div>

@@ -184,12 +184,14 @@ Exemplos: "Onde estou gastando mais este mês?", "Tem incidente aberto?", "Como 
 
 #### Conversas de exemplo
 
-| Tema | Pergunta | O que vem na resposta |
-| --- | --- | --- |
-| Custo | “Onde estou gastando mais este mês?” | Consulta custo por provedor, serviço e namespace e aponta os maiores gastos (no exemplo, kube-system no test-tenant-1). |
-| Saúde de um serviço | “Como está a saúde da lambda-teste?” | Status e último sinal do serviço e os logs recentes. No exemplo, achou dois registros com o mesmo nome e pediu para desambiguar. Use o nome do serviço, não o link da tela. |
-| Triagem | “Quais workloads pedem atenção?” | Workloads, incidentes e alertas. No exemplo, nenhuma falha ativa, mas workloads usando muito mais memória que o pedido, com o ajuste sugerido. |
-| Dados que não chegam | “Por que a VM CRIA 1 não manda dados?” | Status da conexão e o último sinal (no exemplo, nenhum log na última hora e último dado em 14/10, confiança alta) e o que conferir: processo e chave do SDK, rede até o Immuno Ops. |
+| Tema | Pergunta |
+| --- | --- |
+| Custo | “Onde estou gastando mais este mês?” |
+| Saúde de um serviço | “Como está a saúde do checkout-api?” |
+| Triagem | “Quais workloads pedem atenção?” |
+| Dados que não chegam | “Por que a VM CRIA 1 não manda dados?” |
+
+Exemplo real: perguntado “Por que a VM CRIA 1 não manda dados?”, o agente consultou os logs da aplicação, viu que nenhuma linha chegou na última hora e que o último sinal foi em 14 de outubro, e respondeu com confiança alta. Em **Ainda não confirmado** disse o que não tem como verificar (mudança no código, erros que não viraram telemetria) e em **Próximos passos** o que conferir: o processo, a chave do SDK e a rede até o Immuno Ops.
 
 Perguntas que funcionam melhor: uma por vez, com o nome do serviço, cluster ou VM como aparece no console, e o período quando importa (“nas últimas 24 horas”, “este mês”). Responda na mesma conversa para aprofundar.
 
