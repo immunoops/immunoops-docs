@@ -175,21 +175,21 @@ Exemplos: "Onde estou gastando mais este mês?", "Tem incidente aberto?", "Como 
 
 | Parte | O que é |
 | --- | --- |
-| Hipótese | A explicação mais provável, em poucas frases. |
+| Observado | O que o agente consultou para responder (“Consultou o custo do mês por provedor e serviço”, “Leu os logs recebidos dos serverless e apps”). |
+| Hipótese | A explicação mais provável, com os números que sustentam. |
 | Confiança | Alta, média ou baixa. Fica baixa quando a evidência é pouca ou quando a hipótese não se apoia no que o agente leu. |
-| Evidências | O que o agente consultou para responder (“Leu os logs recebidos dos serverless e apps”, “Consultou os workloads da organização”). No texto, `[E1]`, `[E2]`… apontam para cada uma. |
-| Não confirmado | O que o agente não conseguiu verificar. Confira antes de agir. |
-| Outras explicações | Hipóteses alternativas, quando houver. |
+| Ainda não confirmado | O que o agente não conseguiu verificar. Confira antes de agir. |
 | Próximos passos | O que olhar ou fazer em seguida, com o caminho no console. |
+| Fonte | De qual organização vieram os dados; o ícone ao lado copia a resposta. |
 
 #### Conversas de exemplo
 
 | Tema | Pergunta | O que vem na resposta |
 | --- | --- | --- |
-| Custo | “Onde estou gastando mais este mês?” | Custo do mês por provedor, serviço e namespace, cada um na moeda da fatura (AWS em US$, Google Cloud em R$). |
-| Saúde de um serviço | “Como está a saúde da lambda-teste?” | Status, erros e latência, logs recentes e o que mudou antes do problema. Use o nome do serviço, não o link da tela. |
-| Triagem | “Quais workloads pedem atenção?” | Workloads com reinícios, erro, CPU ou memória perto do limite, do mais grave para o menos. |
-| Dados que não chegam | “Por que a VM CRIA 1 não manda dados?” | Status da conexão, quando chegou o último dado e o que conferir no host ou na conta de nuvem. |
+| Custo | “Onde estou gastando mais este mês?” | Consulta custo por provedor, serviço e namespace e aponta os maiores gastos (no exemplo, kube-system no test-tenant-1). |
+| Saúde de um serviço | “Como está a saúde da lambda-teste?” | Status e último sinal do serviço e os logs recentes. No exemplo, achou dois registros com o mesmo nome e pediu para desambiguar. Use o nome do serviço, não o link da tela. |
+| Triagem | “Quais workloads pedem atenção?” | Workloads, incidentes e alertas. No exemplo, nenhuma falha ativa, mas workloads usando muito mais memória que o pedido, com o ajuste sugerido. |
+| Dados que não chegam | “Por que a VM CRIA 1 não manda dados?” | Status da conexão e o último sinal (no exemplo, nenhum log na última hora e último dado em 14/10, confiança alta) e o que conferir: processo e chave do SDK, rede até o Immuno Ops. |
 
 Perguntas que funcionam melhor: uma por vez, com o nome do serviço, cluster ou VM como aparece no console, e o período quando importa (“nas últimas 24 horas”, “este mês”). Responda na mesma conversa para aprofundar.
 

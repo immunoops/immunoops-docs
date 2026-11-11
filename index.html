@@ -838,20 +838,33 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     <table class="tbl">
       <thead><tr><th>Parte</th><th>O que é</th></tr></thead>
       <tbody>
-        <tr><td>Hipótese</td><td>A explicação mais provável, em poucas frases.</td></tr>
+        <tr><td>Observado</td><td>O que o agente consultou para responder, como “Consultou o custo do mês por provedor e serviço” ou “Leu os logs recebidos dos serverless e apps”.</td></tr>
+        <tr><td>Hipótese</td><td>A explicação mais provável, com os números que sustentam.</td></tr>
         <tr><td>Confiança</td><td><strong>Alta</strong>, <strong>média</strong> ou <strong>baixa</strong>. Fica baixa quando a evidência é pouca ou quando a hipótese não se apoia no que o agente leu.</td></tr>
-        <tr><td>Evidências</td><td>O que o agente consultou para responder, como “Leu os logs recebidos dos serverless e apps” ou “Consultou os workloads da organização”. No texto, <code>[E1]</code>, <code>[E2]</code>… apontam para cada uma.</td></tr>
-        <tr><td>Não confirmado</td><td>O que o agente não conseguiu verificar com os dados que tem. Confira antes de agir.</td></tr>
-        <tr><td>Outras explicações</td><td>Hipóteses alternativas, quando houver.</td></tr>
+        <tr><td>Ainda não confirmado</td><td>O que o agente não conseguiu verificar com os dados que tem. Confira antes de agir.</td></tr>
         <tr><td>Próximos passos</td><td>O que olhar ou fazer em seguida, com o caminho no console.</td></tr>
+        <tr><td>Fonte</td><td>De qual organização vieram os dados. O ícone ao lado copia a resposta.</td></tr>
       </tbody>
     </table>
     <h4 id="agente-ia-exemplos">Conversas de exemplo</h4>
+    <p>Quatro conversas reais com o agente, na organização Portifolio.</p>
     <div class="grid-2">
-      <div class="card compact"><span class="tag">Custo</span><h4 style="font-size:17px">“Onde estou gastando mais este mês?”</h4><p>Custo do mês por provedor, serviço e namespace, com a moeda de cada fatura (AWS em US$, Google Cloud em R$) e o maior gasto primeiro.</p></div>
-      <div class="card compact"><span class="tag">Saúde de um serviço</span><h4 style="font-size:17px">“Como está a saúde da lambda-teste?”</h4><p>Status, erros e latência do serviço, os logs recentes e o que mudou antes do problema. Use o nome do serviço, não o link da tela.</p></div>
-      <div class="card compact"><span class="tag">Triagem</span><h4 style="font-size:17px">“Quais workloads pedem atenção?”</h4><p>Workloads com reinícios, erro, CPU ou memória perto do limite, do mais grave para o menos.</p></div>
-      <div class="card compact"><span class="tag">Dados que não chegam</span><h4 style="font-size:17px">“Por que a VM CRIA 1 não manda dados?”</h4><p>Status da conexão, quando chegou o último dado e o que conferir no host ou na conta de nuvem.</p></div>
+      <figure class="shot">
+        <img src="img/ia-custo.png" alt="Custo · “Onde estou gastando mais este mês?” Consulta custo por provedor, serviço e namespace e aponta os maiores gastos." style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
+        <figcaption>Custo · “Onde estou gastando mais este mês?” Consulta custo por provedor, serviço e namespace e aponta os maiores gastos.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/ia-lambda.png" alt="Saúde de um serviço · “Como está a saúde da lambda-teste?” Encontrou dois registros com o mesmo nome e pede para desambiguar." style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
+        <figcaption>Saúde de um serviço · “Como está a saúde da lambda-teste?” Encontrou dois registros com o mesmo nome e pede para desambiguar.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/ia-workloads.png" alt="Triagem · “Quais workloads pedem atenção?” Nenhuma falha ativa, mas workloads usando muito mais memória que o pedido." style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
+        <figcaption>Triagem · “Quais workloads pedem atenção?” Nenhuma falha ativa, mas workloads usando muito mais memória que o pedido.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/ia-vm.png" alt="Dados que não chegam · “Por que a VM CRIA 1 não manda dados?” Confiança alta: sem log na última hora, último sinal em 14/10." style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
+        <figcaption>Dados que não chegam · “Por que a VM CRIA 1 não manda dados?” Confiança alta: sem log na última hora, último sinal em 14/10.</figcaption>
+      </figure>
     </div>
     <div class="note tip"><i>✓</i><div><b>Perguntas que funcionam melhor</b><span>Uma pergunta por vez, com o nome do serviço, cluster ou VM como aparece no console. Para comparar períodos, diga o período (“nas últimas 24 horas”, “este mês”). Responda na mesma conversa para aprofundar.</span></div></div>
     <div class="note"><i>i</i><div><b>Só a sua organização</b><span>O agente só vê os dados da organização selecionada e não executa ações: ele lê e explica. Confira a evidência antes de agir.</span></div></div>
