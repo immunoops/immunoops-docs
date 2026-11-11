@@ -819,6 +819,10 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     <div class="note"><i>i</i><div><b>A área em que você está</b><span>Fica destacada em verde na barra do topo; a aba aberta fica marcada logo abaixo do título da tela.</span></div></div>
     <div class="note"><i>i</i><div><b>Seu papel define o que aparece</b><span>Quem tem papel <strong>Leitura</strong> vê painéis, alertas e custos, mas não os botões de conectar ou convidar. <strong>Equipe</strong> e <strong>Empresa e plano</strong> só aparecem para quem tem permissão.</span></div></div>
       <h3 id="agente-ia">Agente de IA</h3>
+    <figure class="shot">
+        <img src="img/ia.png" alt="Agente IA (✦ ou ⌘J) com perguntas sugeridas" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Agente IA (✦ ou ⌘J) com perguntas sugeridas</figcaption>
+      </figure>
     <p>O botão ✦ no topo (atalho ⌘J) abre o <strong>Agente IA</strong>, um especialista em SRE, DevOps e FinOps que responde com os dados reais da sua organização. Antes de responder, ele consulta sozinho o que a pergunta precisa:</p>
     <table class="tbl">
       <thead><tr><th>Pergunte sobre</th><th>O agente consulta</th></tr></thead>
@@ -841,15 +845,18 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 
     <div class="two">
       <ol class="steps">
-        <li>No menu, vá em <span class="ui">Infraestrutura › Clusters</span> e clique em <span class="ui">Conectar cluster</span>.</li>
-        <li>Em <strong>Escolha a nuvem</strong>, selecione o provedor.</li>
-        <li>Dê um <strong>nome</strong> ao cluster, escolha o <strong>ambiente</strong> (produção, staging…) e clique em <span class="ui">Registrar cluster</span>.</li>
-        <li>A janela <strong>Instale o agent</strong> mostra um comando <code>helm</code> já com o token de conexão. Clique em <span class="ui">Copiar comando</span> e rode num terminal com acesso ao cluster.</li>
-        <li>Clique em <span class="ui">Concluir</span>. Em alguns minutos o status muda de <span class="pill wait">Pendente</span> para <span class="pill ok">Conectado</span>.</li>
+        <li>Vá em <span class="ui">Infraestrutura › Clusters</span> e clique em <span class="ui">Conectar cluster</span>.</li>
+        <li>A janela tem 3 passos. No passo 1, <strong>Cluster Kubernetes</strong> já vem marcado. Escolha <strong>GKE</strong>, <strong>EKS</strong> ou <strong>AKS</strong>, dê o <strong>Nome do cluster</strong> (ex.: <code>prod-sa-east</code>), escolha o <strong>Ambiente</strong> (<strong>Produção</strong> ou <strong>Staging</strong>) e clique em <span class="ui">Continuar</span>.</li>
+        <li>No passo 2, <strong>Instalar o agente</strong>, o <strong>Comando de instalação</strong> já traz o token do cluster. Clique em <span class="ui">Copiar</span>, rode num terminal com o <code>kubectl</code> apontado para o cluster e clique em <span class="ui">Já rodei o comando</span>.</li>
+        <li>O passo 3 fica em <strong>Aguardando o primeiro sinal…</strong> até o agent mandar dado e mostra <strong>Conectado!</strong>. Pode fechar antes: o cluster já aparece como <span class="pill wait">Aguardando conexão</span>.</li>
       </ol>
       <figure class="shot">
         <img src="img/clusters.png" alt="Infraestrutura › Clusters" style="width:100%;border-radius:12px;display:block">
         <figcaption>Infraestrutura › Clusters</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/dlg-cluster.png" alt="Conectar cluster · passo 1 de 3: tipo, nuvem, nome e ambiente" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Conectar cluster · passo 1 de 3: tipo, nuvem, nome e ambiente</figcaption>
       </figure>
     </div>
     <div class="note warn"><i>!</i><div><b>Guarde o comando com cuidado</b><span>Ele carrega um token de conexão da sua organização. Não cole em chats públicos nem em repositórios.</span></div></div>
@@ -857,7 +864,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     <table class="tbl">
       <thead><tr><th>Status</th><th>O que significa</th><th>O que fazer</th></tr></thead>
       <tbody>
-        <tr><td><span class="pill wait">Pendente</span></td><td>Cluster registrado, mas o agent nunca mandou dado.</td><td>Confira se o comando rodou sem erro e se os pods do agent estão <code>Running</code>.</td></tr>
+        <tr><td><span class="pill wait">Aguardando conexão</span></td><td>Cluster registrado, mas o agent nunca mandou dado.</td><td>Confira se o comando rodou sem erro e se os pods do agent estão <code>Running</code>.</td></tr>
         <tr><td><span class="pill ok">Conectado</span></td><td>O agent está mandando dados.</td><td>Nada. Os dados já aparecem em Operação.</td></tr>
         <tr><td><span class="pill off">Desconectado</span></td><td>O último sinal tem mais de 5 minutos.</td><td>Verifique o agent no cluster: pods, rede de saída e token.</td></tr>
       </tbody>
@@ -870,7 +877,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
   <div class="meta"><span>~3 min cada</span><span>Se você usa esses serviços</span></div>
   <p>O Immuno Ops é multicloud: VMs em GCP, AWS, Azure ou on-prem, e serviços serverless no GCP (Cloud Run) e na AWS (Lambda), na mesma tela.</p>
 
-    <div class="note"><i>i</i><div><b>Antes, a conta de nuvem</b><span>VM e Serverless exigem ao menos uma conta cadastrada. Cloud Run exige uma conta GCP; Lambda exige uma conta AWS. Sem ela, <span class="ui">Conectar VM</span> e <span class="ui">Conectar serviço Serverless</span> abrem <span class="ui">Adicionar conta</span>. O cadastro da conta está em <a href="#conta-nuvem">Conta de nuvem</a>. Os papéis no projeto do recurso estão em <a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a>.</span></div></div>
+    <div class="note"><i>i</i><div><b>Antes, a conta de nuvem</b><span>VM e Serverless exigem ao menos uma conta cadastrada. Cloud Run exige uma conta GCP; Lambda exige uma conta AWS. Sem ela, <span class="ui">Conectar VM</span> e <span class="ui">Conectar Serverless</span> abrem <span class="ui">Adicionar conta</span>. O cadastro da conta está em <a href="#conta-nuvem">Conta de nuvem</a>. Os papéis no projeto do recurso estão em <a href="#permissoes-vm-cloudrun">Permissões de VM e Cloud Run</a>.</span></div></div>
     <table class="tbl">
       <thead><tr><th>Tipo</th><th>Nuvem</th><th>O que instalar</th><th>O que chega</th></tr></thead>
       <tbody>
@@ -884,15 +891,15 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
       <div>
         <h3 id="cloudrun-vm--1" style="margin-top:0">Serverless: Cloud Run (GCP)</h3>
         <ol class="steps">
-          <li>Vá em <span class="ui">Infraestrutura › Serverless</span> e clique em <span class="ui">Conectar serviço Serverless</span>.</li>
-          <li>Em <strong>Provedor</strong>, escolha <strong>GCP</strong>.</li>
-          <li>Informe o <strong>nome</strong> do serviço (exatamente como no Cloud Run), o <strong>ID do projeto GCP</strong> e a <strong>região</strong>. Clique em <span class="ui">Registrar</span>.</li>
+          <li>Vá em <span class="ui">Infraestrutura › Serverless</span> e clique em <span class="ui">Conectar Serverless</span>.</li>
+          <li>Escolha <strong>GCP</strong>.</li>
+          <li>Informe o <strong>Nome do serviço</strong> (exatamente como no Cloud Run), a <strong>Região</strong> (ex.: <code>us-central1</code>) e o <strong>Projeto GCP</strong>. Clique em <span class="ui">Continuar</span>. O monitoramento começa sozinho pelo Cloud Monitoring, sem nada para instalar.</li>
         </ol>
         <h3 id="serverless-lambda">Serverless: Lambda (AWS)</h3>
         <ol class="steps">
-          <li>Vá em <span class="ui">Infraestrutura › Serverless</span> e clique em <span class="ui">Conectar serviço Serverless</span>.</li>
-          <li>Em <strong>Provedor</strong>, escolha <strong>AWS</strong>.</li>
-          <li>Informe o <strong>nome</strong> da função, a <strong>região</strong> (por exemplo <code>us-east-1</code>) e o <strong>ID da conta AWS</strong>, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em <span class="ui">Registrar</span>.</li>
+          <li>Vá em <span class="ui">Infraestrutura › Serverless</span> e clique em <span class="ui">Conectar Serverless</span>.</li>
+          <li>Escolha <strong>AWS</strong>.</li>
+          <li>Informe o <strong>nome</strong> da função, a <strong>região</strong> (por exemplo <code>us-east-1</code>) e o <strong>ID da conta AWS</strong>, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em <span class="ui">Continuar</span>.</li>
           <li>Instrumente a função com o SDK e chame <code>flush()</code> antes de retornar. Veja <a href="#lambda-sdk">Lambda com o SDK</a>.</li>
         </ol>
         <div class="note"><i>i</i><div><b>Métricas pelo CloudWatch</b><span>O SDK, se a função o usar, envia os dados para <code>app.immunoops.io</code> com a chave de conexão e não pede papel na função. Numa VPC sem internet, a função precisa de um NAT Gateway para essa saída. Invocações, duração, execuções simultâneas e os logs do grupo <code>/aws/lambda/&lt;função&gt;</code> vêm do CloudWatch, lidos pelo worker com o papel <code>immunoops-billing-reader</code>, criado com um clique em <a href="#conta-aws">Conta AWS</a> (<span class="ui">Conectar à AWS</span>).</span></div></div>
@@ -903,14 +910,26 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
         <img src="img/serverless.png" alt="Infraestrutura › Serverless · Cloud Run e Lambda" style="width:100%;border-radius:12px;display:block">
         <figcaption>Infraestrutura › Serverless · Cloud Run e Lambda</figcaption>
       </figure>
+      <figure class="shot">
+        <img src="img/dlg-serverless.png" alt="Conectar serviço Serverless · GCP ou AWS, nome, região e projeto" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Conectar serviço Serverless · GCP ou AWS, nome, região e projeto</figcaption>
+      </figure>
     </div>
 
     <h3 id="cloudrun-vm--2">VMs</h3>
+    <figure class="shot">
+        <img src="img/vms.png" alt="Infraestrutura › VMs" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Infraestrutura › VMs</figcaption>
+      </figure>
+    <figure class="shot">
+        <img src="img/dlg-vm.png" alt="Conectar VM · passo 1 de 3: o nome da VM" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Conectar VM · passo 1 de 3: o nome da VM</figcaption>
+      </figure>
     <p>O cadastro pede só o nome. O agente descobre sozinho onde a VM roda, lendo o serviço de metadados da nuvem: GCP (Compute Engine), AWS (EC2, IMDSv2) ou Azure. Fora de uma nuvem, a VM aparece como <strong>On-prem</strong>.</p>
     <ol class="steps">
       <li>Vá em <span class="ui">Infraestrutura › VMs</span> e clique em <span class="ui">Conectar VM</span>.</li>
-      <li>Dê um <strong>nome</strong> à VM, do jeito que você quer vê-la no console. Clique em <span class="ui">Registrar</span>.</li>
-      <li>Copie o comando em <strong>Instalar o agente</strong>, rode na VM e clique em <span class="ui">Concluir</span>.</li>
+      <li>No passo 1, <strong>Máquina virtual</strong> já vem marcado. Preencha o <strong>Nome da VM</strong>, do jeito que você quer vê-la no console, e clique em <span class="ui">Continuar</span>.</li>
+      <li>No passo 2, copie o comando de instalação, rode na VM e clique em <span class="ui">Já rodei o comando</span>. O token vale só para esta VM e só aparece agora.</li>
     </ol>
     <p>Quando o agente manda o primeiro dado, o cartão da VM mostra o provedor (GCP, AWS, Azure ou On-prem), a zona ou região, a conta (projeto GCP, conta AWS ou assinatura Azure) e o tipo de máquina.</p>
     <table class="tbl">
@@ -995,6 +1014,10 @@ aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-p
     <div class="note"><i>i</i><div><b>A primeira linha demora</b><span>O export pode levar algumas horas para aparecer. O teste de conexão aceita a tabela vazia; o status só fica em dia quando chega custo recente.</span></div></div>
 
     <h3 id="conta-nuvem-cadastro">Cadastrar no Immuno Ops</h3>
+    <figure class="shot">
+        <img src="img/dlg-conta.png" alt="Adicionar conta de nuvem · GCP, AWS ou Azure" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Adicionar conta de nuvem · GCP, AWS ou Azure</figcaption>
+      </figure>
     <ol class="steps">
       <li>Vá em <span class="ui">Infraestrutura</span>, aba <span class="ui">Contas</span>, e clique em <span class="ui">Adicionar conta</span>.</li>
       <li>Escolha <strong>GCP</strong>.</li>
@@ -1061,7 +1084,7 @@ aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-p
       <li>Informe o <strong>ID da conta (12 dígitos)</strong>. O nome é opcional.</li>
       <li>Clique em <span class="ui">Adicionar conta</span>.</li>
     </ol>
-    <p>A conta aparece como pendente: o custo da AWS ainda não é lido. Isso não impede EKS, EC2 e Lambda.</p>
+    <p>A conta aparece como pendente até o <span class="ui">Conectar à AWS</span> (passo 2b). Isso não impede EKS, EC2 e Lambda.</p>
     <h4 id="conta-aws-um-clique">Passo 2b — Conectar à AWS (um clique)</h4>
     <p>É como nas outras ferramentas de observabilidade: você não escreve IAM.</p>
     <ol class="steps">
@@ -1083,7 +1106,7 @@ aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-p
     <ul>
       <li><strong>EKS:</strong> <span class="ui">Infraestrutura › Clusters › Conectar cluster</span>, escolha <strong>AWS</strong> e rode o comando <code>helm</code> no cluster (<a href="#cluster">passo 05</a>).</li>
       <li><strong>EC2:</strong> <span class="ui">Infraestrutura › VMs › Conectar VM</span>, dê um nome e rode o comando na instância. Com o agente em Docker, ajuste o hop limit do IMDSv2 para 2 (<a href="#cloudrun-vm--2">VMs</a>).</li>
-      <li><strong>Lambda:</strong> <span class="ui">Infraestrutura › Serverless › Conectar serviço Serverless</span>, provedor <strong>AWS</strong>. Métricas e logs chegam pelo CloudWatch depois do passo 2b; o SDK (<a href="#lambda-sdk">Lambda com o SDK</a>) é opcional, para métricas de negócio.</li>
+      <li><strong>Lambda:</strong> <span class="ui">Infraestrutura › Serverless › Conectar Serverless</span>, provedor <strong>AWS</strong>. Métricas e logs chegam pelo CloudWatch depois do passo 2b; o SDK (<a href="#lambda-sdk">Lambda com o SDK</a>) é opcional, para métricas de negócio.</li>
     </ul>
     <p>Os passos de EKS, EC2 e SDK não dão ao Immuno Ops acesso à conta: os dados saem do agente ou do SDK. O acesso de leitura à conta vem só da pilha do passo 2b.</p>
     <h4>Passo 4 — Preparar o billing à mão (sem CloudFormation)</h4>
@@ -1157,8 +1180,8 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
         <figcaption>Infraestrutura › Instrumentação</figcaption>
       </figure>
       <ol class="steps">
-        <li>Vá em <span class="ui">Infraestrutura › Instrumentação</span> e clique em <span class="ui">Conectar via SDK</span>.</li>
-        <li>Dê um nome à aplicação e clique em <span class="ui">Gerar chave</span>.</li>
+        <li>Vá em <span class="ui">Infraestrutura › Instrumentação</span> e clique em <span class="ui">Conectar aplicação</span>.</li>
+        <li>Preencha o <strong>Nome da aplicação</strong> e clique em <span class="ui">Continuar</span>. Copie a <strong>Chave de conexão</strong>: ela só aparece inteira agora.</li>
         <li><strong>Instale o pacote</strong> do SDK com o comando mostrado.</li>
         <li><strong>Inicialize o client</strong> colando a chave de conexão em <code>apiKey</code>.</li>
         <li><strong>Envie o primeiro dado</strong>. O status muda sozinho para <span class="pill ok">Conectada</span>.</li>
@@ -1187,10 +1210,14 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
 </tbody>
 </table>
 <h3 id="instrumentar-chave">Gerar a chave de conexão</h3>
+    <figure class="shot">
+        <img src="img/dlg-app.png" alt="Conectar aplicação · passo 1 de 3: o nome da aplicação" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Conectar aplicação · passo 1 de 3: o nome da aplicação</figcaption>
+      </figure>
 <ol class="steps">
-<li>Vá em <strong>Infraestrutura › Instrumentação</strong> e clique em <strong>Conectar via SDK</strong>.</li>
-<li>Dê um nome à aplicação e clique em <strong>Gerar chave</strong>.</li>
-<li>Copie a chave: ela só aparece inteira agora. Se perder, gere outra nos detalhes da conexão; a anterior deixa de valer.</li>
+<li>Vá em <strong>Infraestrutura › Instrumentação</strong> e clique em <strong>Conectar aplicação</strong>. <strong>Aplicação via SDK</strong> já vem marcado.</li>
+<li>Preencha o <strong>Nome da aplicação</strong> (o mesmo nome do serviço no código ou no deploy) e clique em <strong>Continuar</strong>.</li>
+<li>Copie a <strong>Chave de conexão</strong>: ela só aparece inteira agora. Se perder, use <strong>Gerar nova</strong> nos detalhes da conexão; a anterior deixa de valer.</li>
 </ol>
 <p>O status muda sozinho de <strong>Aguardando primeiro dado</strong> para <strong>Conectada</strong> quando o primeiro dado chega. <strong>Sem dados recentes</strong> quer dizer que a aplicação parou de enviar.</p>
 <p>Guarde a chave numa variável de ambiente ou num cofre de segredos, nunca no código.</p>
@@ -1416,6 +1443,14 @@ exports.handler = async (event) =&gt; {
     <div style="margin-top:32px"><figure class="shot">
         <img src="img/workloads.png" alt="Operação › Workloads" style="width:100%;border-radius:12px;display:block">
         <figcaption>Operação › Workloads</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/incidentes.png" alt="Operação › Incidentes" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Operação › Incidentes</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/w360-topo.png" alt="Visão 360 de um serviço: sinais no mesmo eixo de tempo, logs, traces e dependências" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Visão 360 de um serviço: sinais no mesmo eixo de tempo, logs, traces e dependências</figcaption>
       </figure></div>
     <div class="note"><i>i</i><div><b>Logs e traces vazios?</b><span>Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam com métricas e eventos do agent na Visão 360.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>

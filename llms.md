@@ -184,20 +184,19 @@ O agente só vê os dados da organização selecionada e não executa ações: e
 É o passo mais importante. Com o agent instalado, métricas, logs, traces e o inventário de workloads começam a chegar sozinhos.
 
 1. Vá em **Infraestrutura › Clusters** e clique em **Conectar cluster**.
-2. Em **Escolha a nuvem**, selecione o provedor.
-3. Dê um nome ao cluster, escolha o ambiente (produção, staging ou outro) e clique em **Registrar cluster**.
-4. A janela **Instale o agent** mostra um comando `helm` já com o token de conexão. Clique em **Copiar comando** e rode num terminal com acesso ao cluster.
-5. Clique em **Concluir**. Em alguns minutos o status muda de Pendente para Conectado.
+2. A janela tem 3 passos. No passo 1, **Cluster Kubernetes** já vem marcado. Escolha **GKE**, **EKS** ou **AKS**, dê o **Nome do cluster** (letras minúsculas, números e hífen, até 63; ex.: `prod-sa-east`), escolha o **Ambiente** (**Produção** ou **Staging**) e clique em **Continuar**.
+3. No passo 2, **Instalar o agente**, o **Comando de instalação** já traz o token do cluster. Clique em **Copiar**, rode num terminal com o `kubectl` apontado para o cluster e clique em **Já rodei o comando**.
+4. O passo 3 fica em **Aguardando o primeiro sinal…** até o agent mandar dado e então mostra **Conectado!**. Clique em **Ver cluster** ou **Fechar**. Pode fechar antes: o cluster já aparece na lista como **Aguardando conexão**.
 
 O comando exibido na janela segue a forma `helm upgrade --install` do agent, com `connectionToken` preenchido. Copie o comando do console. Não use um comando montado fora dessa janela: o token e o endereço do chart vêm de lá.
 
-**Guarde o comando com cuidado.** Ele carrega um token de conexão da organização. Não cole em chats públicos nem em repositórios.
+**Guarde o comando com cuidado.** Ele traz o token deste cluster e só aparece agora: copie antes de fechar. Não cole em chats públicos nem em repositórios.
 
 ### Como ler o status do cluster
 
 | Status | O que significa | O que fazer |
 | --- | --- | --- |
-| Pendente | Cluster registrado, mas o agent nunca mandou dado. | Confira se o comando rodou sem erro e se os pods do agent estão `Running`. |
+| Aguardando conexão | Cluster registrado, mas o agent nunca mandou dado. | Confira se o comando rodou sem erro e se os pods do agent estão `Running`. |
 | Conectado | O agent está mandando dados. | Nada. Os dados já aparecem em Operação. |
 | Desconectado | O último sinal tem mais de 5 minutos. | Verifique o agent no cluster: pods, rede de saída e token. |
 
@@ -212,7 +211,7 @@ Comparado com os outros tipos de recurso: no cluster se instala um agent com Hel
 
 O Immuno Ops é multicloud: VMs em GCP, AWS, Azure ou on-prem, e serviços serverless no GCP (Cloud Run) e na AWS (Lambda), na mesma tela.
 
-VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exige uma conta GCP; Lambda exige uma conta AWS. Sem essa conta, **Conectar VM** e **Conectar serviço Serverless** abrem **Adicionar conta** em vez do formulário do recurso. O cadastro da conta está em [Conta de nuvem](#conta-de-nuvem). Os papéis no projeto do recurso estão em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
+VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exige uma conta GCP; Lambda exige uma conta AWS. Sem essa conta, **Conectar VM** e **Conectar Serverless** abrem **Adicionar conta** em vez do formulário do recurso. O cadastro da conta está em [Conta de nuvem](#conta-de-nuvem). Os papéis no projeto do recurso estão em [Permissões de VM e Cloud Run](#permissoes-de-vm-e-cloud-run).
 
 | Tipo | Nuvem | O que instalar | O que chega |
 | --- | --- | --- | --- |
@@ -223,15 +222,15 @@ VM e Serverless exigem ao menos uma conta de nuvem já cadastrada. Cloud Run exi
 
 ### Serverless: Cloud Run (GCP)
 
-1. Vá em **Infraestrutura › Serverless** e clique em **Conectar serviço Serverless**.
-2. Em **Provedor**, escolha **GCP**.
-3. Informe o nome do serviço (exatamente como no Cloud Run), o ID do projeto GCP e a região. Clique em **Registrar**.
+1. Vá em **Infraestrutura › Serverless** e clique em **Conectar Serverless**. A janela **Conectar Serverless** abre com **Serviço Serverless** marcado.
+2. Escolha **GCP**.
+3. Informe o **Nome do serviço** (exatamente como no Cloud Run), a **Região** (ex.: `us-central1`) e o **Projeto GCP**. Clique em **Continuar**. O serviço aparece como **Aguardando conexão** e o monitoramento começa sozinho pelo Cloud Monitoring, sem nada para instalar.
 
 ### Serverless: Lambda (AWS)
 
-1. Vá em **Infraestrutura › Serverless** e clique em **Conectar serviço Serverless**.
-2. Em **Provedor**, escolha **AWS**.
-3. Informe o nome da função, a região (por exemplo `us-east-1`) e o ID da conta AWS, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em **Registrar**.
+1. Vá em **Infraestrutura › Serverless** e clique em **Conectar Serverless**.
+2. Escolha **AWS**.
+3. Informe o nome da função, a região (por exemplo `us-east-1`) e o ID da conta AWS, com 12 dígitos. O ID vem preenchido com a conta AWS da organização. Clique em **Continuar**.
 4. Instrumente a função com o SDK, como no [passo 07](#passo-07-instrumentar-a-aplicacao), e chame `flush()` antes de a função retornar. Veja [Lambda com o SDK](#lambda-com-o-sdk).
 
 O SDK, se a função o usar, envia os dados para `app.immunoops.io` com a chave de conexão e não pede papel na função. Numa VPC sem internet, a função precisa de um NAT Gateway para essa saída.
@@ -245,8 +244,8 @@ As métricas da função (invocações, duração e execuções simultâneas) e 
 O cadastro pede só o nome. O agente descobre sozinho onde a VM roda, lendo o serviço de metadados da nuvem: GCP (Compute Engine), AWS (EC2, IMDSv2) ou Azure. Fora de uma nuvem, a VM aparece como **On-prem**.
 
 1. Vá em **Infraestrutura › VMs** e clique em **Conectar VM**.
-2. Dê um nome à VM, do jeito que você quer vê-la no console. Clique em **Registrar**.
-3. Copie o comando em **Instalar o agente**, rode na VM e clique em **Concluir**.
+2. No passo 1, **Máquina virtual** já vem marcado. Preencha o **Nome da VM**, do jeito que você quer vê-la no console, e clique em **Continuar**.
+3. No passo 2, copie o comando de instalação, rode na VM e clique em **Já rodei o comando**. O token vale só para esta VM e só aparece agora.
 
 Quando o agente manda o primeiro dado, o cartão da VM mostra o provedor (GCP, AWS, Azure ou On-prem), a zona ou região, a conta (projeto GCP, conta AWS ou assinatura Azure) e o tipo de máquina.
 
@@ -448,7 +447,7 @@ aws sts get-caller-identity --query Account --output text
 3. Informe o **ID da conta (12 dígitos)**. O nome é opcional.
 4. Clique em **Adicionar conta**.
 
-A conta aparece como pendente: o custo da AWS ainda não é lido. Isso não impede EKS, EC2 e Lambda.
+A conta aparece como pendente até o **Conectar à AWS** (passo 2b). Isso não impede EKS, EC2 e Lambda.
 
 #### Passo 2b — Conectar à AWS (um clique)
 
@@ -474,7 +473,7 @@ Os passos 4 e as seções seguintes descrevem a mesma configuração feita à m�
 
 - **EKS:** **Infraestrutura › Clusters › Conectar cluster**, escolha **AWS** e rode o comando `helm` no cluster ([passo 05](#passo-05-conectar-um-cluster-kubernetes)).
 - **EC2:** **Infraestrutura › VMs › Conectar VM**, dê um nome e rode o comando na instância. Com o agente em Docker, ajuste o hop limit do IMDSv2 para 2 ([VMs](#vms)).
-- **Lambda:** **Infraestrutura › Serverless › Conectar serviço Serverless**, provedor **AWS**. Métricas e logs chegam pelo CloudWatch depois do passo 2b; o SDK ([Lambda com o SDK](#lambda-com-o-sdk)) é opcional, para métricas de negócio.
+- **Lambda:** **Infraestrutura › Serverless › Conectar Serverless**, provedor **AWS**. Métricas e logs chegam pelo CloudWatch depois do passo 2b; o SDK ([Lambda com o SDK](#lambda-com-o-sdk)) é opcional, para métricas de negócio.
 
 Os passos de EKS, EC2 e SDK não dão ao Immuno Ops acesso à conta: os dados saem do agente ou do SDK. O acesso de leitura à conta vem só da pilha do passo 2b.
 
@@ -564,9 +563,9 @@ O agent já mostra a saúde da infraestrutura. Para ver métricas de negócio, l
 
 ### Gerar a chave de conexão
 
-1. Vá em **Infraestrutura › Instrumentação** e clique em **Conectar via SDK**.
-2. Dê um nome à aplicação e clique em **Gerar chave**.
-3. Copie a chave: ela só aparece inteira agora. Se perder, gere outra nos detalhes da conexão; a anterior deixa de valer.
+1. Vá em **Infraestrutura › Instrumentação** e clique em **Conectar aplicação**. **Aplicação via SDK** já vem marcado.
+2. Preencha o **Nome da aplicação** (o mesmo nome do serviço no código ou no deploy) e clique em **Continuar**.
+3. Copie a **Chave de conexão**: ela só aparece inteira agora. Se perder, use **Gerar nova** nos detalhes da conexão; a anterior deixa de valer.
 
 O status muda sozinho de **Aguardando primeiro dado** para **Conectada** quando o primeiro dado chega. **Sem dados recentes** quer dizer que a aplicação parou de enviar.
 
