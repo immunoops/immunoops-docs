@@ -681,7 +681,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
   <h2 id="camadas">Onde cada coisa fica</h2>
   <div class="grid-4">
       <a class="card" href="#investigar"><span class="tag">Operar · Investigar</span><h4>Confiabilidade & Incidentes</h4><p>Alertas consistentes entre todas as telas e correlação real de causa raiz.</p><span class="go">Passos 08 e 09 →</span></a>
-      <a class="card" href="#custo"><span class="tag">Analisar</span><h4>FinOps & Custo</h4><p>Preço real de vCPU, RAM e SKUs de nuvem, e o FinOps Score do cluster.</p><span class="go">Passo 10 →</span></a>
+      <a class="card" href="#custo"><span class="tag">Analisar</span><h4>FinOps & Custo</h4><p>Gasto diário por nuvem, custo por cluster, namespace e recurso, fatura FOCUS da AWS e do GCP, e o FinOps Score.</p><span class="go">Passo 10 →</span></a>
       <a class="card" href="#cluster"><span class="tag">Administrar</span><h4>Governança Multi-Cluster</h4><p>Clusters, VMs, Serverless e equipe administrados de um único lugar.</p><span class="go">Passos 05, 06 e 11 →</span></a>
       <a class="card" href="#instrumentar"><span class="tag">Investigar · Administrar</span><h4>Observabilidade Nativa</h4><p>Métricas, logs e traces sem depender do editor do Grafana.</p><span class="go">Passos 07 e 09 →</span></a>
     </div>
@@ -697,7 +697,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#conta-nuvem">GCP · Conta</a></li><li><a href="#cloudrun-permissoes">GCP · Cloud Run</a></li><li><a href="#vm-permissoes">GCP · Ligar e desligar a VM</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">AWS · Conta</a></li><li><a href="#conta-aws-permissoes">AWS · Permissões do billing</a></li><li><a href="#aws-lambda-cloudwatch">AWS · CloudWatch da Lambda</a></li><li><a href="#aws-vm-power">AWS · Ligar e desligar a VM</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li><li><a href="#opentelemetry">OpenTelemetry (Go, Python, Java…)</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps Score</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#conta-nuvem">GCP · Conta</a></li><li><a href="#cloudrun-permissoes">GCP · Cloud Run</a></li><li><a href="#vm-permissoes">GCP · Ligar e desligar a VM</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">AWS · Conta</a></li><li><a href="#conta-aws-permissoes">AWS · Permissões do billing</a></li><li><a href="#aws-lambda-cloudwatch">AWS · CloudWatch da Lambda</a></li><li><a href="#aws-vm-power">AWS · Ligar e desligar a VM</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li><li><a href="#opentelemetry">OpenTelemetry (Go, Python, Java…)</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -1021,7 +1021,7 @@ gcloud projects add-iam-policy-binding PROJETO --member="serviceAccount:aegis-wo
     <table class="tbl">
       <thead><tr><th>Papel</th><th>Ação</th><th>Onde</th><th>Para quê</th></tr></thead>
       <tbody>
-        <tr><td><code>immunoops-billing-reader</code></td><td><code>ec2:DescribeInstances</code></td><td>conta</td><td>Listar a instância</td></tr>
+        <tr><td><code>immunoops-billing-reader</code></td><td><code>ec2:DescribeInstances</code></td><td>conta</td><td>Listar a instância e achar os nós de um cluster EKS para somar o custo deles no cluster</td></tr>
         <tr><td><code>immunoops-power</code></td><td><code>ec2:StartInstances</code></td><td>instâncias da conta</td><td>Ligar</td></tr>
         <tr><td><code>immunoops-power</code></td><td><code>ec2:StopInstances</code></td><td>instâncias da conta</td><td>Desligar</td></tr>
       </tbody>
@@ -1100,7 +1100,7 @@ aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-p
         <tr><td>Cluster EKS</td><td>Disponível. Agent via Helm, como no <a href="#cluster">passo 05</a>.</td></tr>
         <tr><td>VM EC2</td><td>Disponível. O agente detecta conta, região e tipo de instância (<a href="#cloudrun-vm--2">VMs</a>).</td></tr>
         <tr><td>Lambda</td><td>Disponível. Métricas e logs pelo CloudWatch depois de <span class="ui">Conectar à AWS</span>; ou pelo SDK, sem nada na conta.</td></tr>
-        <tr><td>Custo da AWS (billing)</td><td>O export FOCUS é criado no <span class="ui">Conectar à AWS</span>. A leitura do custo no console está <strong>em breve</strong>; o histórico já começa a contar.</td></tr>
+        <tr><td>Custo da AWS (billing)</td><td>Disponível. O export FOCUS é criado no <span class="ui">Conectar à AWS</span> e lido a cada 6 horas; o primeiro arquivo chega em até 24 horas. Onde ver: <a href="#custo-aws">Custo da AWS</a>.</td></tr>
       </tbody>
     </table>
     <h4>Passo 1 — Descobrir o ID da conta</h4>
@@ -1501,38 +1501,69 @@ exports.handler = async (event) =&gt; {
     <div class="note"><i>i</i><div><b>Logs e traces vazios?</b><span>Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam visíveis em <strong>Entidades do Cluster</strong>.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="custo" data-keywords="custo, custos, FinOps, FinOps Score, nota, desperdício, economia, billing, fatura, FOCUS, FOCUS Normalizer, rightsizing, requests, CPU, memória, storage, rede, nuvem, SKU, preço">
-  <div class="crumbs">Passo 10 · Operar</div>
-  <h1>Custo e FinOps Score</h1>
-  <div class="meta"><span>Quando a pergunta é “onde estou gastando à toa?”</span></div>
-  <p class="lead">Seu cluster tem uma nota, e o Immuno Ops mostra qual é. O FinOps Score vai de 0 a 100 e é calculado com os dados reais do seu cluster, nunca com amostra.</p>
+<section class="doc" id="custo" data-keywords="custo, custos, Costs, FinOps, FinOps Score, desperdício, economia, billing, fatura, FOCUS, FOCUS Normalizer, gasto diário, orçamento, namespaces, Kubernetes FinOps, Cloud SKUs, SKU, preço, AWS, GCP, USD, BRL, moeda, conversão, câmbio, EKS, Visão 360, exportar CSV, reimportar">
+  <div class="crumbs">Passo 10 · Custos</div>
+  <h1>Custo e FinOps</h1>
+  <div class="meta"><span>Quando a pergunta é “quanto estou gastando, onde e o que sobra?”</span></div>
+  <p class="lead">Clique em <span class="ui">Costs</span> na barra do topo. O custo vem da fatura das suas contas de nuvem (export de billing do Google Cloud e export FOCUS da AWS) e do uso real dos clusters, nunca de amostra. A tela tem quatro abas.</p>
+
+    <table class="tbl">
+      <thead><tr><th>Aba</th><th>O que mostra</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ui">Summary</span> (Resumo)</td><td><strong>Gasto diário</strong> dos últimos 7, 30 ou 90 dias, com uma barra por provedor e o total e a % de cada um. <strong>Orçamento do mês</strong> (defina em <span class="ui">Set a budget</span>). <strong>Namespaces que mais custam</strong> e <strong>CPU pedida × usada</strong> por cluster.</td></tr>
+        <tr><td><span class="ui">Kubernetes FinOps</span></td><td>Um cartão por cluster (GKE, EKS…): custo do mês, eficiência de CPU e desperdício, cada um na moeda da fatura do cluster.</td></tr>
+        <tr><td><span class="ui">Cloud SKUs</span></td><td>Preço por tipo de instância, com filtro por provedor (GCP, AWS, Azure) e busca.</td></tr>
+        <tr><td><span class="ui">FOCUS Normalizer</span></td><td>A fatura de cada nuvem no mesmo formato (padrão FOCUS 1.2): um cartão por provedor com o total e o maior serviço, e a tabela de recursos com provedor, região, serviço e custo efetivo. <span class="ui">Export CSV</span> baixa a tabela; <span class="ui">Reimport</span> lê o export de novo.</td></tr>
+      </tbody>
+    </table>
 
     <div class="two">
       <ol class="steps">
-        <li>Vá em <span class="ui">Analisar › Kubernetes FinOps</span> e escolha o cluster.</li>
-        <li>Leia o <strong>FinOps Score</strong>: 100 menos o desperdício ponderado por custo. As barras (Capacidade, Requests, Autoscaling, Storage, Rede e Dono) mostram onde está o desperdício. A mais baixa é onde começar.</li>
-        <li>Veja o custo de CPU e memória, o desperdício e as opções de rightsizing.</li>
-        <li>Use <span class="ui">Como ler estes dados</span> para saber de onde vem cada número e o que ainda não é coletado.</li>
+        <li>Abra <span class="ui">Costs › Summary</span> e escolha o período (<span class="ui">7d</span>, <span class="ui">30d</span> ou <span class="ui">90d</span>).</li>
+        <li>Leia a legenda do gráfico: cada provedor aparece com o total no período e a sua parte em %. A barra de hoje é menor porque o dia ainda está sendo faturado.</li>
+        <li>Em <span class="ui">Kubernetes FinOps</span>, compare custo, eficiência de CPU e desperdício entre clusters. O cluster com mais desperdício é onde começar.</li>
+        <li>Em <span class="ui">FOCUS Normalizer</span>, veja recurso por recurso de onde vem cada valor da fatura.</li>
+        <li>O custo de um workload aparece na <a href="#investigar">Visão 360</a>, em <strong>Cost of this workload</strong>.</li>
       </ol>
       <figure class="shot">
-        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/kubernetes-finops</div></div>
-          <div class="app"><div class="shell"><div class="rail"><span class="wm">IMMUNO<b>.OPS</b></span><div class="g">Administrar<span>▸</span></div><div class="g">Investigar<span>▸</span></div><div class="g open">Analisar<span>▾</span></div><div class="n on">Kubernetes FinOps</div><div class="n">FOCUS Normalizer</div><div class="g">Operar<span>▸</span></div><div class="foot"><span class="av">VR</span><span>Vanessa R.</span><span class="lock" title="Segurança da conta">⚿</span></div></div><div class="content"><div class="topline"><span class="bc">ANALISAR / KUBERNETES FINOPS</span><span class="acts"><span class="lang">PT</span><span class="orgchip"><i>A</i>Acme ▾</span><span class="ai">✦</span></span></div><div class="body">
-            <div class="ph"><div><h5>Kubernetes FinOps</h5><p>Capacidade, desperdício e recomendações por cluster.</p></div></div>
-            <div class="acard" style="display:flex; gap:14px; align-items:center; flex-wrap:wrap">
-              <div class="ring"><div><div><div class="num">82</div><span class="lbl" style="font-size:7.5px">FinOps Score</span></div></div></div>
-              <div style="flex:1; min-width:150px">
-                <div class="sig">Capacidade<span class="bar"><i style="width:74%"></i></span><u>74</u></div>
-                <div class="sig">Requests<span class="bar"><i style="width:68%"></i></span><u>68</u></div>
-                <div class="sig">Storage<span class="bar"><i style="width:90%"></i></span><u>90</u></div>
-                <div class="sig">Rede<span class="bar"><i style="width:86%"></i></span><u>86</u></div>
-                <div class="sig">Dono<span class="bar"><i style="width:92%"></i></span><u>92</u></div>
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><div class="url">app.immunoops.io/ui/costs</div></div>
+          <div class="app" style="padding:12px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:10px;margin-bottom:10px"><span class="ui">Home</span><span class="ui" style="background:#00ff4c">Costs</span><span class="ui">Decisions</span><span class="ui">Operations</span><span class="ui">Infrastructure</span></div>
+            <div class="acard">
+              <div style="font-size:10px;opacity:.7">Gasto diário · últimos 30 dias</div>
+              <div class="num" style="font-size:22px;font-weight:800">R$ 12.480</div>
+              <div style="display:flex;align-items:flex-end;gap:3px;height:60px;margin:8px 0">
+                <i style="flex:1;height:55%;background:#3b8fc4"></i><i style="flex:1;height:60%;background:#3b8fc4"></i><i style="flex:1;height:58%;background:#3b8fc4"></i><i style="flex:1;height:62%;background:linear-gradient(#5b5bd6 25%,#3b8fc4 25%)"></i><i style="flex:1;height:66%;background:linear-gradient(#5b5bd6 25%,#3b8fc4 25%)"></i><i style="flex:1;height:64%;background:linear-gradient(#5b5bd6 25%,#3b8fc4 25%)"></i><i style="flex:1;height:20%;background:#3b8fc4"></i>
               </div>
-            </div></div></div></div></div>
+              <div style="font-size:9.5px">● Google Cloud R$ 11.230 · 90,0% &nbsp; ● AWS R$ 1.250 · 10,0%</div>
+              <div style="font-size:9px;opacity:.7">AWS faturou US$ 220, convertido pela taxa do export de billing do Google de cada dia.</div>
+            </div>
+          </div>
         </div>
-        <figcaption>Analisar › Kubernetes FinOps · números ilustrativos</figcaption>
+        <figcaption>Costs › Summary · números ilustrativos</figcaption>
       </figure>
     </div>
-    <div class="note tip"><i>✓</i><div><b>Mais de uma nuvem?</b><span><span class="ui">Analisar › FOCUS Normalizer</span> mostra o billing das suas nuvens no mesmo formato (padrão FOCUS), para comparar SKUs lado a lado. O custo da conta GCP entra por aqui depois do export descrito em <a href="#conta-nuvem">Conta de nuvem</a>.</span></div></div>
+
+    <h2 id="custo-moedas">Mais de uma nuvem e mais de uma moeda</h2>
+    <p>Cada nuvem fatura na sua moeda: a AWS em dólar (USD) e o Google Cloud na moeda da conta de faturamento (por exemplo, real). O Immuno Ops não mistura moedas sem dizer:</p>
+    <ul>
+      <li><strong>Cartões e tabelas</strong> (Kubernetes FinOps, FOCUS Normalizer, Infraestrutura, Visão 360) mostram cada valor na moeda da própria fatura. Um cluster EKS aparece em US$ ao lado de um GKE em R$.</li>
+      <li><strong>Gasto diário</strong> soma tudo numa moeda só. O valor em dólar é convertido pela taxa que o próprio export de billing do Google registrou em cada dia (<code>currency_conversion_rate</code>), e a nota abaixo do gráfico mostra o valor original e a taxa média.</li>
+      <li><strong>Orçamento do mês</strong> usa só a fatura do Google Cloud, na moeda dela.</li>
+    </ul>
+
+    <h2 id="custo-aws">Custo da AWS</h2>
+    <p>Depois de <a href="#conta-aws">Conectar à AWS</a>, o Immuno Ops lê o export FOCUS da sua conta a cada 6 horas e logo depois de <span class="ui">Testar conexão</span>. O primeiro arquivo da AWS chega em até 24 horas.</p>
+    <table class="tbl">
+      <thead><tr><th>Recurso</th><th>Como o custo aparece</th></tr></thead>
+      <tbody>
+        <tr><td>Cluster EKS</td><td>Uma linha com o nome do cluster cadastrado, somando o plano de controle, as instâncias EC2 dos nós e os volumes EBS deles. NAT Gateway, Load Balancer e tráfego ficam em linhas próprias. O custo do cluster é dividido entre namespaces e workloads pelos requests de CPU e memória.</td></tr>
+        <tr><td>VM EC2 e Lambda</td><td>Com o nome cadastrado em <a href="#cloudrun-vm">Serverless e VMs</a>, na aba da VM ou do serviço.</td></tr>
+        <tr><td>Demais serviços</td><td>Uma linha por recurso (NAT, ENI, CloudWatch, S3, KMS…), com o provedor AWS e a região.</td></tr>
+      </tbody>
+    </table>
+    <div class="note tip"><i>✓</i><div><b>“Maior: Amazon EKS (89%)”</b><span>No cartão do provedor, o serviço ao lado do total é o que mais pesou na fatura e a % é a parte dele, não o total inteiro.</span></div></div>
+    <div class="note tip"><i>✓</i><div><b>FinOps Score</b><span>A nota de 0 a 100 por cluster continua em <span class="ui">Kubernetes FinOps</span>: 100 menos o desperdício ponderado por custo. As barras (Capacidade, Requests, Autoscaling, Storage, Rede e Dono) mostram onde está o desperdício.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="equipe" data-keywords="equipe, time, usuários, pessoas, convidar, convite, papel, papéis, permissões, administrador, admin, operador, leitura, viewer, suspender, remover, reenviar convite, RBAC">
@@ -1657,6 +1688,8 @@ exports.handler = async (event) =&gt; {
     <details class="faq"><summary>A organização bloqueia a conta do Immuno Ops no IAM</summary><div>A política <code>iam.allowedPolicyMemberDomains</code> está recusando um membro de fora. Inclua o customer ID <strong>C011tigzz</strong> (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.</div></details>
     <details class="faq"><summary>A conta GCP está “Sem tabela”</summary><div>Abra a conta, informe a tabela no formato <code>projeto.dataset.tabela</code> e clique em <span class="ui">Salvar tabela</span>. Sem essa tabela a conta não entra no billing.</div></details>
     <details class="faq"><summary>Os números são reais?</summary><div>Sim. Todo dado vem do seu cluster e da sua conta de nuvem. Quando ainda não há dado, a tela diz isso em vez de mostrar um número inventado.</div></details>
+    <details class="faq"><summary>Por que a AWS aparece em dólar e o Google Cloud em real?</summary><div>Cada nuvem fatura na sua moeda e o Immuno Ops mostra cada valor na moeda da fatura. No gasto diário, o valor em dólar é convertido pela taxa do export de billing do Google de cada dia. Detalhes em <a href="#custo-moedas">Mais de uma nuvem e mais de uma moeda</a>.</div></details>
+    <details class="faq"><summary>Conectei a AWS e o custo ainda não aparece</summary><div>A AWS gera o primeiro arquivo do export FOCUS em até 24 horas. Depois disso, o Immuno Ops lê a cada 6 horas; para ler na hora, use <span class="ui">Testar conexão</span> no cartão da conta em <span class="ui">Infrastructure › Accounts</span>. A AWS só gera o export daqui para a frente: meses anteriores não aparecem.</div></details>
     <p class="faq-group">Problemas comuns</p>
     <details class="faq"><summary>Meu cluster está como “Pendente” há muito tempo</summary><div>O agent nunca mandou dado. Confira se o comando <code>helm</code> terminou sem erro, se os pods do agent estão <code>Running</code> e se o cluster tem saída de rede para o Immuno Ops.</div></details>
     <details class="faq"><summary>O cluster está conectado, mas Workloads está vazio</summary><div>O inventário pode levar alguns minutos para chegar depois da conexão. Se a tela disser “Ainda não recebemos workloads de…”, teste a conexão e confira os logs do agent.</div></details>

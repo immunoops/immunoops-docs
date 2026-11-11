@@ -38,7 +38,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 | Assunto | Onde | Passos |
 | --- | --- | --- |
 | Confiabilidade e incidentes | Operar e Investigar. Alertas consistentes entre as telas e correlação de causa raiz. | 08 e 09 |
-| FinOps e custo | Analisar. Preço real de vCPU, RAM e SKUs de nuvem, e o FinOps Score do cluster. | 10 |
+| FinOps e custo | Costs. Gasto diário por nuvem, custo por cluster, namespace e recurso, fatura FOCUS da AWS e do GCP, e o FinOps Score. | 10 |
 | Governança multi-cluster | Administrar. Clusters, VMs, Serverless e equipe num único lugar. | 05, 06 e 11 |
 | Observabilidade nativa | Investigar e Administrar. Métricas, logs e traces sem depender do editor do Grafana. | 07 e 09 |
 
@@ -53,7 +53,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 - Contas de nuvem: `app.immunoops.io/ui/infrastructure?tab=contas`
 - Instrumentação: `app.immunoops.io/ui/instrumentation`
 - Workloads: `app.immunoops.io/ui/workloads`
-- Kubernetes FinOps: `app.immunoops.io/ui/kubernetes-finops`
+- Custos: `app.immunoops.io/ui/costs` (abas Summary, Kubernetes FinOps, Cloud SKUs e FOCUS Normalizer: `?tab=focus`)
 - Equipe: `app.immunoops.io/ui/team`
 - Segurança da conta: `app.immunoops.io/ui/account/security`
 - Empresa: `app.immunoops.io/ui/company`
@@ -71,7 +71,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 7. [Instrumentar a aplicação](#passo-07-instrumentar-a-aplicacao) — Conectar
 8. [Ler a Visão Geral](#passo-08-ler-a-visao-geral) — Operar
 9. [Investigar um incidente](#passo-09-investigar-um-incidente) — Operar
-10. [Custo e FinOps Score](#passo-10-custo-e-finops-score) — Operar
+10. [Custo e FinOps](#passo-10-custo-e-finops) — Operar
 11. [Convidar a equipe](#passo-11-convidar-a-equipe) — Organizar
 12. [Proteger sua conta](#passo-12-proteger-sua-conta) — Organizar
 13. [Falar com vendas](#passo-13-falar-com-vendas) — Organizar
@@ -323,7 +323,7 @@ Métricas e logs da EC2 saem do agente instalado no host. A conta não precisa d
 
 | Papel | Ação | Onde | Para quê |
 | --- | --- | --- | --- |
-| `immunoops-billing-reader` | `ec2:DescribeInstances` | conta | Listar a instância |
+| `immunoops-billing-reader` | `ec2:DescribeInstances` | conta | Listar a instância e achar os nós de um cluster EKS para somar o custo deles no cluster |
 | `immunoops-power` | `ec2:StartInstances` | instâncias da conta | Ligar |
 | `immunoops-power` | `ec2:StopInstances` | instâncias da conta | Desligar |
 
@@ -430,7 +430,7 @@ A conta AWS é o que libera, para a sua organização, os recursos da AWS no Imm
 | Cluster EKS | Disponível. Agent via Helm, como no [passo 05](#passo-05-conectar-um-cluster-kubernetes). |
 | VM EC2 | Disponível. O agente detecta conta, região e tipo de instância ([VMs](#vms)). |
 | Lambda | Disponível. Métricas e logs pelo CloudWatch depois de **Conectar à AWS**; ou pelo SDK, sem nada na conta. |
-| Custo da AWS (billing) | O export FOCUS é criado no **Conectar à AWS**. A leitura do custo no console está **em breve**; o histórico já começa a contar. |
+| Custo da AWS (billing) | Disponível. O export FOCUS é criado no **Conectar à AWS** e lido a cada 6 horas; o primeiro arquivo chega em até 24 horas. Onde ver: [Custo da AWS](#custo-da-aws). |
 
 #### Passo 1 — Descobrir o ID da conta
 
@@ -758,20 +758,47 @@ Menu de Investigar: Workloads, Alertas e Incidentes, Observabilidade, e Dashboar
 
 **Logs e traces vazios?** Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam visíveis em **Entidades do Cluster**.
 
-## Passo 10 — Custo e FinOps Score
+## Passo 10 — Custo e FinOps
 
-- Grupo: Operar
-- Quando: a pergunta é “onde estou gastando à toa?”
-- Palavras-chave: custo, custos, FinOps, FinOps Score, nota, desperdício, economia, billing, fatura, FOCUS, FOCUS Normalizer, rightsizing, requests, CPU, memória, storage, rede, nuvem, SKU, preço
+- Grupo: Costs (barra do topo)
+- Quando: a pergunta é “quanto estou gastando, onde e o que sobra?”
+- Onde: `app.immunoops.io/ui/costs`
+- Palavras-chave: custo, custos, Costs, FinOps, FinOps Score, desperdício, economia, billing, fatura, FOCUS, FOCUS Normalizer, gasto diário, orçamento, namespaces, Kubernetes FinOps, Cloud SKUs, SKU, preço, AWS, GCP, USD, BRL, moeda, conversão, câmbio, EKS, Visão 360, exportar CSV, reimportar
 
-O cluster tem uma nota. O FinOps Score vai de 0 a 100 e é calculado com os dados reais do cluster, nunca com amostra.
+O custo vem da fatura das contas de nuvem (export de billing do Google Cloud e export FOCUS da AWS) e do uso real dos clusters, nunca de amostra. A tela **Costs** tem quatro abas:
 
-1. Vá em **Analisar › Kubernetes FinOps** e escolha o cluster. A tela descreve capacidade, desperdício e recomendações por cluster.
-2. Leia o **FinOps Score**: 100 menos o desperdício ponderado por custo. As barras (Capacidade, Requests, Autoscaling, Storage, Rede e Dono) mostram onde está o desperdício. A mais baixa é onde começar.
-3. Veja o custo de CPU e memória, o desperdício e as opções de rightsizing.
-4. Use **Como ler estes dados** para saber de onde vem cada número e o que ainda não é coletado.
+| Aba | O que mostra |
+| --- | --- |
+| Summary (Resumo) | **Gasto diário** de 7, 30 ou 90 dias, com uma barra por provedor e o total e a % de cada um. **Orçamento do mês** (**Set a budget**). **Namespaces que mais custam** e **CPU pedida × usada** por cluster. |
+| Kubernetes FinOps | Um cartão por cluster (GKE, EKS…): custo do mês, eficiência de CPU e desperdício, na moeda da fatura do cluster. |
+| Cloud SKUs | Preço por tipo de instância, com filtro por provedor e busca. |
+| FOCUS Normalizer | A fatura de cada nuvem no padrão FOCUS 1.2: um cartão por provedor com o total e o maior serviço, e a tabela de recursos com provedor, região, serviço e custo efetivo. **Export CSV** baixa a tabela; **Reimport** lê o export de novo. |
 
-**Mais de uma nuvem?** **Analisar › FOCUS Normalizer** mostra o billing das nuvens no mesmo formato (padrão FOCUS), para comparar SKUs lado a lado. O custo da conta GCP entra por aqui depois do export descrito em [Conta de nuvem](#conta-de-nuvem).
+1. Abra **Costs › Summary** e escolha o período (**7d**, **30d** ou **90d**).
+2. Leia a legenda do gráfico: cada provedor com o total no período e a sua parte em %. A barra de hoje é menor porque o dia ainda está sendo faturado.
+3. Em **Kubernetes FinOps**, compare custo, eficiência de CPU e desperdício entre clusters.
+4. Em **FOCUS Normalizer**, veja recurso por recurso de onde vem cada valor.
+5. O custo de um workload fica na Visão 360, em **Cost of this workload**.
+
+### Mais de uma nuvem e mais de uma moeda
+
+- Cartões e tabelas (Kubernetes FinOps, FOCUS Normalizer, Infraestrutura, Visão 360) mostram cada valor na moeda da própria fatura: um EKS em US$ ao lado de um GKE em R$.
+- O **gasto diário** soma tudo numa moeda só. O valor em dólar é convertido pela taxa que o export de billing do Google registrou em cada dia (`currency_conversion_rate`); a nota abaixo do gráfico mostra o valor original e a taxa média.
+- O **orçamento do mês** usa só a fatura do Google Cloud.
+
+### Custo da AWS
+
+Depois de **Conectar à AWS** ([Conta AWS](#conta-aws)), o export FOCUS é lido a cada 6 horas e logo depois de **Testar conexão**. O primeiro arquivo da AWS chega em até 24 horas.
+
+| Recurso | Como o custo aparece |
+| --- | --- |
+| Cluster EKS | Uma linha com o nome do cluster cadastrado, somando plano de controle, instâncias EC2 dos nós e volumes EBS deles. NAT, Load Balancer e tráfego ficam em linhas próprias. O custo é dividido entre namespaces e workloads pelos requests de CPU e memória. |
+| VM EC2 e Lambda | Com o nome cadastrado, na aba da VM ou do serviço. |
+| Demais serviços | Uma linha por recurso (NAT, ENI, CloudWatch, S3, KMS…), com provedor e região. |
+
+No cartão do provedor, “Maior: Amazon EKS (89%)” é o serviço que mais pesou na fatura e a parte dele, não o total inteiro.
+
+**FinOps Score.** A nota de 0 a 100 por cluster fica em **Kubernetes FinOps**: 100 menos o desperdício ponderado por custo. As barras (Capacidade, Requests, Autoscaling, Storage, Rede e Dono) mostram onde está o desperdício.
 
 ## Passo 11 — Convidar a equipe
 
@@ -863,6 +890,12 @@ Abra a conta, informe a tabela no formato `projeto.dataset.tabela` e clique em *
 
 **Os números são reais?**
 Sim. Todo dado vem do cluster e da conta de nuvem. Quando ainda não há dado, a tela diz isso em vez de mostrar um número inventado.
+
+**Por que a AWS aparece em dólar e o Google Cloud em real?**
+Cada nuvem fatura na sua moeda e o Immuno Ops mostra cada valor na moeda da fatura. No gasto diário, o dólar é convertido pela taxa do export de billing do Google de cada dia.
+
+**Conectei a AWS e o custo ainda não aparece.**
+O primeiro arquivo do export FOCUS chega em até 24 horas. Depois, a leitura é a cada 6 horas; para ler na hora, use **Testar conexão** no cartão da conta em **Infrastructure › Accounts**. Meses anteriores à criação do export não aparecem.
 
 ### Problemas comuns
 
