@@ -834,6 +834,39 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
       </tbody>
     </table>
     <p>Exemplos: "Onde estou gastando mais este mês?", "Tem incidente aberto?", "Como está o checkout-api?", "Minha Lambda não manda dados, por quê?". A resposta vem no idioma da pergunta, com hipótese e próximos passos quando houver.</p>
+    <h4 id="agente-ia-ler">Como ler a resposta</h4>
+    <table class="tbl">
+      <thead><tr><th>Parte</th><th>O que é</th></tr></thead>
+      <tbody>
+        <tr><td>Observado</td><td>O que o agente consultou para responder, como “Consultou o custo do mês por provedor e serviço” ou “Leu os logs recebidos dos serverless e apps”.</td></tr>
+        <tr><td>Hipótese</td><td>A explicação mais provável, com os números que sustentam.</td></tr>
+        <tr><td>Confiança</td><td><strong>Alta</strong>, <strong>média</strong> ou <strong>baixa</strong>. Fica baixa quando a evidência é pouca ou quando a hipótese não se apoia no que o agente leu.</td></tr>
+        <tr><td>Ainda não confirmado</td><td>O que o agente não conseguiu verificar com os dados que tem. Confira antes de agir.</td></tr>
+        <tr><td>Próximos passos</td><td>O que olhar ou fazer em seguida, com o caminho no console.</td></tr>
+        <tr><td>Fonte</td><td>De qual organização vieram os dados. O ícone ao lado copia a resposta.</td></tr>
+      </tbody>
+    </table>
+    <h4 id="agente-ia-exemplos">Conversas de exemplo</h4>
+    <div class="two">
+      <div>
+        <p>Perguntas que o agente responde bem, uma por tema:</p>
+        <table class="tbl">
+          <thead><tr><th>Tema</th><th>Pergunta</th></tr></thead>
+          <tbody>
+            <tr><td>Custo</td><td>“Onde estou gastando mais este mês?”</td></tr>
+            <tr><td>Saúde de um serviço</td><td>“Como está a saúde do checkout-api?”</td></tr>
+            <tr><td>Triagem</td><td>“Quais workloads pedem atenção?”</td></tr>
+            <tr><td>Dados que não chegam</td><td>“Por que a VM CRIA 1 não manda dados?”</td></tr>
+          </tbody>
+        </table>
+        <p>Na conversa ao lado, real, o agente consultou os logs da aplicação, viu que nenhuma linha chegou na última hora e que o último sinal foi em 14 de outubro. A confiança é alta porque a hipótese se apoia no que ele leu. Em <strong>Ainda não confirmado</strong> ele diz o que não tem como verificar (mudança no código, erros que não viraram telemetria) e em <strong>Próximos passos</strong> o que conferir: o processo, a chave do SDK e a rede até o Immuno Ops.</p>
+      </div>
+      <figure class="shot">
+        <img src="img/ia-vm.png" alt="Agente IA respondendo por que a VM CRIA 1 não manda dados" style="width:100%;max-width:472px;border-radius:12px;display:block;margin:0 auto">
+        <figcaption>Agente IA · “Por que a VM CRIA 1 não manda dados?”</figcaption>
+      </figure>
+    </div>
+    <div class="note tip"><i>✓</i><div><b>Perguntas que funcionam melhor</b><span>Uma pergunta por vez, com o nome do serviço, cluster ou VM como aparece no console. Para comparar períodos, diga o período (“nas últimas 24 horas”, “este mês”). Responda na mesma conversa para aprofundar.</span></div></div>
     <div class="note"><i>i</i><div><b>Só a sua organização</b><span>O agente só vê os dados da organização selecionada e não executa ações: ele lê e explica. Confira a evidência antes de agir.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>

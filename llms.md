@@ -171,6 +171,30 @@ O botão ✦ no topo (atalho ⌘J) abre o **Agente IA**, um especialista em SRE,
 
 Exemplos: "Onde estou gastando mais este mês?", "Tem incidente aberto?", "Como está o checkout-api?", "Minha Lambda não manda dados, por quê?". A resposta vem no idioma da pergunta, com hipótese e próximos passos quando houver.
 
+#### Como ler a resposta
+
+| Parte | O que é |
+| --- | --- |
+| Observado | O que o agente consultou para responder (“Consultou o custo do mês por provedor e serviço”, “Leu os logs recebidos dos serverless e apps”). |
+| Hipótese | A explicação mais provável, com os números que sustentam. |
+| Confiança | Alta, média ou baixa. Fica baixa quando a evidência é pouca ou quando a hipótese não se apoia no que o agente leu. |
+| Ainda não confirmado | O que o agente não conseguiu verificar. Confira antes de agir. |
+| Próximos passos | O que olhar ou fazer em seguida, com o caminho no console. |
+| Fonte | De qual organização vieram os dados; o ícone ao lado copia a resposta. |
+
+#### Conversas de exemplo
+
+| Tema | Pergunta |
+| --- | --- |
+| Custo | “Onde estou gastando mais este mês?” |
+| Saúde de um serviço | “Como está a saúde do checkout-api?” |
+| Triagem | “Quais workloads pedem atenção?” |
+| Dados que não chegam | “Por que a VM CRIA 1 não manda dados?” |
+
+Exemplo real: perguntado “Por que a VM CRIA 1 não manda dados?”, o agente consultou os logs da aplicação, viu que nenhuma linha chegou na última hora e que o último sinal foi em 14 de outubro, e respondeu com confiança alta. Em **Ainda não confirmado** disse o que não tem como verificar (mudança no código, erros que não viraram telemetria) e em **Próximos passos** o que conferir: o processo, a chave do SDK e a rede até o Immuno Ops.
+
+Perguntas que funcionam melhor: uma por vez, com o nome do serviço, cluster ou VM como aparece no console, e o período quando importa (“nas últimas 24 horas”, “este mês”). Responda na mesma conversa para aprofundar.
+
 O agente só vê os dados da organização selecionada e não executa ações: ele lê e explica. Confira a evidência antes de agir.
 
 ## Passo 05 — Conectar um cluster Kubernetes
