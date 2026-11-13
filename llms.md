@@ -781,6 +781,19 @@ Resposta a incidente com contexto, não alerta solto. Roteiro do alerta à causa
 3. **Visão 360 e Monitoramento — por quê.** Na Visão 360, métricas, logs, traces e eventos no mesmo eixo de tempo, padrões de log, traces mais lentos, dependências e custo do workload.
 4. **Operação › Dashboards — acompanhar.** Dashboards do time com painéis reais, sem depender do editor do Grafana.
 
+### Montar um dashboard MELT
+
+MELT = Métricas, Eventos, Logs e Traces. O dashboard customizável junta os quatro de um serviço numa tela, com dados reais e sem o Grafana. Editor ou admin cria e altera; os demais leem.
+
+1. **Abra a lista.** Operação › Dashboards Customizáveis › Novo dashboard.
+2. **Dê nome e descrição** (ex.: "MELT · checkout (eks-test)") e clique em Criar.
+3. **Comece pelo painel vazio.** Use Adicionar painel ou os atalhos Logs de erro, Traces com erro, Traces acima de 1 s.
+4. **M · Métricas.** Tipo Série temporal. Em Montar, escolha a métrica em "O que medir"; ou troque para PromQL (ex.: `host_cpu_utilization`). A Prévia mostra os dados reais. Dê título e clique em Adicionar painel.
+5. **E · Eventos.** Tipo Número único para um valor de relance, ex.: `count(host_cpu_utilization)` (VMs reportando). Tamanho Pequeno.
+6. **L · Logs.** Tipo Logs. Filtre por Workload, Nível e Contém; a LogQL é gerada sozinha (Editar à mão libera a consulta).
+7. **T · Traces.** Tipo Trace. Filtre por Serviço, Mais lentos que e Status. Só há traces de serviços instrumentados com OpenTelemetry (passo 07); sem eles o painel mostra "Sem dados nesta janela".
+8. **Ajuste o período e salve.** O Período (15 min a 7 dias) recarrega todos os painéis. Arraste ⠿ para reordenar e o canto para redimensionar. Clique em Salvar ("Dashboard salvo."). Analisar pede à IA uma leitura do dashboard.
+
 **Logs e traces vazios?** Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam com métricas e eventos do agent na Visão 360.
 
 ## Passo 10 — Custo e FinOps
