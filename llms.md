@@ -226,6 +226,10 @@ O comando exibido na janela segue a forma `helm upgrade --install` do agent, com
 
 Comparado com os outros tipos de recurso: no cluster se instala um agent com Helm, e ele traz workloads, métricas, logs e traces. Serverless e VM estão no passo 06.
 
+### Ver diferenças entre clusters
+
+Com dois ou mais clusters, Infraestrutura › Clusters mostra abaixo dos cards o mesmo workload comparado em cada cluster. A primeira coluna é a referência; o que difere fica destacado. Campos: imagem, réplicas e variáveis de ambiente (só igual/diferente, sem valores). "Ausente" = o workload não existe naquele cluster. Filtre por Namespace ou use Buscar workload.
+
 ## Passo 06 — Serverless e VMs
 
 - Grupo: Conectar
@@ -575,6 +579,10 @@ O papel fica `arn:aws:iam::CONTA:role/immunoops-billing-reader`. Guarde esse ARN
 | `AccessDenied` ao assumir o papel | Confira `sub`, `aud` e `oaud`. O `oaud` tem que ser o da sua organização. |
 | Pedido de chave de acesso ou de usuário IAM | Não crie. O acesso é só por esse papel. |
 
+### Custo estimado de um serviço Serverless
+
+Clique no nome do serviço em Infraestrutura › Serverless. O Resumo do painel lateral traz o custo estimado das últimas 24 h, a projeção do mês, barras por hora e a divisão em vCPU, memória e requisições. Usa as tarifas públicas; o valor faturado aparece em Custos quando o export de billing chegar.
+
 ## Passo 07 — Instrumentar a aplicação
 
 - Grupo: Conectar
@@ -753,6 +761,10 @@ exports.handler = async (event) => {
 
 Guarde a chave numa variável de ambiente da função (ou no Secrets Manager), nunca no código.
 
+### Créditos por aplicação
+
+Cada card em Infraestrutura › Instrumentação mostra "Créditos neste ciclo": o que a telemetria daquela aplicação consumiu do plano no ciclo. Total e saldo ficam em Configurações › Empresa e plano (passo 13).
+
 ## Passo 08 — Ler a Visão Geral
 
 - Grupo: Operar
@@ -795,6 +807,20 @@ MELT = Métricas, Eventos, Logs e Traces. O dashboard customizável junta os qua
 8. **Ajuste o período e salve.** O Período (15 min a 7 dias) recarrega todos os painéis. Arraste ⠿ para reordenar e o canto para redimensionar. Clique em Salvar ("Dashboard salvo."). Analisar pede à IA uma leitura do dashboard.
 
 **Logs e traces vazios?** Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam com métricas e eventos do agent na Visão 360.
+
+### Monitores de anomalia e regras de alerta
+
+Em Operação › Monitoramento:
+
+1. **Criar monitor de anomalia.** Criar o primeiro monitor (ou Novo monitor) → nome, Serviço e métrica, Sensibilidade (Baixa, Média = 3 desvios-padrão, Alta) → Criar monitor. Compara a cada minuto com o padrão dos últimos 7 dias; métrica nova precisa de ~1 h de dados.
+2. **Excluir.** Pede confirmação; para de avaliar na hora, incidentes abertos continuam.
+3. **Regras de alerta.** Nascem de um painel de dashboard; cada uma tem Silenciar, Retomar e Excluir.
+
+### Endpoints, dependências e o waterfall do trace
+
+Na Visão 360, Endpoints lista as rotas mais lentas, com mais erro e mais chamadas. Exige `http.route` nas métricas; sem isso aparece "Este serviço não envia a rota nas métricas" e o Guia de instrumentação. Lista e Mapa mostram os serviços com que ele conversa, com volume e erro por ligação, quando chegam traces.
+
+Clicar num trace (Visão 360 ou painel de traces) abre o waterfall: duração de cada span, qual parte pesou mais, Ver logs deste trace e Perguntar à IA.
 
 ## Passo 10 — Custo e FinOps
 
@@ -860,6 +886,10 @@ No cartão do provedor, “Maior: Amazon EKS (89%)” é o serviço que mais pes
 
 Quem está com Leitura não vê os botões de conectar ou convidar. Peça a um administrador para alterar o papel em Equipe.
 
+### Suspender e reativar acesso
+
+Configurações › Equipe → Suspender corta o acesso na hora sem apagar a conta; o botão vira Reativar. A lixeira remove de vez. Convite vencido aparece como "Convite expirado", com Reenviar.
+
 ## Passo 12 — Proteger sua conta
 
 - Grupo: Organizar
@@ -899,6 +929,10 @@ Para ampliar os limites ou contratar com SSO e SLA, fale com o time direto pelo 
 5. Envie. A pessoa recebe um protocolo, e alguém do time técnico responde direto, sem fila de qualificação automática.
 
 O manual não lista preços, nomes de planos nem cotas. Para isso, use este fluxo.
+
+### Ver o plano e os créditos
+
+Configurações › Empresa e plano mostra plano, situação da conta, vencimento, consumo de créditos do ciclo e limites. Em trial, os créditos aparecem como ainda não liberados. Consumo por aplicação: Infraestrutura › Instrumentação.
 
 ## Perguntas frequentes
 
