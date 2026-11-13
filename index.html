@@ -902,6 +902,12 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
         <tr><td><span class="pill off">Desconectado</span></td><td>O último sinal tem mais de 5 minutos.</td><td>Verifique o agent no cluster: pods, rede de saída e token.</td></tr>
       </tbody>
     </table>
+    <h3 id="diferencas-clusters" style="margin-top:40px">Ver diferenças entre clusters</h3>
+    <p>Com dois ou mais clusters conectados, <span class="ui">Infraestrutura › Clusters</span> mostra, abaixo dos cards, a tabela de diferenças: o mesmo workload comparado em cada cluster. A primeira coluna de valores é a referência; o que difere fica destacado. Os campos comparados são <strong>imagem</strong>, <strong>réplicas</strong> e <strong>variáveis de ambiente</strong> (só se são iguais ou diferentes, sem mostrar os valores). <em>Ausente</em> quer dizer que o workload não existe naquele cluster. Filtre por <span class="ui">Namespace</span> ou use <span class="ui">Buscar workload</span>.</p>
+    <figure class="shot">
+      <img src="img/v0222/diferencas-clusters.png" alt="Diferenças do mesmo workload entre três clusters" style="width:100%;border-radius:12px;display:block">
+      <figcaption>Diferenças do mesmo workload entre três clusters</figcaption>
+    </figure>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="cloudrun-vm" data-keywords="conta AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, s3:ListBucket, s3:GetObject, immunoops-billing-reader, AssumeRoleWithWebIdentity, oaud, chave de acesso, CloudWatch, cloudwatch:GetMetricData, cloudwatch:ListMetrics, logs:FilterLogEvents, ec2:DescribeInstances, ec2:StartInstances, ec2:StopInstances, serverless, multicloud, AWS Lambda, Lambda, EC2, AWS, Azure, Azure VM, on-prem, IMDS, IMDSv2, conta AWS, assinatura Azure, Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
@@ -1203,6 +1209,12 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
         <tr><td>Pedido de chave de acesso ou de usuário IAM</td><td>Não crie. O acesso é só por esse papel.</td></tr>
       </tbody>
     </table>
+    <h3 id="cloudrun-custo" style="margin-top:40px">Custo estimado de um serviço Serverless</h3>
+    <p>Clique no nome de um serviço em <span class="ui">Infraestrutura › Serverless</span> para abrir o painel lateral. O <span class="ui">Resumo</span> traz o <strong>custo estimado das últimas 24 h</strong>, a projeção do mês, as barras por hora e a divisão em vCPU, memória e requisições. É calculado pelas tarifas públicas; o valor faturado aparece em <span class="ui">Custos</span> quando o export de billing chegar.</p>
+    <figure class="shot">
+      <img src="img/v0222/cloudrun-custo.png" alt="Custo estimado do Cloud Run no painel lateral" style="width:100%;border-radius:12px;display:block">
+      <figcaption>Custo estimado do Cloud Run no painel lateral</figcaption>
+    </figure>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="instrumentar" data-keywords="OpenTelemetry Collector, OTLP, OTLP/HTTP, OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_HEADERS, Go, Golang, Python, Java, .NET, traces, @immunoops/sdk, npm install, instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes">
@@ -1442,6 +1454,12 @@ exports.handler = async (event) =&gt; {
   return { ok: true };
 };</code></pre>
     <p>Guarde a chave numa variável de ambiente da função (ou no Secrets Manager), nunca no código.</p>
+    <h3 id="creditos-app" style="margin-top:40px">Créditos por aplicação</h3>
+    <p>Cada card em <span class="ui">Infraestrutura › Instrumentação</span> mostra <span class="ui">Créditos neste ciclo</span>: quanto a telemetria daquela aplicação consumiu do plano no ciclo atual. O total e o saldo ficam em <span class="ui">Configurações › Empresa e plano</span> (<a href="#vendas">passo 13</a>).</p>
+    <figure class="shot">
+      <img src="img/v0222/creditos-instrumentacao.png" alt="Créditos neste ciclo em cada aplicação" style="width:100%;border-radius:12px;display:block">
+      <figcaption>Créditos neste ciclo em cada aplicação</figcaption>
+    </figure>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="visao-geral" data-keywords="visão geral, overview, dashboard inicial, status, saudável, atenção, crítico, alertas disparando, heartbeat, tela vazia, primeiro recurso, home, início">
@@ -1550,6 +1568,29 @@ exports.handler = async (event) =&gt; {
       </li>
     </ol>
     <div class="note"><i>i</i><div><b>Logs e traces vazios?</b><span>Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam com métricas e eventos do agent na Visão 360.</span></div></div>
+    <h3 id="monitoramento" style="margin-top:40px">Monitores de anomalia e regras de alerta</h3>
+    <p>Em <span class="ui">Operação › Monitoramento</span> ficam as regras de alerta e os monitores de anomalia.</p>
+    <ol class="steps">
+      <li><strong>Criar um monitor de anomalia.</strong> Clique em <span class="ui">Criar o primeiro monitor</span> (ou <span class="ui">Novo monitor</span>), dê um nome, escolha o <span class="ui">Serviço e métrica</span> e a <span class="ui">Sensibilidade</span>: Baixa, Média (avisa a 3 desvios-padrão do normal) ou Alta. A cada minuto o valor é comparado com o padrão dos últimos 7 dias; uma métrica nova precisa de cerca de 1 hora de dados. Clique em <span class="ui">Criar monitor</span>.</li>
+      <li><strong>Excluir.</strong> <span class="ui">Excluir</span> na linha do monitor pede confirmação. O monitor para de avaliar na hora; incidentes já abertos continuam.</li>
+      <li><strong>Regras de alerta.</strong> Uma regra nasce de um painel de dashboard. Na lista, cada regra tem <span class="ui">Silenciar</span>, <span class="ui">Retomar</span> e <span class="ui">Excluir</span>.</li>
+    </ol>
+    <h3 id="visao360-endpoints" style="margin-top:32px">Endpoints, dependências e o waterfall do trace</h3>
+    <p>Na Visão 360 de um serviço, a seção <strong>Endpoints</strong> lista as rotas mais lentas, com mais erro e mais chamadas. Ela precisa que o serviço envie a rota (<code>http.route</code>) nas métricas; sem isso aparece <em>Este serviço não envia a rota nas métricas</em> e o atalho <span class="ui">Guia de instrumentação</span>. Logo abaixo, <span class="ui">Lista</span> e <span class="ui">Mapa</span> mostram os serviços com que ele conversa, com volume e erro por ligação; as dependências aparecem quando chegam traces.</p>
+    <p>Clique em qualquer trace (na Visão 360 ou num painel de traces) para abrir o waterfall: cada span com a duração, a frase de qual parte pesou mais (ex.: <em>SELECT orders levou 498 ms, 59% do total</em>), <span class="ui">Ver logs deste trace</span> e <span class="ui">Perguntar à IA</span>.</p>
+
+    <figure class="shot">
+      <img src="img/v0222/monitor-anomalia.png" alt="Monitor de anomalia criado, com Excluir" style="width:100%;border-radius:12px;display:block">
+      <figcaption>Monitor de anomalia criado, com Excluir</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/v0222/visao360-endpoints.png" alt="Endpoints e dependências da Visão 360 sem rota instrumentada" style="width:100%;border-radius:12px;display:block">
+      <figcaption>Endpoints e dependências da Visão 360 sem rota instrumentada</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/v0222/trace-waterfall.png" alt="Waterfall de um trace" style="width:100%;border-radius:12px;display:block">
+      <figcaption>Waterfall de um trace</figcaption>
+    </figure>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="custo" data-keywords="custo, custos, Costs, FinOps, FinOps Score, desperdício, economia, billing, fatura, FOCUS, FOCUS Normalizer, gasto diário, orçamento, namespaces, Kubernetes FinOps, Cloud SKUs, SKU, preço, AWS, GCP, USD, BRL, moeda, conversão, câmbio, EKS, Visão 360, exportar CSV, reimportar">
@@ -1647,6 +1688,12 @@ exports.handler = async (event) =&gt; {
         <tr><td>Leitura</td><td>Só vê painéis, alertas e custos.</td><td>Gestores, financeiro, devs consultando</td></tr>
       </tbody>
     </table>
+    <h3 id="suspender" style="margin-top:40px">Suspender e reativar acesso</h3>
+    <p>Em <span class="ui">Configurações › Equipe</span>, <span class="ui">Suspender</span> na linha da pessoa corta o acesso na hora sem apagar a conta; o mesmo botão vira <span class="ui">Reativar</span>. Para remover de vez, use a lixeira. Convites vencidos aparecem como <em>Convite expirado</em>, com <span class="ui">Reenviar</span>.</p>
+    <figure class="shot">
+      <img src="img/v0222/equipe-suspender.png" alt="Equipe com Suspender em cada pessoa" style="width:100%;border-radius:12px;display:block">
+      <figcaption>Equipe com Suspender em cada pessoa</figcaption>
+    </figure>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="seguranca" data-keywords="segurança, 2FA, MFA, TOTP, verificação em duas etapas, autenticação em dois fatores, autenticador, Google Authenticator, Authy, 1Password, QR Code, senha, trocar senha, proteger conta">
@@ -1689,6 +1736,12 @@ exports.handler = async (event) =&gt; {
         <figcaption>Configurações › Empresa e plano · Falar com vendas (dados da empresa ocultos)</figcaption>
       </figure>
     </div>
+    <h3 id="plano-creditos" style="margin-top:40px">Ver o plano e os créditos</h3>
+    <p><span class="ui">Configurações › Empresa e plano</span> mostra o plano atual, a situação da conta, o vencimento, o <strong>consumo de créditos</strong> do ciclo e os limites do plano. Em trial, os créditos aparecem como <em>ainda não liberados</em>. O consumo por aplicação está em <a href="#creditos-app">Créditos por aplicação</a>.</p>
+    <figure class="shot">
+      <img src="img/v0222/plano-creditos.png" alt="Plano atual, consumo de créditos e limites" style="width:100%;border-radius:12px;display:block">
+      <figcaption>Plano atual, consumo de créditos e limites</figcaption>
+    </figure>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, billing export, BigQuery, dataViewer, domínio, Sem tabela, C011tigzz, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso, CloudWatch, cloudwatch:GetMetricData, logs:FilterLogEvents, ec2:StartInstances, ec2:StopInstances, Lambda sem métricas">
