@@ -697,7 +697,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#conta-nuvem">GCP · Conta</a></li><li><a href="#cloudrun-permissoes">GCP · Cloud Run</a></li><li><a href="#vm-permissoes">GCP · Ligar e desligar a VM</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">AWS · Conta</a></li><li><a href="#conta-aws-permissoes">AWS · Permissões do billing</a></li><li><a href="#aws-lambda-cloudwatch">AWS · CloudWatch da Lambda</a></li><li><a href="#aws-vm-power">AWS · Ligar e desligar a VM</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li><li><a href="#opentelemetry">OpenTelemetry (Go, Python, Java…)</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li><a href="#custo">10 · Custo e FinOps</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#conta-nuvem">GCP · Conta</a></li><li><a href="#cloudrun-permissoes">GCP · Cloud Run</a></li><li><a href="#vm-permissoes">GCP · Ligar e desligar a VM</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">AWS · Conta</a></li><li><a href="#conta-aws-permissoes">AWS · Permissões do billing</a></li><li><a href="#aws-lambda-cloudwatch">AWS · CloudWatch da Lambda</a></li><li><a href="#aws-vm-power">AWS · Ligar e desligar a VM</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li><li><a href="#opentelemetry">OpenTelemetry (Go, Python, Java…)</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li class="nest"><span>Dashboards</span><ul><li><a href="#dashboards">Montar um dashboard MELT</a></li></ul></li><li><a href="#custo">10 · Custo e FinOps</a></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">11 · Convidar a equipe</a></li><li><a href="#seguranca">12 · Proteger sua conta</a></li><li><a href="#vendas">13 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -1465,7 +1465,7 @@ exports.handler = async (event) =&gt; {
     <div class="note"><i>i</i><div><b>Tela vazia?</b><span><strong>Conecte seu primeiro recurso</strong> quer dizer que nenhum cluster, VM ou serviço Serverless mandou dado ainda. Volte ao passo 05. Não mostramos número inventado enquanto isso.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="investigar" data-keywords="investigar, incidente, alerta, alertas e incidentes, workloads, pods, CrashLoop, restart, observabilidade, logs, traces, métricas, OpenTelemetry, dashboards, Grafana, causa raiz, troubleshooting, latência, erro 5xx">
+<section class="doc" id="investigar" data-keywords="investigar, incidente, alerta, alertas e incidentes, workloads, pods, CrashLoop, restart, observabilidade, logs, traces, métricas, OpenTelemetry, dashboards, dashboard customizável, MELT, painel, PromQL, LogQL, TraceQL, Grafana, causa raiz, troubleshooting, latência, erro 5xx">
   <div class="crumbs">Passo 09 · Operar</div>
   <h1>Investigar um incidente</h1>
   <div class="meta"><span>Quando algo sai do normal</span></div>
@@ -1489,6 +1489,66 @@ exports.handler = async (event) =&gt; {
         <img src="img/w360-topo.png" alt="Visão 360 de um serviço: sinais no mesmo eixo de tempo, logs, traces e dependências" style="width:100%;border-radius:12px;display:block">
         <figcaption>Visão 360 de um serviço: sinais no mesmo eixo de tempo, logs, traces e dependências</figcaption>
       </figure></div>
+    <h3 id="dashboards" style="margin-top:40px">Montar um dashboard MELT</h3>
+    <p>MELT são os quatro sinais: <strong>M</strong>étricas, <strong>E</strong>ventos, <strong>L</strong>ogs e <strong>T</strong>races. Um dashboard customizável junta os quatro de um serviço numa tela, com dados reais da sua organização e sem abrir o Grafana. Quem tem papel de editor ou admin cria e altera; os demais só leem.</p>
+    <ol class="steps">
+      <li><strong>Abra a lista.</strong> Em <span class="ui">Operação › Dashboards Customizáveis</span> ficam os dashboards da organização. Clique em <span class="ui">Novo dashboard</span>.
+      <figure class="shot">
+        <img src="img/dashboards/db0.png" alt="Operação › Dashboards Customizáveis" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Operação › Dashboards Customizáveis</figcaption>
+      </figure>
+      </li>
+      <li><strong>Dê nome e descrição.</strong> Use um nome que diga o serviço e o ambiente, por exemplo <em>MELT · checkout (eks-test)</em>, e clique em <span class="ui">Criar</span>.
+      <figure class="shot">
+        <img src="img/dashboards/db2.png" alt="Novo dashboard com nome e descrição" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Novo dashboard com nome e descrição</figcaption>
+      </figure>
+      </li>
+      <li><strong>Comece pelo painel vazio.</strong> O dashboard abre vazio, com o <span class="ui">Período</span> no topo. Use <span class="ui">Adicionar painel</span> ou um dos atalhos prontos (<em>Logs de erro</em>, <em>Traces com erro</em>, <em>Traces acima de 1 s</em>).
+      <figure class="shot">
+        <img src="img/dashboards/db3.png" alt="Dashboard vazio com atalhos" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Dashboard vazio com atalhos</figcaption>
+      </figure>
+      </li>
+      <li><strong>M · Métricas: série temporal.</strong> Em <span class="ui">Adicionar painel</span>, escolha <span class="ui">Série temporal</span>. No modo <span class="ui">Montar</span>, escolha a métrica em <span class="ui">O que medir</span>; quem conhece PromQL troca para <span class="ui">PromQL</span> e escreve a consulta, por exemplo <code>host_cpu_utilization</code>. A <span class="ui">Prévia</span> à direita já mostra os dados reais. Dê um título e clique em <span class="ui">Adicionar painel</span>.
+      <figure class="shot">
+        <img src="img/dashboards/db4.png" alt="Adicionar painel no modo Montar" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Adicionar painel no modo Montar</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/dashboards/db7.png" alt="Série temporal em PromQL com prévia real" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Série temporal em PromQL com prévia real</figcaption>
+      </figure>
+      </li>
+      <li><strong>E · Eventos: número único.</strong> Escolha <span class="ui">Número único</span> para um valor que se lê de relance, como <code>count(host_cpu_utilization)</code> (quantas VMs estão reportando). Tamanho <span class="ui">Pequeno</span> basta.
+      <figure class="shot">
+        <img src="img/dashboards/db12.png" alt="Número único com a contagem de VMs" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Número único com a contagem de VMs</figcaption>
+      </figure>
+      </li>
+      <li><strong>L · Logs.</strong> Escolha <span class="ui">Logs</span>. Filtre por <span class="ui">Workload</span>, <span class="ui">Nível</span> (ex.: só ERROR) e um trecho em <span class="ui">Contém</span>. A LogQL é gerada sozinha; <span class="ui">Editar à mão</span> libera a consulta.
+      <figure class="shot">
+        <img src="img/dashboards/db9.png" alt="Painel de logs com filtros e LogQL gerada" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Painel de logs com filtros e LogQL gerada</figcaption>
+      </figure>
+      </li>
+      <li><strong>T · Traces.</strong> Escolha <span class="ui">Trace</span>. Filtre por <span class="ui">Serviço</span>, <span class="ui">Mais lentos que</span> e <span class="ui">Status</span> (ex.: só erros). Traces só aparecem de serviços instrumentados com OpenTelemetry (<a href="#opentelemetry">passo 07</a>); sem eles o painel mostra <em>Sem dados nesta janela</em>.
+      <figure class="shot">
+        <img src="img/dashboards/db10.png" alt="Painel de traces com filtros e TraceQL gerada" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Painel de traces com filtros e TraceQL gerada</figcaption>
+      </figure>
+      </li>
+      <li><strong>Ajuste o período e salve.</strong> Troque o <span class="ui">Período</span> (15 min a 7 dias) e todos os painéis recarregam juntos. Arraste pelo canto ⠿ para reordenar e pelo canto inferior para redimensionar. Clique em <span class="ui">Salvar</span>; o aviso <em>Dashboard salvo.</em> confirma. Depois, <span class="ui">Analisar</span> pede à IA uma leitura do dashboard.
+      <figure class="shot">
+        <img src="img/dashboards/db13.png" alt="Dashboard salvo com métricas e logs" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Dashboard salvo com métricas e logs</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/dashboards/db14.png" alt="Traces e número único no mesmo dashboard" style="width:100%;border-radius:12px;display:block">
+        <figcaption>Traces e número único no mesmo dashboard</figcaption>
+      </figure>
+      </li>
+    </ol>
     <div class="note"><i>i</i><div><b>Logs e traces vazios?</b><span>Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam com métricas e eventos do agent na Visão 360.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
