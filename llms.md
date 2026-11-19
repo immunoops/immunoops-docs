@@ -26,10 +26,10 @@ A navegação fica na barra do topo, com cinco áreas, nesta ordem. Cada área t
 | --- | --- |
 | Início | Primeira tela depois do login: alertas disparando, anomalias, conexões com problema, o que pede atenção e para onde vai o dinheiro. |
 | Custos | Resumo, Kubernetes FinOps, SKUs de nuvem e FOCUS Normalizer. |
-| Decisões | Recomendações e a fila de aprovação. |
+| Decisões | Pendentes, Agendadas e Histórico, com a cadeia de suprimento de cada cluster (passo 11). |
 | Operação | Visão geral, Incidentes, Workloads, Mobile, Monitoramento e Dashboards. Cada serviço abre na Visão 360. |
 | Infraestrutura | Clusters, VMs, Serverless, Instrumentação e Contas de nuvem. |
-| Configurações (avatar) | Políticas, Notificações, Equipe, Empresa e plano e Segurança. |
+| Configurações (avatar) | Políticas (como o Decision Engine age), Notificações (canais), Equipe, Empresa e plano e Segurança. |
 
 A área aberta fica destacada em verde na barra do topo.
 
@@ -41,7 +41,7 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 | --- | --- | --- |
 | Confiabilidade e incidentes | Início e Operação. Alertas consistentes entre as telas e correlação de causa raiz. | 08 e 09 |
 | FinOps e custo | Custos. Gasto diário por nuvem, custo por cluster, namespace e recurso, fatura FOCUS da AWS e do GCP, e o FinOps Score. | 10 |
-| Governança multi-cluster | Infraestrutura e Configurações. Clusters, VMs, Serverless e equipe num único lugar. | 05, 06 e 11 |
+| Governança multi-cluster | Infraestrutura e Configurações. Clusters, VMs, Serverless e equipe num único lugar. | 05, 06 e 12 |
 | Observabilidade nativa | Operação e Infraestrutura. Métricas, logs e traces sem depender do editor do Grafana. | 07 e 09 |
 
 ### Caminhos do console citados no manual
@@ -72,10 +72,11 @@ O papel define o que aparece. Quem tem papel Leitura vê painéis, alertas e cus
 8. [Ler a Visão Geral](#passo-08-ler-a-visao-geral) — Operar
 9. [Investigar um incidente](#passo-09-investigar-um-incidente) — Operar
 10. [Custo e FinOps](#passo-10-custo-e-finops) — Operar
-11. [Convidar a equipe](#passo-11-convidar-a-equipe) — Organizar
-12. [Proteger sua conta](#passo-12-proteger-sua-conta) — Organizar
-13. [Falar com vendas](#passo-13-falar-com-vendas) — Organizar
-14. [Perguntas frequentes](#perguntas-frequentes) — Ajuda
+11. [Aprovar decisões](#passo-11-aprovar-decisoes) — Operar
+12. [Convidar a equipe](#passo-12-convidar-a-equipe) — Organizar
+13. [Proteger sua conta](#passo-13-proteger-sua-conta) — Organizar
+14. [Falar com vendas](#passo-14-falar-com-vendas) — Organizar
+15. [Perguntas frequentes](#perguntas-frequentes) — Ajuda
 
 Atalhos da capa: criar conta, conectar um cluster, instrumentar a aplicação, ler a Visão Geral, convidar a equipe, falar com vendas.
 
@@ -229,6 +230,17 @@ Comparado com os outros tipos de recurso: no cluster se instala um agent com Hel
 ### Ver diferenças entre clusters
 
 Com dois ou mais clusters, Infraestrutura › Clusters mostra abaixo dos cards o mesmo workload comparado em cada cluster. A primeira coluna é a referência; o que difere fica destacado. Campos: imagem, réplicas e variáveis de ambiente (só igual/diferente, sem valores). "Ausente" = o workload não existe naquele cluster. Filtre por Namespace ou use Buscar workload.
+
+### Ambiente de cada workload
+
+O agent classifica cada workload em produção, staging, desenvolvimento ou não classificado. Isso define o que o Decision Engine pode fazer com ele (passo 11). A ordem é:
+
+1. O label do workload: `environment`, `env`, `app.kubernetes.io/environment`, `immunoops.io/environment` ou `tier`, com valores como `production`, `staging` ou `development`.
+2. O nome do namespace: `prod`, `stag`, `-stg`, `hml` ou `dev`.
+3. O **Ambiente** escolhido ao conectar o cluster.
+4. Se nada disso define, o workload fica como **ambiente não classificado**, e o Decision Engine só observa.
+
+Rotule os workloads com `environment` para que cada um caia no ambiente certo. Agents instalados antes de 17/11/2026 marcam todos os workloads como produção; atualize o agent pelo comando do console.
 
 ## Passo 06 — Serverless e VMs
 
@@ -761,9 +773,29 @@ exports.handler = async (event) => {
 
 Guarde a chave numa variável de ambiente da função (ou no Secrets Manager), nunca no código.
 
+### App Flutter (mobile)
+
+O SDK `immunoops_flutter` manda crashes, telas, jank, tempo de abertura, rede e jornadas de negócio de apps Flutter (Android, iOS e macOS; web em modo reduzido). Pede Dart 3.5+ e Flutter 3.24+.
+
+1. Gere a chave em Infraestrutura › Instrumentação, como em [Gerar a chave de conexão](#gerar-a-chave-de-conexao).
+2. Adicione a dependência `immunoops_flutter` ao `pubspec.yaml`, na versão indicada no repositório do SDK.
+3. Chame `ImmunoOps.init` em `main.dart`, logo depois de `WidgetsFlutterBinding.ensureInitialized()`, com a chave, o nome do app e o ambiente.
+4. Registre `ImmunoOps.navigatorObserver` no roteador (e em cada `ShellRoute`) e `ImmunoOpsDioInterceptor()` em cada cliente Dio.
+5. Confira com `dart run immunoops_flutter:doctor`.
+
+```dart
+ImmunoOps.init(const ImmunoOpsConfig(
+  clientKey: String.fromEnvironment('IMMUNOOPS_CLIENT_KEY'),
+  appName: 'loja-app',
+  environment: 'production',
+));
+```
+
+Os dados aparecem em Operação › Mobile ([Apps mobile](#apps-mobile)).
+
 ### Créditos por aplicação
 
-Cada card em Infraestrutura › Instrumentação mostra "Créditos neste ciclo": o que a telemetria daquela aplicação consumiu do plano no ciclo. Total e saldo ficam em Configurações › Empresa e plano (passo 13).
+Cada card em Infraestrutura › Instrumentação mostra "Créditos neste ciclo": o que a telemetria daquela aplicação consumiu do plano no ciclo. Total e saldo ficam em Configurações › Empresa e plano (passo 14).
 
 ## Passo 08 — Ler a Visão Geral
 
@@ -808,6 +840,17 @@ MELT = Métricas, Eventos, Logs e Traces. O dashboard customizável junta os qua
 
 **Logs e traces vazios?** Eles só chegam de workloads instrumentados com OpenTelemetry (passo 07). Os demais continuam com métricas e eventos do agent na Visão 360.
 
+### Organizar dashboards em pastas
+
+A coluna **Pastas**, à esquerda da lista, mostra **Todos**, cada pasta com a contagem e **Sem pasta** (quando há dashboard solto). Pasta com cadeado tem acesso restrito.
+
+1. **Criar.** **Nova pasta** → nome (até 80 caracteres) → **Criar pasta**. Só aparece para quem edita dashboards.
+2. **Mover.** No menu do dashboard, **Mover para pasta** → escolha a pasta → **Mover**.
+3. **Restringir.** Em **Ações da pasta › Permissões**, escolha para cada papel **Ver e editar**, **Só ver** ou **Sem acesso**. **Liberar para todos** volta a pasta para todos com acesso a dashboards.
+4. **Renomear ou excluir.** Em **Ações da pasta**. Excluir não apaga dashboards: eles vão para **Sem pasta**.
+
+Regras: pasta sem regra fica visível para todos com acesso a dashboards. Admin sempre vê e edita. Quem não vê a pasta também não abre os dashboards dela, nem pelo link. A tela não deixa salvar uma regra que tira o seu próprio acesso.
+
 ### Monitores de anomalia e regras de alerta
 
 Em Operação › Monitoramento:
@@ -821,6 +864,14 @@ Em Operação › Monitoramento:
 Na Visão 360, Endpoints lista as rotas mais lentas, com mais erro e mais chamadas. Exige `http.route` nas métricas; sem isso aparece "Este serviço não envia a rota nas métricas" e o Guia de instrumentação. Lista e Mapa mostram os serviços com que ele conversa, com volume e erro por ligação, quando chegam traces.
 
 Clicar num trace (Visão 360 ou painel de traces) abre o waterfall: duração de cada span, qual parte pesou mais, Ver logs deste trace e Perguntar à IA.
+
+### Apps mobile
+
+Operação › Mobile mostra os apps Flutter instrumentados (passo 07): sessões sem crash (objetivo de 99,5% ou mais), erro HTTP no app, cold start, sessões sem crash por versão e crashes agrupados pela pilha de chamadas.
+
+- Filtre por **App** e por **Período**: **Últimas 24 h** (padrão), **7 dias**, **30 dias** ou **Escolher dia**, no calendário.
+- O histórico guarda os últimos 30 dias. Sem dados no período, a tela diz "Nenhum dado do app em …" e mantém o filtro para escolher outro.
+- Um aparelho com o relógio errado não some do console: horário mais de 5 minutos no futuro, ou mais antigo que 30 dias, vira a hora em que o dado chegou.
 
 ## Passo 10 — Custo e FinOps
 
@@ -862,9 +913,104 @@ Depois de **Conectar à AWS** ([Conta AWS](#conta-aws)), o export FOCUS é lido 
 
 No cartão do provedor, “Maior: Amazon EKS (89%)” é o serviço que mais pesou na fatura e a parte dele, não o total inteiro.
 
+Workloads do EKS têm custo mensal mesmo antes da fatura chegar: o Immuno Ops usa o preço on-demand do tipo de instância, lido pela conta AWS conectada. É esse custo que Decisões usa para calcular a economia (passo 11).
+
 **FinOps Score.** A nota de 0 a 100 por cluster fica em **Kubernetes FinOps**: 100 menos o desperdício ponderado por custo. As barras (Capacidade, Requests, Autoscaling, Storage, Rede e Dono) mostram onde está o desperdício.
 
-## Passo 11 — Convidar a equipe
+## Passo 11 — Aprovar decisões
+
+- Grupo: Operar
+- Quando: toda semana, ou quando o sino avisar de uma aprovação
+- Onde: `app.immunoops.io/ui/decisions`
+- Quem: aprovar e recusar pedem papel Operador ou Admin; Políticas pede Admin
+- Palavras-chave: decisões, Decision Engine, aprovar, recusar, agendar, rightsizing, réplicas, economia, risco, cadeia de suprimento, supply chain, nó, pool, consolidar nó, mover workload, provisionar capacidade, pedir aprovação, só observação, trava, SLO, error budget, burn rate, p95, impacto na cadeia, revertida, janela de manutenção, congelar produção, políticas, canais, Slack, Microsoft Teams, Google Chat
+
+O Decision Engine cruza custo, uso real e risco, e cada sugestão mostra o porquê. No topo da tela ficam **Esperando você** (quanto está em jogo por mês), **Aplicadas este mês** e **Revertidas**.
+
+1. **Pendentes.** Sugestões esperando alguém. Ordene por **Maior economia** ou **Menor risco** e filtre por tipo: **Rightsizing**, **Réplicas**, **Agendamento** ou **Tipo de instância**. **Aprovar as de baixo risco** aprova todas as de risco baixo de uma vez.
+2. **Abra uma sugestão.** O painel traz **Por que o Engine sugere** (uso observado contra o pedido), o **Plano** (quando e como a mudança entra), o uso de CPU nas últimas 24 h, o **Impacto na cadeia** e o **SLO da aplicação**.
+3. **Decida.** **Aprovar**, **Recusar** ou **Agendar** (vai para a próxima janela de manutenção, na aba **Agendadas**).
+4. **Histórico.** As decisões aprovadas, recusadas e revertidas, com **O que aconteceu** e o motivo.
+
+### Cadeia de suprimento
+
+Acima da lista, cada cluster tem a faixa **Aplicação → workload → nó → pool → cluster**, com o pior elo de cada camada:
+
+| Camada | O que mostra |
+| --- | --- |
+| Aplicações | Agrupadas pelo rótulo `app`. |
+| Workloads | Uso por réplica. |
+| Nós | Quantos estão congestionados, com pressão, isolados ou ociosos; "sem gargalo" quando está tudo bem. |
+| Pools | Requests do pool mais cheio. |
+| Cluster | CPU e memória reservadas no cluster. |
+
+Abaixo da faixa ficam as ações de nó:
+
+- **Consolidar nó** ("Esvaziar e liberar …"): tira os pods de um nó ocioso e o isola.
+- **Mover workload** ("Mover … para …"): tira um pod de um nó congestionado.
+- **Provisionar capacidade**: só informativo; o Immuno Ops não cria nós.
+
+Consolidar e mover têm **Pedir aprovação**, que cria um pedido na aba Pendentes. O Immuno Ops refaz o plano com os dados do momento antes de executar, nunca com o que a tela mostrou.
+
+### Impacto na cadeia e SLO da aplicação
+
+- **Impacto na cadeia**: CPU reservada (requests) antes → depois no nó e no cluster.
+- **SLO da aplicação**: p95 contra o objetivo, erros contra o objetivo e burn 1h · 6h. O estado é **dentro do SLO**, **queimando error budget** ou **fora do SLO**. O objetivo é declarado ou derivado dos últimos 7 dias.
+- **Sem SLO de aplicação**: a aplicação não está instrumentada com OpenTelemetry (passo 07). A trava usa só os sinais do Kubernetes.
+
+### Por que uma decisão está em "Só observação"
+
+O Immuno Ops só muda a infraestrutura quando o sinal é confiável e o workload aguenta. Quando uma trava bloqueia, a decisão aparece como **Só observação**, com o motivo:
+
+| Motivo | O que fazer |
+| --- | --- |
+| Componente do sistema (`kube-*`, `gke-*`, `amazon-*`, `aws-*`, `immuno-system`, `argocd`, `monitoring` e outros) | Nada. O Decision Engine não altera esses namespaces. |
+| Agente do cluster sem enviar dados, ou última coleta há mais de 15 min | Confira o agent (passo 05). |
+| Sem medição de uso, ou uso estimado pelo agente | Instale o metrics-server ou atualize o agent. |
+| Janela de uso incompleta | Espere a coleta: a decisão precisa de quase 6 h seguidas de amostras de uso. |
+| Custo do workload desconhecido | Conecte a conta de nuvem (passo 06). |
+| Ambiente não classificado | Rotule o workload ([Ambiente de cada workload](#ambiente-de-cada-workload)). |
+| SLO: pods fora de Running, com falha, OOMKilled, restarts, CPU estrangulada ou réplicas faltando | Resolva a saúde do workload antes de reduzir. |
+| SLO da aplicação violado ou queimando error budget | A aplicação não perde capacidade; um aumento nunca é bloqueado. |
+| Cluster com pods Pending, nó sob pressão ou sem folga para perder o maior nó | Provisione capacidade antes. |
+
+Em produção, mudança autônoma sempre pede aprovação.
+
+### Depois de aprovar
+
+Aprovar registra a decisão e tenta aplicar no cluster:
+
+- **Decisão aprovada e aplicada no cluster**: o agent confirmou a mudança.
+- **Decisão aprovada. O cluster ainda não aplicou.**: a mudança espera o agent. Sem resposta em 15 minutos, fica como não aplicada, com o motivo. Isso acontece quando o actuator do agent não está ligado ou não alcança o Immuno Ops.
+- **Falhou**: o cluster recusou a mudança (por exemplo, por causa de um HPA). O motivo fica no Histórico.
+- **Revertida**: depois da mudança, o workload saiu do SLO (pods com falha, réplicas faltando, erros subindo, aplicação fora do SLO) e a mudança foi desfeita. Numa consolidação, o nó volta a receber pods. O motivo fica registrado.
+
+### Políticas: como o Decision Engine age
+
+Em Configurações › Políticas, o card **Como o Decision Engine age** tem:
+
+- **Aplicar automaticamente quando o risco for baixo**: desligado, toda mudança vira pedido de aprovação.
+- **Congelar mudanças em produção**: nenhuma mudança é aplicada em produção. Útil em Black Friday e janelas de release.
+- **Janela de manutenção**: horário (UTC) em que as mudanças agendadas rodam.
+
+**Em resumo** mostra a combinação em uma frase. Só quem pode editar as regras de proteção muda as políticas.
+
+### Receber incidentes e aprovações no chat
+
+Em Configurações › Notificações › **Canais**, **Adicionar canal** → escolha Slack, Microsoft Teams ou Google Chat → cole a **URL do webhook** (https) → **Adicionar**. Incidentes e aprovações passam a chegar no canal. Se a entrega falhar, o canal mostra **Última entrega falhou**: confira se a URL ainda vale. **Remover canal** pede confirmação.
+
+O sino da barra do topo mostra alertas disparando e anomalias abertas; **Configurar canais** leva a essa tela.
+
+### Quando a lista está vazia
+
+| Mensagem | O que fazer |
+| --- | --- |
+| Nenhum cluster enviando dados | **Conectar cluster** (passo 05). As primeiras sugestões aparecem depois de algumas horas de coleta. |
+| O cluster está sem enviar dados | **Ver agentes** e confira o agent. |
+| Falta o custo dos workloads | Conecte a conta de nuvem; o primeiro cálculo roda em até 1 hora. |
+| Analisamos N workloads em N clusters e não há economia segura agora | Nada. A análise roda de novo a cada hora. |
+
+## Passo 12 — Convidar a equipe
 
 - Grupo: Organizar
 - Tempo: cerca de 1 minuto por pessoa
@@ -890,7 +1036,7 @@ Quem está com Leitura não vê os botões de conectar ou convidar. Peça a um a
 
 Configurações › Equipe → Suspender corta o acesso na hora sem apagar a conta; o botão vira Reativar. A lixeira remove de vez. Convite vencido aparece como "Convite expirado", com Reenviar.
 
-## Passo 12 — Proteger sua conta
+## Passo 13 — Proteger sua conta
 
 - Grupo: Organizar
 - Tempo: cerca de 2 minutos
@@ -909,7 +1055,7 @@ A tela Segurança da conta pede uma senha forte e uma segunda etapa no login.
 
 Apps citados no manual: Google Authenticator, 1Password, Authy ou outro.
 
-## Passo 13 — Falar com vendas
+## Passo 14 — Falar com vendas
 
 - Grupo: Organizar
 - Tempo: cerca de 2 minutos
@@ -938,7 +1084,7 @@ Configurações › Empresa e plano mostra plano, situação da conta, venciment
 
 - Grupo: Ajuda
 - Quando: antes de chamar o time
-- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso, CloudWatch, cloudwatch:GetMetricData, logs:FilterLogEvents, ec2:StartInstances, ec2:StopInstances, Lambda sem métricas
+- Palavras-chave: perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, decisões vazia, aprovei e não aplicou, só observação, mobile sem dados, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso, CloudWatch, cloudwatch:GetMetricData, logs:FilterLogEvents, ec2:StartInstances, ec2:StopInstances, Lambda sem métricas
 
 ### Dados e acesso
 
@@ -988,3 +1134,15 @@ O acesso foi suspenso ou removido em todas as organizações. Peça a um adminis
 
 **Não vejo os botões de conectar ou convidar.**
 O papel é **Leitura**. Peça a um administrador para alterar o papel em **Equipe**.
+
+**Decisões está vazia.**
+A tela diz o motivo: nenhum cluster enviando dados, clusters sem sinal, workloads sem custo ou nada a economizar agora. A ação de cada caso está em [Quando a lista está vazia](#quando-a-lista-esta-vazia).
+
+**Aprovei uma decisão e o cluster não mudou.**
+Veja o Histórico. "O cluster ainda não aplicou" quer dizer que o agent não confirmou a mudança: depois de 15 minutos, ela fica como não aplicada, com o motivo. A aplicação depende do actuator do agent ligado no cluster. Detalhes em [Depois de aprovar](#depois-de-aprovar).
+
+**A decisão aparece como "Só observação".**
+Uma trava de segurança bloqueou. O motivo aparece na própria decisão; a tabela está em [Por que uma decisão está em "Só observação"](#por-que-uma-decisao-esta-em-so-observacao).
+
+**O app mobile não aparece em Operação › Mobile.**
+Confira o período (o padrão é Últimas 24 h) e o app no filtro. Rode `dart run immunoops_flutter:doctor` para testar a chave e o envio. O histórico guarda 30 dias.
