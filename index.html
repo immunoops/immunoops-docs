@@ -1404,13 +1404,19 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 <h4 id="lambda-go-otel">Exemplo completo: AWS Lambda com Go e OpenTelemetry</h4>
 <p>Este exemplo acompanha a jornada inteira: criar a conexão no ImmunoOps, configurar a Lambda, enviar telemetria e conferir o resultado no produto. O projeto compilável, com dependências fixadas e template AWS SAM, está em <a href="https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel"><code>examples/aws-lambda-go-otel</code></a>.</p>
 <ol class="steps">
-  <li><strong>Gere a chave.</strong> Em <span class="ui">Infraestrutura › Instrumentação</span>, clique em <span class="ui">Conectar aplicação</span>, dê o nome <code>lambda-checkout</code> e copie a chave de conexão.</li>
-  <li><strong>Baixe e compile.</strong> Copie a pasta do exemplo e execute os comandos abaixo. O resultado é um ZIP para Linux ARM64.</li>
+  <li><strong>Encontre a Lambda.</strong> Selecione a organização correta no canto superior esquerdo. Vá a <span class="ui">Infraestrutura › Serverless</span> e localize a função AWS Lambda.</li>
+  <li><strong>Comece a instrumentação.</strong> No cartão da função, clique em <span class="ui">Instrumentar com SDK</span>. O ImmunoOps preenche o nome da aplicação com o mesmo nome da função; mantenha-o igual ao <code>OTEL_SERVICE_NAME</code>.</li>
+  <li><strong>Gere a chave.</strong> Clique em <span class="ui">Continuar</span> e copie a chave de conexão. Ela será usada somente na variável protegida <code>OTEL_EXPORTER_OTLP_HEADERS</code>.</li>
 </ol>
 <figure class="shot">
-  <img src="img/dlg-app.png" alt="Janela do ImmunoOps para criar uma conexão de aplicação" style="width:100%;border-radius:12px;display:block">
-  <figcaption>No ImmunoOps: Infraestrutura › Instrumentação › Conectar aplicação. Guarde a chave em um segredo; ela não aparece inteira novamente.</figcaption>
+  <img src="img/v0230/lambda-serverless.png" alt="Lambda immunoops-test-checkout na página Infraestrutura, aba Serverless" style="width:100%;border-radius:12px;display:block">
+  <figcaption>Infraestrutura › Serverless. No cartão da Lambda, use Instrumentar com SDK para conectar a telemetria da aplicação.</figcaption>
 </figure>
+<figure class="shot">
+  <img src="img/v0230/lambda-instrumentar.png" alt="Primeiro passo da instrumentação da Lambda no ImmunoOps" style="width:100%;border-radius:12px;display:block">
+  <figcaption>O nome vem preenchido com a função selecionada. Clique em Continuar para gerar a chave e ver as instruções de instalação.</figcaption>
+</figure>
+<p><strong>Baixe e compile o exemplo.</strong> Copie a pasta do projeto e execute:</p>
 <pre><code class="language-bash">cd examples/aws-lambda-go-otel
 go mod download
 GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
@@ -1447,8 +1453,8 @@ aws lambda invoke --function-name immunoops-otel-quickstart \
 </table>
 <div class="note warn"><i>!</i><div><b>Não coloque a chave no código ou no ZIP</b><span>Use variável protegida da Lambda ou o mecanismo de segredos da sua esteira. Se o exporter registrar erro, procure <code>trace export</code>, <code>metric export</code> ou <code>log export</code> nos logs da função.</span></div></div>
 <figure class="shot">
-  <img src="img/v0222/trace-waterfall.png" alt="Trace recebido no ImmunoOps com spans e acesso aos logs" style="width:100%;border-radius:12px;display:block">
-  <figcaption>Depois da invocação, abra Operação e selecione o trace. A tela mostra os spans, duração e permite abrir os logs relacionados.</figcaption>
+  <img src="img/v0230/lambda-visao360.png" alt="Visão 360 da Lambda immunoops-test-checkout no ImmunoOps" style="width:100%;border-radius:12px;display:block">
+  <figcaption>Depois do envio, clique em Visão 360. Use as abas Logs, Traces e Métricas para confirmar cada sinal; Atualizar refaz a consulta da última hora.</figcaption>
 </figure>
 <h4 id="otel-outras">Outras linguagens</h4>
 <p>Com as mesmas variáveis de ambiente:</p>
