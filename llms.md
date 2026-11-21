@@ -683,10 +683,18 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 func setupOTel(ctx context.Context) (func(context.Context) error, error) {
+	res, err := sdkresource.New(ctx,
+		sdkresource.WithFromEnv(),
+		sdkresource.WithTelemetrySDK(),
+	)
+	if err != nil {
+		return nil, err
+	}
 	traceExp, err := otlptracehttp.New(ctx) // lê OTEL_EXPORTER_OTLP_*
 	if err != nil {
 		return nil, err
@@ -695,8 +703,8 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 	if err != nil {
 		return nil, err
 	}
-	tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(traceExp))
-	mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)))
+	tp := sdktrace.NewTracerProvider(sdktrace.WithResource(res), sdktrace.WithBatcher(traceExp))
+	mp := sdkmetric.NewMeterProvider(sdkmetric.WithResource(res), sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)))
 	otel.SetTracerProvider(tp)
 	otel.SetMeterProvider(mp)
 	return func(ctx context.Context) error { // chame ao encerrar
@@ -707,6 +715,52 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 ```
 
 Logs seguem o mesmo padrão com `otlploghttp`. Para HTTP e gRPC do próprio Go, os pacotes `otelhttp` e `otelgrpc` criam os spans de cada requisição.
+
+#### Quickstart: AWS Lambda com Go e OpenTelemetry
+
+Este caminho envia traces, métricas e logs direto ao Immuno Ops, sem agent ou Collector. O projeto completo, com dependências fixadas e template AWS SAM, está em [`examples/aws-lambda-go-otel`](https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel).
+
+1. Em **Infraestrutura › Instrumentação**, clique em **Conectar aplicação**, dê o nome `lambda-checkout` e copie a chave de conexão.
+2. Copie a pasta do exemplo e compile:
+
+```bash
+cd examples/aws-lambda-go-otel
+go mod download
+GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
+  go build -trimpath -tags lambda.norpc -ldflags="-s -w" -o bootstrap .
+zip function.zip bootstrap
+```
+
+Configure a Lambda com runtime `provided.al2023`, arquitetura `arm64`, handler `bootstrap`, memória de 256 MB e timeout inicial de 15 segundos.
+
+| Variável | Valor |
+| --- | --- |
+| `OTEL_SERVICE_NAME` | `lambda-checkout` |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `https://app.immunoops.io/agent/ingest` |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |
+| `OTEL_EXPORTER_OTLP_HEADERS` | `Authorization=Bearer SUA_CHAVE` |
+| `OTEL_EXPORTER_OTLP_TIMEOUT` | `3000` |
+| `OTEL_RESOURCE_ATTRIBUTES` | `deployment.environment.name=production` |
+
+O exemplo finaliza o span e chama `ForceFlush` nos três sinais antes do retorno, porque a Lambda pode congelar o processo. Os providers ficam globais e são reaproveitados nos warm starts.
+
+```bash
+aws lambda invoke --function-name immunoops-otel-quickstart \
+  --cli-binary-format raw-in-base64-out --payload '{}' response.json
+
+aws lambda invoke --function-name immunoops-otel-quickstart \
+  --cli-binary-format raw-in-base64-out --payload '{"fail":true}' response-error.json
+```
+
+| Sinal | Resultado esperado |
+| --- | --- |
+| Trace | `checkout.process`, com `faas.coldstart`; a segunda invocação fica marcada como erro |
+| Métricas | `checkout.invocations`, `checkout.errors` e `checkout.cold_starts` |
+| Logs | `Checkout processado` e `Checkout falhou` |
+| Serviço | `lambda-checkout` |
+| Conexão | **Conectada** |
+
+Não coloque a chave no código ou no ZIP. Use variável protegida da Lambda ou o mecanismo de segredos da sua esteira. Se o exporter registrar erro, procure `trace export`, `metric export` ou `log export` nos logs da função.
 
 #### Outras linguagens
 

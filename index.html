@@ -697,7 +697,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
 </section>
 
 <div class="layout">
-<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#conta-nuvem">GCP · Conta</a></li><li><a href="#cloudrun-permissoes">GCP · Cloud Run</a></li><li><a href="#vm-permissoes">GCP · Ligar e desligar a VM</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">AWS · Conta</a></li><li><a href="#conta-aws-permissoes">AWS · Permissões do billing</a></li><li><a href="#aws-lambda-cloudwatch">AWS · CloudWatch da Lambda</a></li><li><a href="#aws-vm-power">AWS · Ligar e desligar a VM</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li><li><a href="#opentelemetry">OpenTelemetry (Go, Python, Java…)</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li class="nest"><span>Dashboards</span><ul><li><a href="#dashboards">Montar um dashboard MELT</a></li><li><a href="#dashboards-pastas">Pastas de dashboards</a></li><li><a href="#mobile">Apps mobile</a></li></ul></li><li><a href="#custo">10 · Custo e FinOps</a></li><li><a href="#decisoes">11 · Aprovar decisões</a></li><li class="nest"><span>Decisões</span><ul><li><a href="#cadeia-suprimento">Cadeia de suprimento</a></li><li><a href="#so-observacao">Só observação</a></li><li><a href="#politicas">Políticas</a></li><li><a href="#canais">Canais de notificação</a></li></ul></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">12 · Convidar a equipe</a></li><li><a href="#seguranca">13 · Proteger sua conta</a></li><li><a href="#vendas">14 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
+<aside class="side" aria-label="Passos do manual"><div class="grp">Começar</div><ul><li><a href="#acesso">01 · Criar conta ou aceitar convite</a></li><li><a href="#login">02 · Entrar no console</a></li><li><a href="#tour">03 · Tour de boas-vindas</a></li><li><a href="#console">04 · Conhecer o console</a></li></ul><div class="grp">Conectar</div><ul><li><a href="#cluster">05 · Conectar um cluster Kubernetes</a></li><li><a href="#cloudrun-vm">06 · Serverless e VMs</a></li><li class="nest"><span>GCP</span><ul><li><a href="#conta-nuvem">GCP · Conta</a></li><li><a href="#cloudrun-permissoes">GCP · Cloud Run</a></li><li><a href="#vm-permissoes">GCP · Ligar e desligar a VM</a></li></ul></li><li class="nest"><span>AWS</span><ul><li><a href="#conta-aws">AWS · Conta</a></li><li><a href="#conta-aws-permissoes">AWS · Permissões do billing</a></li><li><a href="#aws-lambda-cloudwatch">AWS · CloudWatch da Lambda</a></li><li><a href="#aws-vm-power">AWS · Ligar e desligar a VM</a></li></ul></li><li><a href="#instrumentar">07 · Instrumentar a aplicação</a></li><li><a href="#opentelemetry">OpenTelemetry (Go, Python, Java…)</a></li><li><a href="#lambda-go-otel">AWS Lambda · Go (Golang)</a></li></ul><div class="grp">Operar</div><ul><li><a href="#visao-geral">08 · Ler a Visão Geral</a></li><li><a href="#investigar">09 · Investigar um incidente</a></li><li class="nest"><span>Dashboards</span><ul><li><a href="#dashboards">Montar um dashboard MELT</a></li><li><a href="#dashboards-pastas">Pastas de dashboards</a></li><li><a href="#mobile">Apps mobile</a></li></ul></li><li><a href="#custo">10 · Custo e FinOps</a></li><li><a href="#decisoes">11 · Aprovar decisões</a></li><li class="nest"><span>Decisões</span><ul><li><a href="#cadeia-suprimento">Cadeia de suprimento</a></li><li><a href="#so-observacao">Só observação</a></li><li><a href="#politicas">Políticas</a></li><li><a href="#canais">Canais de notificação</a></li></ul></li></ul><div class="grp">Organizar</div><ul><li><a href="#equipe">12 · Convidar a equipe</a></li><li><a href="#seguranca">13 · Proteger sua conta</a></li><li><a href="#vendas">14 · Falar com vendas</a></li></ul><div class="grp">Ajuda</div><ul><li><a href="#faq">Perguntas frequentes</a></li></ul></aside>
 <main class="docs-main">
 <section class="doc" id="acesso" data-keywords="cadastro, cadastrar, criar conta, registrar, signup, inscrição, código de verificação, OTP, convite, convidado, aceitar convite, link do convite, senha nova, primeiro acesso, onboarding">
   <div class="crumbs">Passo 01 · Começar</div>
@@ -1230,7 +1230,9 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
   <div class="crumbs">Passo 07 · Conectar</div>
   <h1>Instrumentar a aplicação</h1>
   <div class="meta"><span>~10 min</span><span>Time de desenvolvimento</span><span>Opcional</span></div>
-  <p class="lead">O agent já mostra a saúde da infraestrutura. Para ver métricas de negócio, logs, traces e eventos de dentro do código, conecte a aplicação pelo SDK Node.js ou por OpenTelemetry, em qualquer linguagem.</p>
+  <p class="lead">O agent já mostra a saúde da infraestrutura. Para enxergar o que acontece dentro do código, escolha a integração da sua aplicação: SDK Node.js ou OpenTelemetry. Para uma <strong>AWS Lambda em Go (Golang)</strong>, siga o <a href="#lambda-go-otel">quickstart completo de Go com OpenTelemetry</a>.</p>
+
+  <div class="note"><i>Go</i><div><b>Vai instrumentar uma AWS Lambda em Go?</b><span>Abra o <a href="#lambda-go-otel">passo a passo específico para Golang</a>: função em Serverless, chave OTLP, código compilável, deploy e validação no ImmunoOps.</span></div></div>
 
     <div class="two">
       <figure class="shot">
@@ -1240,8 +1242,8 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
       <ol class="steps">
         <li>Vá em <span class="ui">Infraestrutura › Instrumentação</span> e clique em <span class="ui">Conectar aplicação</span>.</li>
         <li>Preencha o <strong>Nome da aplicação</strong> e clique em <span class="ui">Continuar</span>. Copie a <strong>Chave de conexão</strong>: ela só aparece inteira agora.</li>
-        <li><strong>Instale o pacote</strong> do SDK com o comando mostrado.</li>
-        <li><strong>Inicialize o client</strong> colando a chave de conexão em <code>apiKey</code>.</li>
+        <li><strong>Escolha a integração:</strong> instale o SDK para Node.js ou configure o exporter OTLP da sua linguagem. Em Go, use o quickstart de Lambda abaixo.</li>
+        <li><strong>Configure a chave:</strong> no SDK ela entra em <code>apiKey</code>; no OpenTelemetry, em <code>OTEL_EXPORTER_OTLP_HEADERS</code>.</li>
         <li><strong>Envie o primeiro dado</strong>. O status muda sozinho para <span class="pill ok">Conectada</span>.</li>
       </ol>
     </div>
@@ -1370,10 +1372,18 @@ export OTEL_EXPORTER_OTLP_HEADERS=&quot;Authorization=Bearer SUA_CHAVE&quot;
     &quot;go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp&quot;
     &quot;go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp&quot;
     sdkmetric &quot;go.opentelemetry.io/otel/sdk/metric&quot;
+    sdkresource &quot;go.opentelemetry.io/otel/sdk/resource&quot;
     sdktrace &quot;go.opentelemetry.io/otel/sdk/trace&quot;
 )
 
 func setupOTel(ctx context.Context) (func(context.Context) error, error) {
+    res, err := sdkresource.New(ctx,
+        sdkresource.WithFromEnv(),
+        sdkresource.WithTelemetrySDK(),
+    )
+    if err != nil {
+        return nil, err
+    }
     traceExp, err := otlptracehttp.New(ctx) // lê OTEL_EXPORTER_OTLP_*
     if err != nil {
         return nil, err
@@ -1382,8 +1392,8 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
     if err != nil {
         return nil, err
     }
-    tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(traceExp))
-    mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)))
+    tp := sdktrace.NewTracerProvider(sdktrace.WithResource(res), sdktrace.WithBatcher(traceExp))
+    mp := sdkmetric.NewMeterProvider(sdkmetric.WithResource(res), sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)))
     otel.SetTracerProvider(tp)
     otel.SetMeterProvider(mp)
     return func(ctx context.Context) error { // chame ao encerrar
@@ -1393,6 +1403,62 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 }
 </code></pre>
 <p>Logs seguem o mesmo padrão com <code>otlploghttp</code>. Para HTTP e gRPC do próprio Go, os pacotes <code>otelhttp</code> e <code>otelgrpc</code> criam os spans de cada requisição.</p>
+<h4 id="lambda-go-otel">Exemplo completo: AWS Lambda em Go (Golang) com OpenTelemetry</h4>
+<p>Este é um quickstart específico para uma função <strong>AWS Lambda escrita em Go (Golang)</strong>. Ele acompanha a jornada inteira: criar a conexão no ImmunoOps, configurar o OpenTelemetry para Go, enviar traces, métricas e logs, e conferir o resultado no produto. O projeto Go compilável, com <code>go.mod</code>, <code>go.sum</code> e template AWS SAM, está em <a href="https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel"><code>examples/aws-lambda-go-otel</code></a>.</p>
+<ol class="steps">
+  <li><strong>Encontre a Lambda.</strong> Selecione a organização correta no canto superior esquerdo. Vá a <span class="ui">Infraestrutura › Serverless</span> e localize a função AWS Lambda.</li>
+  <li><strong>Comece a instrumentação Go.</strong> No cartão da função, clique em <span class="ui">Instrumentar com SDK</span>. Esse botão cria a conexão e a chave; neste exemplo, a implementação usa <strong>OpenTelemetry para Go</strong>. O ImmunoOps preenche o nome da aplicação com o mesmo nome da função; mantenha-o igual ao <code>OTEL_SERVICE_NAME</code>.</li>
+  <li><strong>Gere a chave.</strong> Clique em <span class="ui">Continuar</span> e copie a chave de conexão. Ela será usada somente na variável protegida <code>OTEL_EXPORTER_OTLP_HEADERS</code>.</li>
+</ol>
+<figure class="shot">
+  <img src="img/v0230/lambda-serverless.png" alt="Lambda immunoops-test-checkout na página Infraestrutura, aba Serverless" style="width:100%;border-radius:12px;display:block">
+  <figcaption>Infraestrutura › Serverless. No cartão da Lambda, use Instrumentar com SDK para conectar a telemetria da aplicação.</figcaption>
+</figure>
+<figure class="shot">
+  <img src="img/v0230/lambda-instrumentar.png" alt="Primeiro passo da instrumentação da Lambda no ImmunoOps" style="width:100%;border-radius:12px;display:block">
+  <figcaption>O nome vem preenchido com a função selecionada. Neste quickstart, a aplicação é uma Lambda em Go e envia os dados pelo exporter OTLP/HTTP do OpenTelemetry.</figcaption>
+</figure>
+<div class="note"><i>Go</i><div><b>“Instrumentar com SDK” não significa SDK Node.js neste exemplo</b><span>Use a chave gerada pela tela nas variáveis OTLP abaixo. O código executado na Lambda é Go (Golang) e usa os pacotes oficiais do OpenTelemetry Go.</span></div></div>
+<p><strong>Baixe e compile o exemplo.</strong> Copie a pasta do projeto e execute:</p>
+<pre><code class="language-bash">cd examples/aws-lambda-go-otel
+go mod download
+GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
+  go build -trimpath -tags lambda.norpc -ldflags=&quot;-s -w&quot; -o bootstrap .
+zip function.zip bootstrap</code></pre>
+<p>Configure a Lambda com runtime <code>provided.al2023</code>, arquitetura <code>arm64</code>, handler <code>bootstrap</code>, memória de 256 MB e timeout inicial de 15 segundos.</p>
+<table class="tbl">
+  <thead><tr><th>Variável</th><th>Valor</th></tr></thead>
+  <tbody>
+    <tr><td><code>OTEL_SERVICE_NAME</code></td><td><code>lambda-checkout</code></td></tr>
+    <tr><td><code>OTEL_EXPORTER_OTLP_ENDPOINT</code></td><td><code>https://app.immunoops.io/agent/ingest</code></td></tr>
+    <tr><td><code>OTEL_EXPORTER_OTLP_PROTOCOL</code></td><td><code>http/protobuf</code></td></tr>
+    <tr><td><code>OTEL_EXPORTER_OTLP_HEADERS</code></td><td><code>Authorization=Bearer SUA_CHAVE</code></td></tr>
+    <tr><td><code>OTEL_EXPORTER_OTLP_TIMEOUT</code></td><td><code>3000</code></td></tr>
+    <tr><td><code>OTEL_RESOURCE_ATTRIBUTES</code></td><td><code>deployment.environment.name=production</code></td></tr>
+  </tbody>
+</table>
+<div class="note"><i>i</i><div><b>Por que o exemplo usa ForceFlush?</b><span>A Lambda pode congelar o processo assim que o handler retorna. O código finaliza o span e força o envio dos três sinais antes do retorno, mas mantém os providers globais para reaproveitá-los em warm starts.</span></div></div>
+<p>Depois do deploy, invoque duas vezes para validar cold e warm start:</p>
+<pre><code class="language-bash">aws lambda invoke --function-name immunoops-otel-quickstart \
+  --cli-binary-format raw-in-base64-out --payload '{}' response.json
+
+aws lambda invoke --function-name immunoops-otel-quickstart \
+  --cli-binary-format raw-in-base64-out --payload '{&quot;fail&quot;:true}' response-error.json</code></pre>
+<table class="tbl">
+  <thead><tr><th>Sinal</th><th>Resultado esperado</th></tr></thead>
+  <tbody>
+    <tr><td>Trace</td><td><code>checkout.process</code>, com <code>faas.coldstart</code>; a segunda invocação de erro fica marcada como erro</td></tr>
+    <tr><td>Métricas</td><td><code>checkout.invocations</code>, <code>checkout.errors</code> e <code>checkout.cold_starts</code></td></tr>
+    <tr><td>Logs</td><td><code>Checkout processado</code> e <code>Checkout falhou</code></td></tr>
+    <tr><td>Serviço</td><td><code>lambda-checkout</code></td></tr>
+    <tr><td>Conexão</td><td><strong>Conectada</strong></td></tr>
+  </tbody>
+</table>
+<div class="note warn"><i>!</i><div><b>Não coloque a chave no código ou no ZIP</b><span>Use variável protegida da Lambda ou o mecanismo de segredos da sua esteira. Se o exporter registrar erro, procure <code>trace export</code>, <code>metric export</code> ou <code>log export</code> nos logs da função.</span></div></div>
+<figure class="shot">
+  <img src="img/v0230/lambda-visao360.png" alt="Visão 360 da Lambda immunoops-test-checkout no ImmunoOps" style="width:100%;border-radius:12px;display:block">
+  <figcaption>Depois do envio, clique em Visão 360. Use as abas Logs, Traces e Métricas para confirmar cada sinal; Atualizar refaz a consulta da última hora.</figcaption>
+</figure>
 <h4 id="otel-outras">Outras linguagens</h4>
 <p>Com as mesmas variáveis de ambiente:</p>
 <ul>
@@ -2025,6 +2091,19 @@ exports.handler = async (event) =&gt; {
       Array.prototype.forEach.call(tr.children, function (td, i) { if (names[i]) td.setAttribute('data-label', names[i]); });
     });
   });
+
+  /* Imagens sem altura fixa podem deslocar o conteúdo depois que o navegador
+     já aplicou uma âncora direta. Realinha uma vez após todos os assets. */
+  function alignHash() {
+    var id = decodeURIComponent((location.hash || '').slice(1));
+    var el = id && document.getElementById(id);
+    if (el) el.scrollIntoView({ block: 'start' });
+  }
+  window.addEventListener('load', function () {
+    if (!location.hash) return;
+    [0, 250, 1000].forEach(function (delay) { setTimeout(alignHash, delay); });
+  }, { once: true });
+  window.addEventListener('hashchange', alignHash);
 
   /* Destaca no menu o trecho que está na tela. Se o passo e um título de GCP ou AWS
      caem juntos na faixa, fica o que vem por último no texto. */
