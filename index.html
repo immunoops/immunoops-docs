@@ -1401,11 +1401,11 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 }
 </code></pre>
 <p>Logs seguem o mesmo padrão com <code>otlploghttp</code>. Para HTTP e gRPC do próprio Go, os pacotes <code>otelhttp</code> e <code>otelgrpc</code> criam os spans de cada requisição.</p>
-<h4 id="lambda-go-otel">Exemplo completo: AWS Lambda com Go e OpenTelemetry</h4>
-<p>Este exemplo acompanha a jornada inteira: criar a conexão no ImmunoOps, configurar a Lambda, enviar telemetria e conferir o resultado no produto. O projeto compilável, com dependências fixadas e template AWS SAM, está em <a href="https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel"><code>examples/aws-lambda-go-otel</code></a>.</p>
+<h4 id="lambda-go-otel">Exemplo completo: AWS Lambda em Go (Golang) com OpenTelemetry</h4>
+<p>Este é um quickstart específico para uma função <strong>AWS Lambda escrita em Go (Golang)</strong>. Ele acompanha a jornada inteira: criar a conexão no ImmunoOps, configurar o OpenTelemetry para Go, enviar traces, métricas e logs, e conferir o resultado no produto. O projeto Go compilável, com <code>go.mod</code>, <code>go.sum</code> e template AWS SAM, está em <a href="https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel"><code>examples/aws-lambda-go-otel</code></a>.</p>
 <ol class="steps">
   <li><strong>Encontre a Lambda.</strong> Selecione a organização correta no canto superior esquerdo. Vá a <span class="ui">Infraestrutura › Serverless</span> e localize a função AWS Lambda.</li>
-  <li><strong>Comece a instrumentação.</strong> No cartão da função, clique em <span class="ui">Instrumentar com SDK</span>. O ImmunoOps preenche o nome da aplicação com o mesmo nome da função; mantenha-o igual ao <code>OTEL_SERVICE_NAME</code>.</li>
+  <li><strong>Comece a instrumentação Go.</strong> No cartão da função, clique em <span class="ui">Instrumentar com SDK</span>. Esse botão cria a conexão e a chave; neste exemplo, a implementação usa <strong>OpenTelemetry para Go</strong>. O ImmunoOps preenche o nome da aplicação com o mesmo nome da função; mantenha-o igual ao <code>OTEL_SERVICE_NAME</code>.</li>
   <li><strong>Gere a chave.</strong> Clique em <span class="ui">Continuar</span> e copie a chave de conexão. Ela será usada somente na variável protegida <code>OTEL_EXPORTER_OTLP_HEADERS</code>.</li>
 </ol>
 <figure class="shot">
@@ -1414,8 +1414,9 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 </figure>
 <figure class="shot">
   <img src="img/v0230/lambda-instrumentar.png" alt="Primeiro passo da instrumentação da Lambda no ImmunoOps" style="width:100%;border-radius:12px;display:block">
-  <figcaption>O nome vem preenchido com a função selecionada. Clique em Continuar para gerar a chave e ver as instruções de instalação.</figcaption>
+  <figcaption>O nome vem preenchido com a função selecionada. Neste quickstart, a aplicação é uma Lambda em Go e envia os dados pelo exporter OTLP/HTTP do OpenTelemetry.</figcaption>
 </figure>
+<div class="note"><i>Go</i><div><b>“Instrumentar com SDK” não significa SDK Node.js neste exemplo</b><span>Use a chave gerada pela tela nas variáveis OTLP abaixo. O código executado na Lambda é Go (Golang) e usa os pacotes oficiais do OpenTelemetry Go.</span></div></div>
 <p><strong>Baixe e compile o exemplo.</strong> Copie a pasta do projeto e execute:</p>
 <pre><code class="language-bash">cd examples/aws-lambda-go-otel
 go mod download
