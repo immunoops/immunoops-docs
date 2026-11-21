@@ -1230,7 +1230,9 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
   <div class="crumbs">Passo 07 · Conectar</div>
   <h1>Instrumentar a aplicação</h1>
   <div class="meta"><span>~10 min</span><span>Time de desenvolvimento</span><span>Opcional</span></div>
-  <p class="lead">O agent já mostra a saúde da infraestrutura. Para ver métricas de negócio, logs, traces e eventos de dentro do código, conecte a aplicação pelo SDK Node.js ou por OpenTelemetry, em qualquer linguagem.</p>
+  <p class="lead">O agent já mostra a saúde da infraestrutura. Para enxergar o que acontece dentro do código, escolha a integração da sua aplicação: SDK Node.js ou OpenTelemetry. Para uma <strong>AWS Lambda em Go (Golang)</strong>, siga o <a href="#lambda-go-otel">quickstart completo de Go com OpenTelemetry</a>.</p>
+
+  <div class="note"><i>Go</i><div><b>Vai instrumentar uma AWS Lambda em Go?</b><span>Abra o <a href="#lambda-go-otel">passo a passo específico para Golang</a>: função em Serverless, chave OTLP, código compilável, deploy e validação no ImmunoOps.</span></div></div>
 
     <div class="two">
       <figure class="shot">
@@ -1240,8 +1242,8 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
       <ol class="steps">
         <li>Vá em <span class="ui">Infraestrutura › Instrumentação</span> e clique em <span class="ui">Conectar aplicação</span>.</li>
         <li>Preencha o <strong>Nome da aplicação</strong> e clique em <span class="ui">Continuar</span>. Copie a <strong>Chave de conexão</strong>: ela só aparece inteira agora.</li>
-        <li><strong>Instale o pacote</strong> do SDK com o comando mostrado.</li>
-        <li><strong>Inicialize o client</strong> colando a chave de conexão em <code>apiKey</code>.</li>
+        <li><strong>Escolha a integração:</strong> instale o SDK para Node.js ou configure o exporter OTLP da sua linguagem. Em Go, use o quickstart de Lambda abaixo.</li>
+        <li><strong>Configure a chave:</strong> no SDK ela entra em <code>apiKey</code>; no OpenTelemetry, em <code>OTEL_EXPORTER_OTLP_HEADERS</code>.</li>
         <li><strong>Envie o primeiro dado</strong>. O status muda sozinho para <span class="pill ok">Conectada</span>.</li>
       </ol>
     </div>
