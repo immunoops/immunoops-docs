@@ -1370,10 +1370,18 @@ export OTEL_EXPORTER_OTLP_HEADERS=&quot;Authorization=Bearer SUA_CHAVE&quot;
     &quot;go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp&quot;
     &quot;go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp&quot;
     sdkmetric &quot;go.opentelemetry.io/otel/sdk/metric&quot;
+    sdkresource &quot;go.opentelemetry.io/otel/sdk/resource&quot;
     sdktrace &quot;go.opentelemetry.io/otel/sdk/trace&quot;
 )
 
 func setupOTel(ctx context.Context) (func(context.Context) error, error) {
+    res, err := sdkresource.New(ctx,
+        sdkresource.WithFromEnv(),
+        sdkresource.WithTelemetrySDK(),
+    )
+    if err != nil {
+        return nil, err
+    }
     traceExp, err := otlptracehttp.New(ctx) // lê OTEL_EXPORTER_OTLP_*
     if err != nil {
         return nil, err
@@ -1382,8 +1390,8 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
     if err != nil {
         return nil, err
     }
-    tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(traceExp))
-    mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)))
+    tp := sdktrace.NewTracerProvider(sdktrace.WithResource(res), sdktrace.WithBatcher(traceExp))
+    mp := sdkmetric.NewMeterProvider(sdkmetric.WithResource(res), sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)))
     otel.SetTracerProvider(tp)
     otel.SetMeterProvider(mp)
     return func(ctx context.Context) error { // chame ao encerrar
@@ -1393,6 +1401,47 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 }
 </code></pre>
 <p>Logs seguem o mesmo padrão com <code>otlploghttp</code>. Para HTTP e gRPC do próprio Go, os pacotes <code>otelhttp</code> e <code>otelgrpc</code> criam os spans de cada requisição.</p>
+<h4 id="lambda-go-otel">Quickstart: AWS Lambda com Go e OpenTelemetry</h4>
+<p>Este caminho envia traces, métricas e logs direto ao Immuno Ops, sem agent ou Collector. O projeto completo, com dependências fixadas e template AWS SAM, está em <a href="https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel"><code>examples/aws-lambda-go-otel</code></a>.</p>
+<ol class="steps">
+  <li><strong>Gere a chave.</strong> Em <span class="ui">Infraestrutura › Instrumentação</span>, clique em <span class="ui">Conectar aplicação</span>, dê o nome <code>lambda-checkout</code> e copie a chave de conexão.</li>
+  <li><strong>Baixe e compile.</strong> Copie a pasta do exemplo e execute os comandos abaixo. O resultado é um ZIP para Linux ARM64.</li>
+</ol>
+<pre><code class="language-bash">cd examples/aws-lambda-go-otel
+go mod download
+GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
+  go build -trimpath -tags lambda.norpc -ldflags=&quot;-s -w&quot; -o bootstrap .
+zip function.zip bootstrap</code></pre>
+<p>Configure a Lambda com runtime <code>provided.al2023</code>, arquitetura <code>arm64</code>, handler <code>bootstrap</code>, memória de 256 MB e timeout inicial de 15 segundos.</p>
+<table class="tbl">
+  <thead><tr><th>Variável</th><th>Valor</th></tr></thead>
+  <tbody>
+    <tr><td><code>OTEL_SERVICE_NAME</code></td><td><code>lambda-checkout</code></td></tr>
+    <tr><td><code>OTEL_EXPORTER_OTLP_ENDPOINT</code></td><td><code>https://app.immunoops.io/agent/ingest</code></td></tr>
+    <tr><td><code>OTEL_EXPORTER_OTLP_PROTOCOL</code></td><td><code>http/protobuf</code></td></tr>
+    <tr><td><code>OTEL_EXPORTER_OTLP_HEADERS</code></td><td><code>Authorization=Bearer SUA_CHAVE</code></td></tr>
+    <tr><td><code>OTEL_EXPORTER_OTLP_TIMEOUT</code></td><td><code>3000</code></td></tr>
+    <tr><td><code>OTEL_RESOURCE_ATTRIBUTES</code></td><td><code>deployment.environment.name=production</code></td></tr>
+  </tbody>
+</table>
+<div class="note"><i>i</i><div><b>Por que o exemplo usa ForceFlush?</b><span>A Lambda pode congelar o processo assim que o handler retorna. O código finaliza o span e força o envio dos três sinais antes do retorno, mas mantém os providers globais para reaproveitá-los em warm starts.</span></div></div>
+<p>Depois do deploy, invoque duas vezes para validar cold e warm start:</p>
+<pre><code class="language-bash">aws lambda invoke --function-name immunoops-otel-quickstart \
+  --cli-binary-format raw-in-base64-out --payload '{}' response.json
+
+aws lambda invoke --function-name immunoops-otel-quickstart \
+  --cli-binary-format raw-in-base64-out --payload '{&quot;fail&quot;:true}' response-error.json</code></pre>
+<table class="tbl">
+  <thead><tr><th>Sinal</th><th>Resultado esperado</th></tr></thead>
+  <tbody>
+    <tr><td>Trace</td><td><code>checkout.process</code>, com <code>faas.coldstart</code>; a segunda invocação de erro fica marcada como erro</td></tr>
+    <tr><td>Métricas</td><td><code>checkout.invocations</code>, <code>checkout.errors</code> e <code>checkout.cold_starts</code></td></tr>
+    <tr><td>Logs</td><td><code>Checkout processado</code> e <code>Checkout falhou</code></td></tr>
+    <tr><td>Serviço</td><td><code>lambda-checkout</code></td></tr>
+    <tr><td>Conexão</td><td><strong>Conectada</strong></td></tr>
+  </tbody>
+</table>
+<div class="note warn"><i>!</i><div><b>Não coloque a chave no código ou no ZIP</b><span>Use variável protegida da Lambda ou o mecanismo de segredos da sua esteira. Se o exporter registrar erro, procure <code>trace export</code>, <code>metric export</code> ou <code>log export</code> nos logs da função.</span></div></div>
 <h4 id="otel-outras">Outras linguagens</h4>
 <p>Com as mesmas variáveis de ambiente:</p>
 <ul>
@@ -2025,6 +2074,19 @@ exports.handler = async (event) =&gt; {
       Array.prototype.forEach.call(tr.children, function (td, i) { if (names[i]) td.setAttribute('data-label', names[i]); });
     });
   });
+
+  /* Imagens sem altura fixa podem deslocar o conteúdo depois que o navegador
+     já aplicou uma âncora direta. Realinha uma vez após todos os assets. */
+  function alignHash() {
+    var id = decodeURIComponent((location.hash || '').slice(1));
+    var el = id && document.getElementById(id);
+    if (el) el.scrollIntoView({ block: 'start' });
+  }
+  window.addEventListener('load', function () {
+    if (!location.hash) return;
+    [0, 250, 1000].forEach(function (delay) { setTimeout(alignHash, delay); });
+  }, { once: true });
+  window.addEventListener('hashchange', alignHash);
 
   /* Destaca no menu o trecho que está na tela. Se o passo e um título de GCP ou AWS
      caem juntos na faixa, fica o que vem por último no texto. */

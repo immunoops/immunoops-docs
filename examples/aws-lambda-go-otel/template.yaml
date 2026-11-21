@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  ImmunoOpsToken:
+    Type: String
+    NoEcho: true
+
+Resources:
+  CheckoutFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      FunctionName: immunoops-otel-quickstart
+      CodeUri: .
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Architectures: [arm64]
+      Timeout: 15
+      MemorySize: 256
+      Environment:
+        Variables:
+          OTEL_SERVICE_NAME: lambda-checkout
+          OTEL_EXPORTER_OTLP_ENDPOINT: https://app.immunoops.io/agent/ingest
+          OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+          OTEL_EXPORTER_OTLP_HEADERS: !Sub "Authorization=Bearer ${ImmunoOpsToken}"
+          OTEL_EXPORTER_OTLP_TIMEOUT: "3000"
+          OTEL_RESOURCE_ATTRIBUTES: deployment.environment.name=production
+
+Outputs:
+  FunctionName:
+    Value: !Ref CheckoutFunction
