@@ -1467,11 +1467,16 @@ exports.handler = async (event) =&gt; {
     <p>O SDK <code>immunoops_flutter</code> manda crashes, telas, jank, tempo de abertura, rede e jornadas de negócio de apps Flutter (Android, iOS e macOS; web em modo reduzido). Pede Dart 3.5+ e Flutter 3.24+.</p>
     <ol class="steps">
       <li>Gere a chave em <span class="ui">Infraestrutura › Instrumentação</span>, como em <a href="#instrumentar-chave">Gerar a chave de conexão</a>.</li>
-      <li>Adicione a dependência <code>immunoops_flutter</code> ao <code>pubspec.yaml</code>, na versão indicada no repositório do SDK.</li>
+      <li>Adicione a dependência <code>immunoops_flutter</code> ao <code>pubspec.yaml</code>, usando a versão indicada no <a href="https://github.com/immunoops/immunoops-flutter-sdk">repositório público do SDK</a>.</li>
       <li>Chame <code>ImmunoOps.init</code> em <code>main.dart</code>, logo depois de <code>WidgetsFlutterBinding.ensureInitialized()</code>, com a chave, o nome do app e o ambiente.</li>
       <li>Registre <code>ImmunoOps.navigatorObserver</code> no roteador (e em cada <code>ShellRoute</code>) e <code>ImmunoOpsDioInterceptor()</code> em cada cliente Dio.</li>
       <li>Confira com <code>dart run immunoops_flutter:doctor</code>.</li>
     </ol>
+    <pre><code>dependencies:
+  immunoops_flutter:
+    git:
+      url: https://github.com/immunoops/immunoops-flutter-sdk.git
+      ref: v0.2.1</code></pre>
     <pre><code>ImmunoOps.init(const ImmunoOpsConfig(
   clientKey: String.fromEnvironment('IMMUNOOPS_CLIENT_KEY'),
   appName: 'loja-app',
@@ -1707,6 +1712,7 @@ exports.handler = async (event) =&gt; {
   <h1>Aprovar decisões</h1>
   <div class="meta"><span>Toda semana, ou quando o sino avisar</span><span>Operador ou Admin</span></div>
   <p class="lead">Clique em <span class="ui">Decisões</span> na barra do topo. O Decision Engine cruza custo, uso real e risco, e cada sugestão mostra o porquê. No topo ficam <strong>Esperando você</strong> (quanto está em jogo por mês), <strong>Aplicadas este mês</strong> e <strong>Revertidas</strong>.</p>
+    <div class="note warn"><i>!</i><div><b>A aplicação automática ainda não está disponível nos clusters conectados pelo comando padrão</b><span>O comando gerado pelo console instala o agent com o actuator desabilitado. Aprovar registra a decisão e a auditoria, mas não altera o cluster; depois de 15 minutos, ela fica como não aplicada. Só espere execução automática em uma instalação cujo actuator tenha sido habilitado e configurado pela equipe Immuno Ops.</span></div></div>
 
     <ol class="steps">
       <li><strong>Pendentes.</strong> Sugestões esperando alguém. Ordene por <span class="ui">Maior economia</span> ou <span class="ui">Menor risco</span> e filtre por tipo: Rightsizing, Réplicas, Agendamento ou Tipo de instância. <span class="ui">Aprovar as de baixo risco</span> aprova todas as de risco baixo de uma vez.</li>

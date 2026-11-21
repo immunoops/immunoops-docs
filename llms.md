@@ -778,10 +778,18 @@ Guarde a chave numa variável de ambiente da função (ou no Secrets Manager), n
 O SDK `immunoops_flutter` manda crashes, telas, jank, tempo de abertura, rede e jornadas de negócio de apps Flutter (Android, iOS e macOS; web em modo reduzido). Pede Dart 3.5+ e Flutter 3.24+.
 
 1. Gere a chave em Infraestrutura › Instrumentação, como em [Gerar a chave de conexão](#gerar-a-chave-de-conexao).
-2. Adicione a dependência `immunoops_flutter` ao `pubspec.yaml`, na versão indicada no repositório do SDK.
+2. Adicione a dependência `immunoops_flutter` ao `pubspec.yaml`, usando a versão indicada no [repositório público do SDK](https://github.com/immunoops/immunoops-flutter-sdk).
 3. Chame `ImmunoOps.init` em `main.dart`, logo depois de `WidgetsFlutterBinding.ensureInitialized()`, com a chave, o nome do app e o ambiente.
 4. Registre `ImmunoOps.navigatorObserver` no roteador (e em cada `ShellRoute`) e `ImmunoOpsDioInterceptor()` em cada cliente Dio.
 5. Confira com `dart run immunoops_flutter:doctor`.
+
+```yaml
+dependencies:
+  immunoops_flutter:
+    git:
+      url: https://github.com/immunoops/immunoops-flutter-sdk.git
+      ref: v0.2.1
+```
 
 ```dart
 ImmunoOps.init(const ImmunoOpsConfig(
@@ -926,6 +934,8 @@ Workloads do EKS têm custo mensal mesmo antes da fatura chegar: o Immuno Ops us
 - Palavras-chave: decisões, Decision Engine, aprovar, recusar, agendar, rightsizing, réplicas, economia, risco, cadeia de suprimento, supply chain, nó, pool, consolidar nó, mover workload, provisionar capacidade, pedir aprovação, só observação, trava, SLO, error budget, burn rate, p95, impacto na cadeia, revertida, janela de manutenção, congelar produção, políticas, canais, Slack, Microsoft Teams, Google Chat
 
 O Decision Engine cruza custo, uso real e risco, e cada sugestão mostra o porquê. No topo da tela ficam **Esperando você** (quanto está em jogo por mês), **Aplicadas este mês** e **Revertidas**.
+
+> **A aplicação automática ainda não está disponível nos clusters conectados pelo comando padrão.** O comando gerado pelo console instala o agent com o actuator desabilitado. Aprovar registra a decisão e a auditoria, mas não altera o cluster; depois de 15 minutos, ela fica como não aplicada. Só espere execução automática em uma instalação cujo actuator tenha sido habilitado e configurado pela equipe Immuno Ops.
 
 1. **Pendentes.** Sugestões esperando alguém. Ordene por **Maior economia** ou **Menor risco** e filtre por tipo: **Rightsizing**, **Réplicas**, **Agendamento** ou **Tipo de instância**. **Aprovar as de baixo risco** aprova todas as de risco baixo de uma vez.
 2. **Abra uma sugestão.** O painel traz **Por que o Engine sugere** (uso observado contra o pedido), o **Plano** (quando e como a mudança entra), o uso de CPU nas últimas 24 h, o **Impacto na cadeia** e o **SLO da aplicação**.
