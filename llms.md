@@ -839,7 +839,7 @@ O SDK `immunoops_flutter` manda crashes, telas, jank, tempo de abertura, rede e 
 
 ```yaml
 dependencies:
-  immunoops_flutter: ^0.2.1
+  immunoops_flutter: ^0.2.2
 ```
 
 ```dart
