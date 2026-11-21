@@ -1533,16 +1533,13 @@ exports.handler = async (event) =&gt; {
     <p>O SDK <code>immunoops_flutter</code> manda crashes, telas, jank, tempo de abertura, rede e jornadas de negócio de apps Flutter (Android, iOS e macOS; web em modo reduzido). Pede Dart 3.5+ e Flutter 3.24+.</p>
     <ol class="steps">
       <li>Gere a chave em <span class="ui">Infraestrutura › Instrumentação</span>, como em <a href="#instrumentar-chave">Gerar a chave de conexão</a>.</li>
-      <li>Adicione a dependência <code>immunoops_flutter</code> ao <code>pubspec.yaml</code>, usando a versão indicada no <a href="https://github.com/immunoops/immunoops-flutter-sdk">repositório público do SDK</a>.</li>
+      <li>Adicione a dependência <code>immunoops_flutter</code> ao <code>pubspec.yaml</code>. O pacote está no <a href="https://pub.dev/packages/immunoops_flutter">pub.dev</a>, no publisher <a href="https://pub.dev/publishers/immunoops.io">immunoops.io</a>. O código fica no <a href="https://github.com/immunoops/immunoops-flutter-sdk">repositório do SDK</a>.</li>
       <li>Chame <code>ImmunoOps.init</code> em <code>main.dart</code>, logo depois de <code>WidgetsFlutterBinding.ensureInitialized()</code>, com a chave, o nome do app e o ambiente.</li>
       <li>Registre <code>ImmunoOps.navigatorObserver</code> no roteador (e em cada <code>ShellRoute</code>) e <code>ImmunoOpsDioInterceptor()</code> em cada cliente Dio.</li>
       <li>Confira com <code>dart run immunoops_flutter:doctor</code>.</li>
     </ol>
     <pre><code>dependencies:
-  immunoops_flutter:
-    git:
-      url: https://github.com/immunoops/immunoops-flutter-sdk.git
-      ref: v0.2.1</code></pre>
+  immunoops_flutter: ^0.2.1</code></pre>
     <pre><code>ImmunoOps.init(const ImmunoOpsConfig(
   clientKey: String.fromEnvironment('IMMUNOOPS_CLIENT_KEY'),
   appName: 'loja-app',

@@ -832,17 +832,14 @@ Guarde a chave numa variável de ambiente da função (ou no Secrets Manager), n
 O SDK `immunoops_flutter` manda crashes, telas, jank, tempo de abertura, rede e jornadas de negócio de apps Flutter (Android, iOS e macOS; web em modo reduzido). Pede Dart 3.5+ e Flutter 3.24+.
 
 1. Gere a chave em Infraestrutura › Instrumentação, como em [Gerar a chave de conexão](#gerar-a-chave-de-conexao).
-2. Adicione a dependência `immunoops_flutter` ao `pubspec.yaml`, usando a versão indicada no [repositório público do SDK](https://github.com/immunoops/immunoops-flutter-sdk).
+2. Adicione a dependência `immunoops_flutter` ao `pubspec.yaml`. O pacote está no [pub.dev](https://pub.dev/packages/immunoops_flutter), no publisher [immunoops.io](https://pub.dev/publishers/immunoops.io). O código fica no [repositório do SDK](https://github.com/immunoops/immunoops-flutter-sdk).
 3. Chame `ImmunoOps.init` em `main.dart`, logo depois de `WidgetsFlutterBinding.ensureInitialized()`, com a chave, o nome do app e o ambiente.
 4. Registre `ImmunoOps.navigatorObserver` no roteador (e em cada `ShellRoute`) e `ImmunoOpsDioInterceptor()` em cada cliente Dio.
 5. Confira com `dart run immunoops_flutter:doctor`.
 
 ```yaml
 dependencies:
-  immunoops_flutter:
-    git:
-      url: https://github.com/immunoops/immunoops-flutter-sdk.git
-      ref: v0.2.1
+  immunoops_flutter: ^0.2.1
 ```
 
 ```dart
