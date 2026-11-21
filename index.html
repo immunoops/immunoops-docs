@@ -1401,15 +1401,16 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 }
 </code></pre>
 <p>Logs seguem o mesmo padrão com <code>otlploghttp</code>. Para HTTP e gRPC do próprio Go, os pacotes <code>otelhttp</code> e <code>otelgrpc</code> criam os spans de cada requisição.</p>
-<h4 id="lambda-go-otel">AWS Lambda, Go e OpenTelemetry</h4>
-<p>Este manual explica o conceito e a tela de conexão. Para o passo a passo técnico, com código compilável, dependências e deploy, consulte o <a href="https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel">Quickstart de AWS Lambda com Go e OpenTelemetry</a>.</p>
-<!-- O quickstart detalhado fica fora do manual de usuário para não misturar tarefas de operação com instruções de desenvolvimento. -->
-<!-- QUICKSTART REMOVED -->
-<div hidden aria-hidden="true">
+<h4 id="lambda-go-otel">Exemplo completo: AWS Lambda com Go e OpenTelemetry</h4>
+<p>Este exemplo acompanha a jornada inteira: criar a conexão no ImmunoOps, configurar a Lambda, enviar telemetria e conferir o resultado no produto. O projeto compilável, com dependências fixadas e template AWS SAM, está em <a href="https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel"><code>examples/aws-lambda-go-otel</code></a>.</p>
 <ol class="steps">
   <li><strong>Gere a chave.</strong> Em <span class="ui">Infraestrutura › Instrumentação</span>, clique em <span class="ui">Conectar aplicação</span>, dê o nome <code>lambda-checkout</code> e copie a chave de conexão.</li>
   <li><strong>Baixe e compile.</strong> Copie a pasta do exemplo e execute os comandos abaixo. O resultado é um ZIP para Linux ARM64.</li>
 </ol>
+<figure class="shot">
+  <img src="img/dlg-app.png" alt="Janela do ImmunoOps para criar uma conexão de aplicação" style="width:100%;border-radius:12px;display:block">
+  <figcaption>No ImmunoOps: Infraestrutura › Instrumentação › Conectar aplicação. Guarde a chave em um segredo; ela não aparece inteira novamente.</figcaption>
+</figure>
 <pre><code class="language-bash">cd examples/aws-lambda-go-otel
 go mod download
 GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
@@ -1445,7 +1446,10 @@ aws lambda invoke --function-name immunoops-otel-quickstart \
   </tbody>
 </table>
 <div class="note warn"><i>!</i><div><b>Não coloque a chave no código ou no ZIP</b><span>Use variável protegida da Lambda ou o mecanismo de segredos da sua esteira. Se o exporter registrar erro, procure <code>trace export</code>, <code>metric export</code> ou <code>log export</code> nos logs da função.</span></div></div>
-</div>
+<figure class="shot">
+  <img src="img/v0222/trace-waterfall.png" alt="Trace recebido no ImmunoOps com spans e acesso aos logs" style="width:100%;border-radius:12px;display:block">
+  <figcaption>Depois da invocação, abra Operação e selecione o trace. A tela mostra os spans, duração e permite abrir os logs relacionados.</figcaption>
+</figure>
 <h4 id="otel-outras">Outras linguagens</h4>
 <p>Com as mesmas variáveis de ambiente:</p>
 <ul>
