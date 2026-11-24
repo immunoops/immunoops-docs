@@ -716,6 +716,42 @@ func setupOTel(ctx context.Context) (func(context.Context) error, error) {
 
 Logs seguem o mesmo padrão com `otlploghttp`. Para HTTP e gRPC do próprio Go, os pacotes `otelhttp` e `otelgrpc` criam os spans de cada requisição.
 
+#### Reduzir o consumo de métricas OpenTelemetry
+
+O consumo cresce com a quantidade de séries e com a frequência de exportação. A configuração canônica é:
+
+1. Não criar um histograma próprio de latência quando a instrumentação automática já envia `http.server.request.duration` (no Mimir, `http_server_request_duration_seconds`). Antes de remover um histograma existente, migrar dashboards e alertas que ainda o consultam. Contadores de negócio separados podem continuar.
+2. Usar `OTEL_METRIC_EXPORT_INTERVAL=60000` para exportar uma vez por minuto.
+3. Configurar uma View com menos buckets. Como a métrica HTTP padrão usa segundos, os limites de 50, 100, 250, 500, 1.000 e 2.500 ms são `[0.05, 0.1, 0.25, 0.5, 1, 2.5]`. Aplicar também a `http.client.request.duration`, ou deixar de coletá-la se ninguém usa a latência das chamadas de saída.
+4. Garantir que `http.route` contém o padrão, como `/pedido/{id}`, nunca IDs, e-mails, hashes, query strings ou a URL real.
+5. Em escala automática, remover UUIDs de instância das métricas apenas quando a separação por instância não for necessária, mantendo-os nos traces. Atributos de recurso podem exigir providers separados; uma View não os remove.
+
+Exemplo Node.js:
+
+```javascript
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { AggregationType } from '@opentelemetry/sdk-metrics';
+
+const httpDurationView = {
+    instrumentName: 'http.server.request.duration',
+    aggregation: {
+      type: AggregationType.EXPLICIT_BUCKET_HISTOGRAM,
+      options: { boundaries: [0.05, 0.1, 0.25, 0.5, 1, 2.5] },
+    },
+};
+const clientDurationView = { ...httpDurationView, instrumentName: 'http.client.request.duration' };
+const sdk = new NodeSDK({ views: [httpDurationView, clientDurationView] });
+sdk.start();
+```
+
+Não habilite `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta`: a ingestão atual do ImmunoOps não oferece conversão delta para cumulativo antes do Mimir. Use a temporalidade padrão do SDK.
+
+Depois do redeploy, compare uma janela equivalente e confirme que p95 e taxa de erro continuam presentes, `http.route` tem cardinalidade estável e o histograma duplicado desapareceu. A economia exata depende das rotas, métodos, status e instâncias de cada aplicação.
+
+Aplicações conectadas há mais tempo podem ter dashboards ou alertas que consultam `{service}_request_duration_milliseconds_bucket`. Migre a consulta para `http_server_request_duration_seconds_bucket` e multiplique o quantil por 1.000 quando o painel estiver em milissegundos. Só então remova o histograma próprio.
+
+Exemplo observado: em um serviço com cerca de 671 séries, a estimativa caiu de 55 para 33 créditos/dia ao remover o histograma duplicado; para 17 ao também exportar a cada 60 segundos; e para aproximadamente 8 com buckets reduzidos. Em um saldo de 1.500 créditos, isso representaria cerca de 27 dias, 45 dias, 3 meses e 6 meses, respectivamente. São ordens de grandeza, não uma promessa de consumo.
+
 #### Quickstart: AWS Lambda com Go e OpenTelemetry
 
 Este caminho envia traces, métricas e logs direto ao Immuno Ops, sem agent ou Collector. O projeto completo, com dependências fixadas e template AWS SAM, está em [`examples/aws-lambda-go-otel`](https://github.com/immunoops/immunoops-docs/tree/main/examples/aws-lambda-go-otel).
