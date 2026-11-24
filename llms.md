@@ -1026,6 +1026,18 @@ Workloads do EKS têm custo mensal mesmo antes da fatura chegar: o Immuno Ops us
 
 **FinOps Score.** A nota de 0 a 100 por cluster fica em **Kubernetes FinOps**: 100 menos o desperdício ponderado por custo. As barras (Capacidade, Requests, Autoscaling, Storage, Rede e Dono) mostram onde está o desperdício.
 
+### O FinOps Framework no Immuno Ops
+
+O FinOps Framework (FinOps Foundation) organiza a prática em quatro Domínios e três Fases que se repetem: Inform, Optimize e Operate.
+
+- **Inform:** custo por organização, cluster, namespace e workload a partir da fatura (export do Google Cloud e FOCUS da AWS) e do uso real; anomalias com alerta; dashboards MELT.
+- **Optimize:** Decisões sugere rightsizing, réplicas, suspensão, consolidação de nós e tipo de máquina mais barato, sempre pelas travas de segurança.
+- **Operate:** você aprova, o actuator aplica e a mudança fica auditada; as políticas definem o que pode ser automático.
+
+Capabilities atendidas hoje: Data Ingestion, Allocation, Reporting & Analytics, Anomaly Management (Understand Usage & Cost); KPIs via SLO e burn rate (Quantify Business Value); Usage Optimization e Architecting & Workload Placement (Optimize Usage & Cost); Governance, Policy & Risk e Automation, Tools & Services (Manage the FinOps Practice).
+
+Termos: Rightsizing (request ajustado ao uso real), Showback (custo mostrado a cada time), Unit Economics (custo por unidade de valor), FOCUS (formato aberto de faturamento). Curso para aprender o Framework: FinOps Certified Practitioner, em learn.finops.org.
+
 ## Passo 11 — Aprovar decisões
 
 - Grupo: Operar
