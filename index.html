@@ -1226,7 +1226,7 @@ aws iam put-role-policy --role-name immunoops-billing-reader --policy-name immun
     </figure>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="instrumentar" data-keywords="OpenTelemetry Collector, OTLP, OTLP/HTTP, OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_HEADERS, Go, Golang, Python, Java, .NET, traces, @immunoops/sdk, npm install, instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes">
+<section class="doc" id="instrumentar" data-keywords="OpenTelemetry Collector, OTLP, OTLP/HTTP, OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_HEADERS, Go, Golang, Python, Java, .NET, traces, @immunoops/sdk, npm install, instrumentação, instrumentar, SDK, aplicação, app, código, chave de conexão, apiKey, API key, OpenTelemetry, OTel, Node.js, npm, métricas da aplicação, eventos de negócio, conectada, aguardando primeiro dado, sem dados recentes, reduzir consumo, créditos, economia, séries, cardinalidade, buckets, histograma duplicado, OTEL_METRIC_EXPORT_INTERVAL, View, temporalidade, delta, http.route">
   <div class="crumbs">Passo 07 · Conectar</div>
   <h1>Instrumentar a aplicação</h1>
   <div class="meta"><span>~10 min</span><span>Time de desenvolvimento</span><span>Opcional</span></div>
@@ -1552,6 +1552,45 @@ exports.handler = async (event) =&gt; {
       <img src="img/v0222/creditos-instrumentacao.png" alt="Créditos neste ciclo em cada aplicação" style="width:100%;border-radius:12px;display:block">
       <figcaption>Créditos neste ciclo em cada aplicação</figcaption>
     </figure>
+
+    <h3 id="reduzir-consumo" style="margin-top:40px">Reduzir o consumo de créditos da telemetria</h3>
+    <p>O consumo cresce com o número de <b>séries</b> (cada combinação de métrica e atributos) e com a <b>frequência</b> de envio. Os ajustes abaixo, em ordem de impacto, cortam o consumo sem perder o que o Immuno Ops usa para o SLO da aplicação (p95 de latência e taxa de erro, lidos de <code>http_server_request_duration_seconds</code>).</p>
+
+    <h4 id="reduzir-duplicado">1. Tirar histogramas duplicados</h4>
+    <p>A instrumentação HTTP do OpenTelemetry já gera <code>http_server_request_duration_seconds</code>. Um histograma próprio de latência do servidor (por exemplo <code>meuapp_request_duration_milliseconds</code>) mede a mesma coisa e dobra as séries. Remova o customizado. Se precisar da contagem por rota, um contador simples (<code>meuapp_requests_total</code>) custa pouco e pode ficar.</p>
+
+    <h4 id="reduzir-intervalo">2. Exportar a cada 60 s</h4>
+    <p>Para painéis e SLO, um ponto por minuto basta. O padrão de muitos SDKs é mais frequente.</p>
+<pre><code>OTEL_METRIC_EXPORT_INTERVAL=60000</code></pre>
+
+    <h4 id="reduzir-buckets">3. Menos buckets por histograma</h4>
+    <p>O OpenTelemetry usa 15 fronteiras de bucket por padrão, e isso se repete para cada combinação de rota, método e status. Com uma <i>View</i> no SDK, limite às faixas que interessam, por exemplo <code>[50, 100, 250, 500, 1000, 2500]</code> ms: 7 buckets em vez de 16, com p95 ainda confiável. Faça o mesmo em <code>http_client_request_duration_seconds</code>, ou desligue esse histograma se ninguém olha a latência das chamadas que a aplicação faz.</p>
+<pre><code>// Node.js, @opentelemetry/sdk-metrics 1.x (no 2.x a View vira objeto com aggregation.type)
+new View({
+  instrumentName: 'http.server.request.duration',
+  aggregation: new ExplicitBucketHistogramAggregation([0.05, 0.1, 0.25, 0.5, 1, 2.5]), // segundos
+});</code></pre>
+
+    <h4 id="reduzir-instancia">4. Não multiplicar séries por instância</h4>
+    <p>Em serverless (Cloud Run, Lambda), o atributo da instância muda a cada escala, deploy ou partida a frio, e cada instância nova cria um conjunto inteiro de séries. Tire esse atributo das <b>métricas</b> com uma <i>View</i> (mantenha-o nos traces) ou mantenha um mínimo de instâncias fixo.</p>
+
+    <h4 id="reduzir-rota">5. Rota como padrão, nunca a URL crua</h4>
+    <p>Garanta que <code>http.route</code> traga o padrão (<code>/pedido/{id}</code>) e não a URL com o ID: cada ID vira uma série nova, sem limite.</p>
+
+    <div class="note warn"><i>!</i><div><b>Temporalidade delta: não use por enquanto</b><span>Com <code>OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta</code> o SDK só enviaria o que mudou, mas a ingestão do Immuno Ops ainda grava apenas métricas cumulativas: contadores e histogramas em delta são descartados. Mantenha o padrão (cumulativo).</span></div></div>
+
+    <h4 id="reduzir-exemplo">Exemplo</h4>
+    <p>Aplicação Node.js no Cloud Run com 671 séries, histograma de latência próprio duplicando o padrão OpenTelemetry e exportação a cada ~30 s:</p>
+    <table class="tbl">
+      <thead><tr><th>Aplicado</th><th>Créditos/dia</th><th>1.500 créditos duram</th></tr></thead>
+      <tbody>
+        <tr><td>Nada</td><td>~55</td><td>~27 dias</td></tr>
+        <tr><td>1 (sem duplicado, −40% das séries)</td><td>~33</td><td>~45 dias</td></tr>
+        <tr><td>1 + 2 (60 s, −50% das amostras)</td><td>~17</td><td>~3 meses</td></tr>
+        <tr><td>1 + 2 + 3 (7 buckets)</td><td>~8</td><td>~6 meses</td></tr>
+      </tbody>
+    </table>
+    <p>Para ver o efeito, compare <span class="ui">Créditos neste ciclo</span> da aplicação antes e depois do deploy.</p>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
 <section class="doc" id="visao-geral" data-keywords="visão geral, overview, dashboard inicial, status, saudável, atenção, crítico, alertas disparando, heartbeat, tela vazia, primeiro recurso, home, início">

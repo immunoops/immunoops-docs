@@ -856,6 +856,20 @@ Os dados aparecem em Operação › Mobile ([Apps mobile](#apps-mobile)).
 
 Cada card em Infraestrutura › Instrumentação mostra "Créditos neste ciclo": o que a telemetria daquela aplicação consumiu do plano no ciclo. Total e saldo ficam em Configurações › Empresa e plano (passo 14).
 
+### Reduzir o consumo de créditos da telemetria
+
+O consumo cresce com o número de séries (métrica × atributos) e com a frequência de envio. Em ordem de impacto, sem perder o SLO da aplicação (lido de `http_server_request_duration_seconds`):
+
+1. **Tirar histogramas duplicados.** A instrumentação HTTP do OpenTelemetry já gera `http_server_request_duration_seconds`; um histograma próprio de latência do servidor dobra as séries. Remova-o. Um contador por rota (`meuapp_requests_total`) pode ficar.
+2. **Exportar a cada 60 s:** `OTEL_METRIC_EXPORT_INTERVAL=60000`.
+3. **Menos buckets:** com uma View, limite a `[50, 100, 250, 500, 1000, 2500]` ms (7 buckets em vez de 16). Idem para `http_client_request_duration_seconds`, ou desligue-o se ninguém usa.
+4. **Não multiplicar séries por instância** (Cloud Run, Lambda): tire o atributo da instância das métricas com uma View (mantenha nos traces) ou fixe um mínimo de instâncias.
+5. **Rota como padrão** (`/pedido/{id}`), nunca a URL crua em `http.route`.
+
+Temporalidade delta: não use por enquanto. A ingestão grava apenas métricas cumulativas; contadores e histogramas em delta são descartados.
+
+Exemplo (Node.js no Cloud Run, 671 séries, histograma duplicado, exportação a cada ~30 s): nada aplicado ~55 créditos/dia (1.500 duram ~27 dias); com 1 ~33/dia (~45 dias); 1+2 ~17/dia (~3 meses); 1+2+3 ~8/dia (~6 meses). Compare "Créditos neste ciclo" antes e depois do deploy.
+
 ## Passo 08 — Ler a Visão Geral
 
 - Grupo: Operar
