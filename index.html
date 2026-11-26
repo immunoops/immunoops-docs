@@ -919,7 +919,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     <div class="note tip"><i>✓</i><div><b>Rotule os workloads</b><span>Use o label <code>environment</code> para cada workload cair no ambiente certo. Agents instalados antes de 17/11/2026 marcam todos os workloads como produção; atualize o agent pelo comando do console.</span></div></div>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="cloudrun-vm" data-keywords="conta AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, s3:ListBucket, s3:GetObject, immunoops-billing-reader, AssumeRoleWithWebIdentity, oaud, chave de acesso, CloudWatch, cloudwatch:GetMetricData, cloudwatch:ListMetrics, logs:FilterLogEvents, ec2:DescribeInstances, ec2:StartInstances, ec2:StopInstances, serverless, multicloud, AWS Lambda, Lambda, EC2, AWS, Azure, Azure VM, on-prem, IMDS, IMDSv2, conta AWS, assinatura Azure, Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C011tigzz, Sem tabela, testar conexão">
+<section class="doc" id="cloudrun-vm" data-keywords="conta AWS, Data Exports, FOCUS, S3, CloudFormation, AWS Organizations, s3:ListBucket, s3:GetObject, immunoops-billing-reader, AssumeRoleWithWebIdentity, oaud, chave de acesso, CloudWatch, cloudwatch:GetMetricData, cloudwatch:ListMetrics, logs:FilterLogEvents, ec2:DescribeInstances, ec2:StartInstances, ec2:StopInstances, serverless, multicloud, AWS Lambda, Lambda, EC2, AWS, Azure, Azure VM, on-prem, IMDS, IMDSv2, conta AWS, assinatura Azure, Cloud Run, VM, máquina virtual, Compute Engine, GCE, GCP, Google Cloud, projeto GCP, região, zona, serverless, docker, agente na VM, suspensão, desligar VM, horário, conta de nuvem, billing export, BigQuery, dataViewer, permissão, monitoring.viewer, logging.viewer, Visualizador do Monitoring, Visualizador de registros, compute.instances, immunoOpsVmPower, domínio, allowedPolicyMemberDomains, customer ID, C04cqybo8, Sem tabela, testar conexão">
   <div class="crumbs">Passo 06 · Conectar</div>
   <h1>Serverless e VMs</h1>
   <div class="meta"><span>~3 min cada</span><span>Se você usa esses serviços</span></div>
@@ -994,7 +994,7 @@ html.js .dh.nav-mini nav .nav-cta:hover { background: #3dff6e; color: var(--on-a
     <div class="note tip"><i>✓</i><div><b>Economize com a aba Suspensão</b><span>Em <span class="ui">VMs › Suspensão</span>, use <span class="ui">Nova política</span> para ligar e desligar VMs por horário, no Compute Engine ou na EC2. No GCP, o acesso está em <a href="#vm-permissoes">Permissões da VM</a>. Na EC2, a nuvem da política é AWS e as ações estão em <a href="#aws-vm-power">Ligar e desligar a VM</a>.</span></div></div>
 
     <h3 id="permissoes-vm-cloudrun">Permissões de VM e Cloud Run</h3>
-    <p>Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é a do worker, <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code>, a mesma do billing em <a href="#conta-nuvem">Conta de nuvem</a>. Se a organização bloqueia contas de fora, inclua o customer ID <strong>C011tigzz</strong> neste projeto também, do mesmo jeito descrito em <a href="#conta-nuvem-dominio">Se a organização bloqueia contas de fora</a>.</p>
+    <p>Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é a do worker, <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code>, a mesma do billing em <a href="#conta-nuvem">Conta de nuvem</a>. Se a organização bloqueia contas de fora, inclua o customer ID <strong>C04cqybo8</strong> neste projeto também, do mesmo jeito descrito em <a href="#conta-nuvem-dominio">Se a organização bloqueia contas de fora</a>.</p>
 
     <h3 id="cloudrun-permissoes">Cloud Run</h3>
     <p>O worker lê o Cloud Monitoring e o Cloud Logging do projeto. Nada é instalado no container. No projeto GCP do serviço, a conta do worker precisa de dois papéis de leitura:</p>
@@ -1088,11 +1088,11 @@ aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-p
 
     <h3 id="conta-nuvem-dominio">Se a organização bloqueia contas de fora</h3>
     <p>Algumas organizações restringem quem pode receber papel no IAM (<code>iam.allowedPolicyMemberDomains</code>, “Domain restricted sharing”). O comando acima falha com a mensagem de que o membro não pertence a um cliente permitido.</p>
-    <p>Inclua o customer ID <strong>C011tigzz</strong> como exceção dessa política. A organização é <strong>immunoops.io</strong>, id <strong>424787708642</strong>. Faça a exceção só no projeto do billing, não na organização inteira.</p>
+    <p>Inclua o customer ID <strong>C04cqybo8</strong> como exceção dessa política. A organização é <strong>immunoops.io</strong>, id <strong>424787708642</strong>. Faça a exceção só no projeto do billing, não na organização inteira.</p>
     <ol class="steps">
       <li>No Google Cloud, abra <span class="ui">IAM e administrador › Políticas da organização</span> no projeto do billing.</li>
       <li>Abra a restrição <strong>Domain restricted sharing</strong> (<code>constraints/iam.allowedPolicyMemberDomains</code>).</li>
-      <li>Adicione <strong>C011tigzz</strong> aos valores permitidos, sem remover os que já existem.</li>
+      <li>Adicione <strong>C04cqybo8</strong> aos valores permitidos, sem remover os que já existem.</li>
       <li>Salve e rode de novo o comando <code>bq</code>.</li>
     </ol>
 
@@ -1105,7 +1105,7 @@ aws iam put-role-policy --role-name immunoops-power --policy-name immunoops-vm-p
       <thead><tr><th>O que a tela diz</th><th>O que fazer</th></tr></thead>
       <tbody>
         <tr><td>Sem tabela</td><td>Informe <code>projeto.dataset.tabela</code> e salve.</td></tr>
-        <tr><td>A organização bloqueia contas de fora</td><td>Inclua o customer ID C011tigzz e teste de novo.</td></tr>
+        <tr><td>A organização bloqueia contas de fora</td><td>Inclua o customer ID C04cqybo8 e teste de novo.</td></tr>
         <tr><td>Não foi possível ler o export</td><td>Confira se o comando <code>bq</code> rodou no dataset certo e teste de novo.</td></tr>
       </tbody>
     </table>
@@ -2047,7 +2047,7 @@ new View({
     </figure>
   <p class="back"><a href="#topo">↑ Voltar ao início</a></p>
 </section>
-<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, decisões vazia, aprovei e não aplicou, só observação, mobile sem dados, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, billing export, BigQuery, dataViewer, domínio, Sem tabela, C011tigzz, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso, CloudWatch, cloudwatch:GetMetricData, logs:FilterLogEvents, ec2:StartInstances, ec2:StopInstances, Lambda sem métricas">
+<section class="doc" id="faq" data-keywords="perguntas frequentes, FAQ, dúvidas, problemas, erro, ajuda, suporte, decisões vazia, aprovei e não aplicou, só observação, mobile sem dados, não recebi o código, pendente, workloads vazio, sem organização, não vejo botões, acesso de escrita, números reais, billing export, BigQuery, dataViewer, domínio, Sem tabela, C04cqybo8, monitoring.viewer, logging.viewer, Cloud Run sem métricas, suspensão, VM não desliga, AWS, s3:GetObject, s3:ListBucket, immunoops-billing-reader, chave de acesso, CloudWatch, cloudwatch:GetMetricData, logs:FilterLogEvents, ec2:StartInstances, ec2:StopInstances, Lambda sem métricas">
   <div class="crumbs">Ajuda</div>
   <h1>Perguntas frequentes</h1>
   <div class="meta"><span>Antes de chamar o time</span></div>
@@ -2058,7 +2058,7 @@ new View({
     <details class="faq"><summary>O Cloud Run não mostra métricas ou logs</summary><div>No projeto do serviço, conceda <code>roles/monitoring.viewer</code> e <code>roles/logging.viewer</code> para <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code>. Os comandos estão em <a href="#cloudrun-permissoes">Cloud Run</a>. Se a tela disser que a coleta de logs ainda não está habilitada para a conta, fale com o suporte: o papel prepara o acesso, e a coleta começa depois dessa liberação.</div></details>
     <details class="faq"><summary>A política de suspensão não desliga a VM</summary><div>No GCP, a conta do worker <code>aegis-worker@immunoops-prod.iam.gserviceaccount.com</code> precisa listar, iniciar e parar instâncias no projeto da VM. Os comandos do papel <code>immunoOpsVmPower</code> estão em <a href="#vm-permissoes">VM</a>. A VM também precisa do agente instalado e de saída HTTPS para <code>app.immunoops.io</code> para enviar métricas e logs. Na EC2, listar fica no papel <code>immunoops-billing-reader</code> e ligar e desligar no papel <code>immunoops-power</code>, em <a href="#aws-vm-power">Ligar e desligar a VM</a>.</div></details>
     <details class="faq"><summary>A Lambda não mostra invocações, duração ou concorrência</summary><div>O worker lê isso no CloudWatch. No papel <code>immunoops-billing-reader</code>, conceda <code>cloudwatch:GetMetricData</code> e <code>cloudwatch:ListMetrics</code> no namespace <code>AWS/Lambda</code>. Sem <code>logs:FilterLogEvents</code> no grupo <code>/aws/lambda/*</code>, a aba de logs fica sem as linhas da função. Os comandos estão em <a href="#aws-lambda-cloudwatch">CloudWatch da Lambda</a>.</div></details>
-    <details class="faq"><summary>A organização bloqueia a conta do Immuno Ops no IAM</summary><div>A política <code>iam.allowedPolicyMemberDomains</code> está recusando um membro de fora. Inclua o customer ID <strong>C011tigzz</strong> (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.</div></details>
+    <details class="faq"><summary>A organização bloqueia a conta do Immuno Ops no IAM</summary><div>A política <code>iam.allowedPolicyMemberDomains</code> está recusando um membro de fora. Inclua o customer ID <strong>C04cqybo8</strong> (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.</div></details>
     <details class="faq"><summary>A conta GCP está “Sem tabela”</summary><div>Abra a conta, informe a tabela no formato <code>projeto.dataset.tabela</code> e clique em <span class="ui">Salvar tabela</span>. Sem essa tabela a conta não entra no billing.</div></details>
     <details class="faq"><summary>Os números são reais?</summary><div>Sim. Todo dado vem do seu cluster e da sua conta de nuvem. Quando ainda não há dado, a tela diz isso em vez de mostrar um número inventado.</div></details>
     <details class="faq"><summary>Por que a AWS aparece em dólar e o Google Cloud em real?</summary><div>Cada nuvem fatura na sua moeda e o Immuno Ops mostra cada valor na moeda da fatura. No gasto diário, o valor em dólar é convertido pela taxa do export de billing do Google de cada dia. Detalhes em <a href="#custo-moedas">Mais de uma nuvem e mais de uma moeda</a>.</div></details>

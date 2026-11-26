@@ -306,7 +306,7 @@ aws ec2 modify-instance-metadata-options --instance-id ID_DA_INSTANCIA --http-to
 
 ### Permissões de VM e Cloud Run
 
-Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é a do worker, `aegis-worker@immunoops-prod.iam.gserviceaccount.com`, a mesma do billing em [Conta de nuvem](#conta-de-nuvem). Se a organização bloqueia contas de fora, inclua o customer ID **C011tigzz** neste projeto também, do mesmo jeito descrito em [Se a organização bloqueia contas de fora](#se-a-organizacao-bloqueia-contas-de-fora).
+Quem libera no Google Cloud é alguém que altera o IAM do projeto do recurso. A conta é a do worker, `aegis-worker@immunoops-prod.iam.gserviceaccount.com`, a mesma do billing em [Conta de nuvem](#conta-de-nuvem). Se a organização bloqueia contas de fora, inclua o customer ID **C04cqybo8** neste projeto também, do mesmo jeito descrito em [Se a organização bloqueia contas de fora](#se-a-organizacao-bloqueia-contas-de-fora).
 
 #### Permissões do Cloud Run
 
@@ -383,7 +383,7 @@ Sem o papel `immunoops-power`, a política de Suspensão não liga nem desliga a
 - Quem cadastra no Immuno Ops: Administrador
 - Quem libera no Google Cloud: alguém que altera o IAM do dataset de billing e, se a organização restringe domínios, a política do projeto
 - Onde: **Infraestrutura**, aba **Contas** (`app.immunoops.io/ui/infrastructure?tab=contas`)
-- Palavras-chave: conta de nuvem, adicionar conta, billing export, BigQuery, tabela, projeto.dataset.tabela, dataViewer, aegis-worker, customer ID, C011tigzz, domínio, Sem tabela, testar conexão
+- Palavras-chave: conta de nuvem, adicionar conta, billing export, BigQuery, tabela, projeto.dataset.tabela, dataViewer, aegis-worker, customer ID, C04cqybo8, domínio, Sem tabela, testar conexão
 
 A conta é somente leitura do billing. Nada é criado nem alterado nos recursos da nuvem. Uma conta GCP traz o custo do projeto. Uma conta AWS ou Azure conta como “ao menos uma conta” para uma VM, mas não substitui a conta GCP do Cloud Run.
 
@@ -435,11 +435,11 @@ Rode o comando com uma conta que tenha permissão para alterar o IAM do projeto 
 
 Algumas organizações restringem quem pode receber papel no IAM (`iam.allowedPolicyMemberDomains`, “Domain restricted sharing”). O comando acima falha com a mensagem de que o membro não pertence a um cliente permitido.
 
-Inclua o customer ID **C011tigzz** como exceção dessa política. A organização é **immunoops.io**, id **424787708642**. Faça a exceção só no projeto do billing, não na organização inteira.
+Inclua o customer ID **C04cqybo8** como exceção dessa política. A organização é **immunoops.io**, id **424787708642**. Faça a exceção só no projeto do billing, não na organização inteira.
 
 1. No Google Cloud, abra **IAM e administrador › Políticas da organização** no projeto do billing.
 2. Abra a restrição **Domain restricted sharing** (`constraints/iam.allowedPolicyMemberDomains`).
-3. Adicione **C011tigzz** aos valores permitidos, sem remover os que já existem.
+3. Adicione **C04cqybo8** aos valores permitidos, sem remover os que já existem.
 4. Salve e rode de novo o comando `bq`.
 
 #### Testar
@@ -450,7 +450,7 @@ Inclua o customer ID **C011tigzz** como exceção dessa política. A organizaç�
 | O que a tela diz | O que fazer |
 | --- | --- |
 | Sem tabela | Informe `projeto.dataset.tabela` e salve. |
-| A organização bloqueia contas de fora | Inclua o customer ID C011tigzz e teste de novo. |
+| A organização bloqueia contas de fora | Inclua o customer ID C04cqybo8 e teste de novo. |
 | Não foi possível ler o export | Confira se o comando `bq` rodou no dataset certo, e se `roles/bigquery.jobUser` foi concedido no projeto immunoops-prod. Teste de novo. |
 | Custo chegou, mas logs mostram erro de permissão | Conceda `roles/logging.viewer` ao dataset ou ao projeto, e teste de novo. |
 
@@ -1224,7 +1224,7 @@ No GCP, a conta do worker `aegis-worker@immunoops-prod.iam.gserviceaccount.com` 
 O worker lê isso no CloudWatch. No papel `immunoops-billing-reader`, conceda `cloudwatch:GetMetricData` e `cloudwatch:ListMetrics` no namespace `AWS/Lambda`. Sem `logs:FilterLogEvents` no grupo `/aws/lambda/*`, a aba de logs fica sem as linhas da função. Os comandos estão em [CloudWatch da Lambda](#cloudwatch-da-lambda).
 
 **A organização bloqueia a conta do Immuno Ops no IAM.**
-A política `iam.allowedPolicyMemberDomains` está recusando um membro de fora. Inclua o customer ID **C011tigzz** (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.
+A política `iam.allowedPolicyMemberDomains` está recusando um membro de fora. Inclua o customer ID **C04cqybo8** (organização immunoops.io, id 424787708642) como exceção, de preferência só no projeto do billing, e rode de novo os comandos de leitura.
 
 **A conta GCP está “Sem tabela”.**
 Abra a conta, informe a tabela no formato `projeto.dataset.tabela` e clique em **Salvar tabela**. Sem essa tabela a conta não entra no billing.
